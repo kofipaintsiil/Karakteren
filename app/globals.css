@@ -1,26 +1,109 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap");
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand */
+  --coral:        oklch(0.64 0.22 28);
+  --coral-hover:  oklch(0.58 0.22 28);
+  --coral-press:  oklch(0.48 0.22 28);
+  --coral-soft:   oklch(0.95 0.05 28);
+  --coral-mid:    oklch(0.88 0.10 28);
+
+  --yellow:       oklch(0.86 0.17 82);
+  --yellow-press: oklch(0.74 0.17 82);
+  --yellow-soft:  oklch(0.97 0.05 82);
+
+  --green:        oklch(0.70 0.19 150);
+  --green-press:  oklch(0.56 0.19 150);
+  --green-soft:   oklch(0.96 0.05 150);
+
+  --blue:         oklch(0.62 0.19 240);
+  --blue-soft:    oklch(0.95 0.05 240);
+
+  /* Surfaces */
+  --bg:           oklch(0.99 0.004 60);
+  --surface:      oklch(1 0 0);
+  --surface-2:    oklch(0.96 0.005 60);
+  --border:       oklch(0.88 0.008 60);
+  --border-dark:  oklch(0.76 0.012 60);
+
+  /* Text */
+  --text:         oklch(0.18 0.015 55);
+  --text-muted:   oklch(0.50 0.012 55);
+  --text-faint:   oklch(0.70 0.008 55);
+
+  /* Semantic */
+  --success:      oklch(0.68 0.18 150);
+  --success-press:oklch(0.54 0.18 150);
+  --warning:      oklch(0.76 0.17 75);
+  --error:        oklch(0.58 0.21 22);
+
+  /* Shape */
+  --r-sm:   10px;
+  --r-md:   16px;
+  --r-lg:   20px;
+  --r-xl:   28px;
+  --r-full: 9999px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* Touch optimization */
+button, a, [role="button"] {
+  touch-action: manipulation;
+}
+
+/* Input focus state — coral border, no default outline */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--coral) !important;
+  box-shadow: 0 0 0 3px var(--coral-soft);
+}
+
+/* Section slide animations — triggered by AppShell swipe */
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(36px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-36px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.slide-from-right { animation: slideFromRight 230ms ease-out; }
+.slide-from-left  { animation: slideFromLeft  230ms ease-out; }
+@keyframes blink { 50% { opacity: 0; } }
+
+
+/* Duolingo-style 3D button base — opt in with .btn-3d */
+.btn-3d {
+  position: relative;
+  transform: translateY(0);
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
+}
+.btn-3d:active {
+  transform: translateY(3px);
+  box-shadow: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
