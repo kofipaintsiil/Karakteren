@@ -1,9 +1,9 @@
 let currentAudio: HTMLAudioElement | null = null;
 
-// ElevenLabs TTS via API route, falls back to browser TTS
 export async function speak(text: string, lang = "nb-NO"): Promise<void> {
   stopSpeaking();
 
+  // Try API (OpenAI) if available
   try {
     const res = await fetch("/api/tts", {
       method: "POST",
@@ -11,7 +11,7 @@ export async function speak(text: string, lang = "nb-NO"): Promise<void> {
       body: JSON.stringify({ text }),
     });
 
-    if (res.ok) {
+    if (res.ok && res.headers.get("content-type")?.includes("audio")) {
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       return new Promise((resolve) => {
@@ -23,22 +23,38 @@ export async function speak(text: string, lang = "nb-NO"): Promise<void> {
       });
     }
   } catch {
-    // fall through to browser TTS
+    // fall through
   }
 
-  // Fallback: browser TTS
+  // Browser TTS — uses iOS "Nora" / macOS Norwegian voices, sounds natural
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !window.speechSynthesis) { resolve(); return; }
     window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = lang;
-    utt.rate = 0.95;
-    const voices = window.speechSynthesis.getVoices();
-    const norVoice = voices.find((v) => v.lang.startsWith("nb") || v.lang.startsWith("no"));
-    if (norVoice) utt.voice = norVoice;
-    utt.onend = () => resolve();
-    utt.onerror = () => resolve();
-    window.speechSynthesis.speak(utt);
+
+    const trySpeak = () => {
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = lang;
+      utt.rate = 0.92;
+      utt.pitch = 1.0;
+
+      const voices = window.speechSynthesis.getVoices();
+      const norVoice =
+        voices.find((v) => v.name.toLowerCase().includes("nora")) ??
+        voices.find((v) => v.name.toLowerCase().includes("malin")) ??
+        voices.find((v) => v.lang.startsWith("nb") || v.lang.startsWith("no"));
+      if (norVoice) utt.voice = norVoice;
+
+      utt.onend = () => resolve();
+      utt.onerror = () => resolve();
+      window.speechSynthesis.speak(utt);
+    };
+
+    // Voices may not be loaded yet on first call
+    if (window.speechSynthesis.getVoices().length > 0) {
+      trySpeak();
+    } else {
+      window.speechSynthesis.onvoiceschanged = () => { trySpeak(); };
+    }
   });
 }
 
