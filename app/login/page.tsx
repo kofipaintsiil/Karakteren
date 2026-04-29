@@ -64,11 +64,16 @@ function LoginForm() {
     }
 
     if (mode === "signup") {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password });
       setLoading(false);
-      if (error) setMessage({ type: "error", text: ERROR_MESSAGES[error.message] ?? error.message });
-      else {
-        setMessage({ type: "success", text: "Konto opprettet! Du må bekrefte e-posten din før du kan logge inn — sjekk innboksen (og søppelpost)." });
+      if (error) {
+        setMessage({ type: "error", text: ERROR_MESSAGES[error.message] ?? error.message });
+      } else if (data.session) {
+        // Auto-confirmed (email confirmation off) — redirect immediately
+        window.location.href = next;
+      } else {
+        // Email confirmation required
+        setMessage({ type: "success", text: "Konto opprettet! Sjekk e-posten din for å bekrefte kontoen (sjekk også søppelpost)." });
         setMode("login");
       }
       return;
