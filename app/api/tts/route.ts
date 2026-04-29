@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // ElevenLabs voice IDs — eleven_multilingual_v2 handles Norwegian well
-const ELEVENLABS_VOICE_ID = "onwK4e9ZLuTAKqWW03F9"; // Daniel — neutral, authoritative
+const ELEVENLABS_VOICE_ID = "s2xtA7B2CTXPlJzch1v";
 
 export async function POST(req: NextRequest) {
   const { text } = await req.json();
