@@ -60,8 +60,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     let startX = 0;
     let startY = 0;
     let locked: "h" | "v" | null = null;
+    let skipSwipe = false;
 
     function onTouchStart(e: TouchEvent) {
+      skipSwipe = !!(e.target as Element)?.closest?.("[data-no-swipe]");
+      if (skipSwipe) return;
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
       locked = null;
@@ -73,6 +76,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
 
     function onTouchMove(e: TouchEvent) {
+      if (skipSwipe) return;
       const dx = e.touches[0].clientX - startX;
       const dy = e.touches[0].clientY - startY;
 
@@ -92,6 +96,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
 
     function onTouchEnd(e: TouchEvent) {
+      if (skipSwipe) { skipSwipe = false; return; }
       if (locked !== "h") return;
       const dx = e.changedTouches[0].clientX - startX;
       locked = null;
@@ -132,11 +137,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         style={{
           maxWidth: "1100px",
           margin: "0 auto",
-          padding: "0 16px",
           display: "flex",
           alignItems: "flex-start",
-          overflow: "hidden",
-          position: "relative", // creates a clipping context that contains the swipe
+          overflowX: "clip",
+          position: "relative",
         }}
       >
         <DesktopSidebar />
@@ -145,6 +149,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           style={{
             flex: 1,
             minWidth: 0,
+            width: "100%",
             transform: dragX !== 0 ? `translateX(${dragX}px)` : undefined,
             transition: snapping
               ? "transform 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94)"
@@ -152,7 +157,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             willChange: dragX !== 0 ? "transform" : "auto",
           }}
         >
-          <main style={{ paddingBottom: "96px" }} className="sm:pb-8">
+          <main
+            style={{ paddingBottom: "calc(72px + env(safe-area-inset-bottom))", paddingLeft: "16px", paddingRight: "16px" }}
+            className="sm:pb-8"
+          >
             {children}
           </main>
         </div>
