@@ -216,24 +216,40 @@ function ExamPageInner() {
     }
   }
 
+  async function stopRecordingAndReview(text: string) {
+    stopRecognitionRef.current?.();
+    stopRecognitionRef.current = null;
+    setIsRecording(false);
+    setLiveTranscript("");
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    setTypedAnswer(trimmed); // vis rå tekst umiddelbart
+
+    // Korriger fagbegreper stille i bakgrunnen
+    try {
+      const res = await fetch("/api/correct-transcript", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: trimmed, subject, topic: topicName }),
+      });
+      if (res.ok) {
+        const { text: corrected } = await res.json();
+        if (corrected && corrected !== trimmed) setTypedAnswer(corrected);
+      }
+    } catch {}
+  }
+
   function toggleRecording() {
     if (isRecording) {
-      stopRecognitionRef.current?.();
-      stopRecognitionRef.current = null;
-      setIsRecording(false);
-      if (liveTranscript.trim()) handleStudentAnswer(liveTranscript);
+      void stopRecordingAndReview(liveTranscript);
     } else {
       setLiveTranscript("");
+      setTypedAnswer("");
       const stop = startRecognition(
         (text, isFinal) => {
           setLiveTranscript(text);
-          if (isFinal) {
-            setLiveTranscript("");
-            stopRecognitionRef.current?.();
-            stopRecognitionRef.current = null;
-            setIsRecording(false);
-            handleStudentAnswer(text);
-          }
+          if (isFinal) void stopRecordingAndReview(text);
         },
         () => setIsRecording(false),
         subject === "engelsk" ? "en-US" : "nb-NO"
