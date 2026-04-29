@@ -208,7 +208,7 @@ function ExamPageInner() {
         messages: messagesWithAI,
       };
       sessionStorage.setItem("examResult", JSON.stringify(sessionResult));
-      saveSession({ subject: subjectLabel, topic: topicName, grade, feedback, messages: messagesWithAI });
+      saveSession({ subject: subjectLabel, topic: topicName, grade, feedback, strengths, improvements, messages: messagesWithAI });
       setBlobbState(grade >= 5 ? "happy" : grade >= 3 ? "idle" : "disappointed");
       setPhase("done");
     } else {

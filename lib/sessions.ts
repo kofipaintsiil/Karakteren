@@ -12,6 +12,8 @@ interface SaveSessionParams {
   topic: string;
   grade: number;
   feedback: string;
+  strengths?: string[];
+  improvements?: string[];
   messages: { role: "examiner" | "student"; text: string }[];
 }
 
@@ -20,6 +22,12 @@ export async function saveSession(params: SaveSessionParams): Promise<string | n
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
+  const feedbackPayload = JSON.stringify({
+    text: params.feedback,
+    strengths: params.strengths ?? [],
+    improvements: params.improvements ?? [],
+  });
+
   const { data, error } = await supabase
     .from("sessions")
     .insert({
@@ -27,7 +35,7 @@ export async function saveSession(params: SaveSessionParams): Promise<string | n
       subject: params.subject,
       topic: params.topic,
       grade: params.grade,
-      feedback: params.feedback,
+      feedback: feedbackPayload,
       transcript: params.messages,
     })
     .select("id")
@@ -35,6 +43,20 @@ export async function saveSession(params: SaveSessionParams): Promise<string | n
 
   if (error || !data) return null;
   return data.id;
+}
+
+export function parseFeedback(raw: string): { text: string; strengths: string[]; improvements: string[] } {
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && "text" in parsed) {
+      return {
+        text: parsed.text ?? "",
+        strengths: parsed.strengths ?? [],
+        improvements: parsed.improvements ?? [],
+      };
+    }
+  } catch {}
+  return { text: raw, strengths: [], improvements: [] };
 }
 
 export async function fetchSessions() {

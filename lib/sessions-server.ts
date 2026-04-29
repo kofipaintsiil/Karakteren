@@ -5,6 +5,7 @@ interface SessionRow {
   subject: string;
   topic: string;
   grade: number | null;
+  feedback: string | null;
   created_at: string;
 }
 
@@ -12,13 +13,34 @@ export async function fetchSessions(userId: string): Promise<SessionRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("sessions")
-    .select("id, subject, topic, grade, created_at")
+    .select("id, subject, topic, grade, feedback, created_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(50);
 
   if (error) return [] as SessionRow[];
   return (data ?? []) as SessionRow[];
+}
+
+export async function fetchSession(id: string, userId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("sessions")
+    .select("id, subject, topic, grade, feedback, transcript, created_at")
+    .eq("id", id)
+    .eq("user_id", userId)
+    .single();
+
+  if (error || !data) return null;
+  return data as {
+    id: string;
+    subject: string;
+    topic: string;
+    grade: number | null;
+    feedback: string | null;
+    transcript: { role: string; text: string }[] | null;
+    created_at: string;
+  };
 }
 
 interface StatsRow { subject: string; topic: string; grade: number | null; created_at: string; }

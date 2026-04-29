@@ -25,10 +25,10 @@ function streakCopy(streak: number): string {
   return `${streak} dager. Ganske bra.`;
 }
 
-function gradeVariant(g: number): "success" | "warning" | "error" {
+function gradeVariant(g: number): "success" | "warning" | "default" {
   if (g >= 5) return "success";
-  if (g >= 3) return "warning";
-  return "error";
+  if (g >= 3) return "default";
+  return "warning";
 }
 
 function formatDate(iso: string) {
@@ -55,109 +55,7 @@ export default async function DashboardPage() {
     <AppShell>
       <div className="max-w-2xl mx-auto px-4 py-6">
 
-        {/* Streak hero */}
-        <div style={{
-          backgroundColor: streak > 0 ? "var(--yellow-soft)" : "var(--coral-soft)",
-          border: `2px solid ${streak > 0 ? "var(--yellow-press)" : "var(--coral-mid)"}`,
-          borderBottom: `4px solid ${streak > 0 ? "var(--yellow-press)" : "var(--coral-mid)"}`,
-          borderRadius: "var(--r-lg)",
-          padding: "20px 24px",
-          marginBottom: "16px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}>
-          <div>
-            <p style={{
-              fontSize: "11px",
-              fontWeight: 700,
-              color: "var(--text-muted)",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-              marginBottom: "8px",
-            }}>
-              {streakCopy(streak)}
-            </p>
-            <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-              <span style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--text)", lineHeight: 1 }}>
-                {streak}
-              </span>
-              <span style={{ fontSize: "15px", fontWeight: 600, color: "var(--text-muted)" }}>
-                {streak === 1 ? "dag" : "dager"}
-              </span>
-            </div>
-          </div>
-          <Flame
-            size={52}
-            strokeWidth={1.5}
-            color={streak > 0 ? "var(--yellow-press)" : "var(--text-faint)"}
-            style={{
-              opacity: streak === 0 ? 0.25 : 1,
-              flexShrink: 0,
-              transition: "opacity 300ms ease-out",
-            }}
-          />
-        </div>
-
-        {/* Stats bar */}
-        {stats && (
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "12px",
-            marginBottom: "36px",
-          }}>
-            <div style={{
-              backgroundColor: "var(--surface)",
-              border: "2px solid var(--border)",
-              borderBottom: "4px solid var(--border-dark)",
-              borderRadius: "var(--r-md)",
-              padding: "16px",
-            }}>
-              <p style={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: "8px",
-              }}>
-                Snittkarakter
-              </p>
-              <p style={{ fontSize: "2.25rem", fontWeight: 800, lineHeight: 1, color: gradeColor(stats.avg) }}>
-                {stats.avg}
-              </p>
-              <p style={{ fontSize: "11px", color: "var(--text-faint)", marginTop: "4px" }}>av 6</p>
-            </div>
-
-            <div style={{
-              backgroundColor: "var(--surface)",
-              border: "2px solid var(--border)",
-              borderBottom: "4px solid var(--border-dark)",
-              borderRadius: "var(--r-md)",
-              padding: "16px",
-            }}>
-              <p style={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: "8px",
-              }}>
-                Prøver totalt
-              </p>
-              <p style={{ fontSize: "2.25rem", fontWeight: 800, lineHeight: 1, color: "var(--text)" }}>
-                {stats.total}
-              </p>
-              <p style={{ fontSize: "11px", color: "var(--text-faint)", marginTop: "4px" }}>
-                {stats.bestSubject !== "—" ? `Best i ${stats.bestSubject}` : "Ingen data ennå"}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Subject grid */}
+        {/* Subject grid — first thing you see */}
         <section className="mb-8">
           <h2 style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)", marginBottom: "12px" }}>
             Velg fag
@@ -165,41 +63,8 @@ export default async function DashboardPage() {
           <SubjectGrid />
         </section>
 
-        {/* Progress chart */}
-        {stats && stats.chartData.length > 1 && (
-          <section className="mb-8">
-            <h2 style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)", marginBottom: "12px" }}>
-              Fremgang
-            </h2>
-            <div style={{
-              backgroundColor: "var(--surface)",
-              border: "2px solid var(--border)",
-              borderBottom: "4px solid var(--border-dark)",
-              borderRadius: "var(--r-lg)",
-              padding: "16px",
-            }}>
-              <GradeChart data={stats.chartData} />
-            </div>
-          </section>
-        )}
-
-        {/* Subject averages */}
-        <section className="mb-8">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-            <h2 style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)" }}>
-              Fag-oversikt
-            </h2>
-            {stats?.worstSubject && stats.worstSubject !== "—" && (
-              <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--error)" }}>
-                Øv mer: {stats.worstSubject}
-              </span>
-            )}
-          </div>
-          <WeakAreas subjectAvgs={stats?.subjectAvgs ?? []} />
-        </section>
-
         {/* Session history */}
-        <section>
+        <section className="mb-8">
           <h2 style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)", marginBottom: "12px" }}>
             Tidligere prøver
           </h2>
@@ -225,27 +90,91 @@ export default async function DashboardPage() {
           ) : (
             <div className="flex flex-col gap-2">
               {recentSessions.map((s) => (
-                <div key={s.id} style={{
-                  backgroundColor: "var(--surface)",
-                  border: "2px solid var(--border)",
-                  borderBottom: "4px solid var(--border-dark)",
-                  borderRadius: "var(--r-md)",
-                  padding: "14px 16px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}>
-                  <div>
-                    <p style={{ fontSize: "15px", fontWeight: 700, color: "var(--text)" }}>{s.subject}</p>
-                    <p style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 600 }}>
-                      {s.topic} · {formatDate(s.created_at)}
-                    </p>
+                <Link key={s.id} href={`/dashboard/session/${s.id}`} style={{ textDecoration: "none" }}>
+                  <div style={{
+                    backgroundColor: "var(--surface)",
+                    border: "2px solid var(--border)",
+                    borderBottom: "4px solid var(--border-dark)",
+                    borderRadius: "var(--r-md)",
+                    padding: "14px 16px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}>
+                    <div>
+                      <p style={{ fontSize: "15px", fontWeight: 700, color: "var(--text)" }}>{s.subject}</p>
+                      <p style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 600 }}>
+                        {s.topic} · {formatDate(s.created_at)}
+                      </p>
+                    </div>
+                    {s.grade && <Badge variant={gradeVariant(s.grade)}>{s.grade}</Badge>}
                   </div>
-                  {s.grade && <Badge variant={gradeVariant(s.grade)}>{s.grade}</Badge>}
-                </div>
+                </Link>
               ))}
             </div>
           )}
+        </section>
+
+        {/* Stats — lower on page, less confrontational */}
+        {stats && (
+          <section className="mb-8">
+            <h2 style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)", marginBottom: "12px" }}>
+              Din statistikk
+            </h2>
+
+            {/* Streak */}
+            <div style={{
+              backgroundColor: streak > 0 ? "var(--yellow-soft)" : "var(--surface)",
+              border: `2px solid ${streak > 0 ? "var(--yellow-press)" : "var(--border)"}`,
+              borderBottom: `4px solid ${streak > 0 ? "var(--yellow-press)" : "var(--border-dark)"}`,
+              borderRadius: "var(--r-lg)",
+              padding: "16px 20px",
+              marginBottom: "12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
+              <div>
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "4px" }}>
+                  {streakCopy(streak)}
+                </p>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+                  <span style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text)", lineHeight: 1 }}>{streak}</span>
+                  <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-muted)" }}>{streak === 1 ? "dag" : "dager"}</span>
+                </div>
+              </div>
+              <Flame size={40} strokeWidth={1.5} color={streak > 0 ? "var(--yellow-press)" : "var(--text-faint)"} style={{ opacity: streak === 0 ? 0.2 : 1, flexShrink: 0 }} />
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
+              <div style={{ backgroundColor: "var(--surface)", border: "2px solid var(--border)", borderBottom: "4px solid var(--border-dark)", borderRadius: "var(--r-md)", padding: "16px" }}>
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Snittkarakter</p>
+                <p style={{ fontSize: "2rem", fontWeight: 800, lineHeight: 1, color: gradeColor(stats.avg) }}>{stats.avg}</p>
+                <p style={{ fontSize: "11px", color: "var(--text-faint)", marginTop: "4px" }}>av 6</p>
+              </div>
+              <div style={{ backgroundColor: "var(--surface)", border: "2px solid var(--border)", borderBottom: "4px solid var(--border-dark)", borderRadius: "var(--r-md)", padding: "16px" }}>
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Prøver totalt</p>
+                <p style={{ fontSize: "2rem", fontWeight: 800, lineHeight: 1, color: "var(--text)" }}>{stats.total}</p>
+                <p style={{ fontSize: "11px", color: "var(--text-faint)", marginTop: "4px" }}>{stats.bestSubject !== "—" ? `Best i ${stats.bestSubject}` : "Ingen data ennå"}</p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Progress chart */}
+        {stats && stats.chartData.length > 1 && (
+          <section className="mb-8">
+            <h2 style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)", marginBottom: "12px" }}>Fremgang</h2>
+            <div style={{ backgroundColor: "var(--surface)", border: "2px solid var(--border)", borderBottom: "4px solid var(--border-dark)", borderRadius: "var(--r-lg)", padding: "16px" }}>
+              <GradeChart data={stats.chartData} />
+            </div>
+          </section>
+        )}
+
+        {/* Subject averages */}
+        <section className="mb-8">
+          <h2 style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)", marginBottom: "12px" }}>Fag-oversikt</h2>
+          <WeakAreas subjectAvgs={stats?.subjectAvgs ?? []} />
         </section>
 
       </div>
