@@ -53,14 +53,14 @@ export default async function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="max-w-2xl mx-auto px-4 py-6">
+      <div style={{ maxWidth: "600px", margin: "0 auto", paddingTop: "20px" }}>
 
         {/* Subject grid — first thing you see */}
         <section className="mb-8">
           <h2 style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)", marginBottom: "12px" }}>
             Velg fag
           </h2>
-          <SubjectGrid />
+          <SubjectGrid mode="exam" />
         </section>
 
         {/* Session history */}

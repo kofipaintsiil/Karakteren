@@ -6,7 +6,7 @@ import TopNav from "./TopNav";
 import BottomNav from "./BottomNav";
 import DesktopSidebar from "./DesktopSidebar";
 
-const SECTIONS = ["/dashboard", "/toppliste", "/profil"];
+const SECTIONS = ["/dashboard", "/oving", "/toppliste", "/profil"];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -137,9 +137,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         style={{
           maxWidth: "1100px",
           margin: "0 auto",
+          padding: "0 16px",
           display: "flex",
           alignItems: "flex-start",
-          overflowX: "clip",
+          overflow: "hidden",
           position: "relative",
         }}
       >
@@ -149,7 +150,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           style={{
             flex: 1,
             minWidth: 0,
-            width: "100%",
             transform: dragX !== 0 ? `translateX(${dragX}px)` : undefined,
             transition: snapping
               ? "transform 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94)"
@@ -158,7 +158,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           }}
         >
           <main
-            style={{ paddingBottom: "calc(72px + env(safe-area-inset-bottom))", paddingLeft: "16px", paddingRight: "16px" }}
+            style={{ paddingBottom: "calc(68px + env(safe-area-inset-bottom))" }}
             className="sm:pb-8"
           >
             {children}
