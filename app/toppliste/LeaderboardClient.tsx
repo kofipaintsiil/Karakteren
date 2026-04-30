@@ -21,26 +21,15 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
   return (
     <div style={{ width: "100%" }}>
       {/* Subject filter tabs */}
-      <div
-        data-no-swipe
-        className="hide-scrollbar"
-        style={{
-          display: "flex",
-          gap: "8px",
-          overflowX: "auto",
-          paddingBottom: "4px",
-          marginBottom: "16px",
-        }}
-      >
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "16px" }}>
         {subjects.map((s) => (
           <button
             key={s}
             onClick={() => setActiveSubject(s)}
             style={{
-              flexShrink: 0,
-              padding: "8px 16px",
+              padding: "7px 14px",
               borderRadius: "var(--r-full)",
-              fontSize: "13px",
+              fontSize: "12px",
               fontWeight: 700,
               border: `2px solid ${activeSubject === s ? "var(--coral)" : "var(--border)"}`,
               backgroundColor: activeSubject === s ? "var(--coral-soft)" : "var(--surface)",
