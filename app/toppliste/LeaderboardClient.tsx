@@ -19,16 +19,19 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
     : entries.filter((e) => e.top_subject === activeSubject);
 
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       {/* Subject filter tabs */}
-      <div style={{
-        display: "flex",
-        gap: "8px",
-        overflowX: "auto",
-        paddingBottom: "4px",
-        marginBottom: "16px",
-        scrollbarWidth: "none",
-      }}>
+      <div
+        data-no-swipe
+        className="hide-scrollbar"
+        style={{
+          display: "flex",
+          gap: "8px",
+          overflowX: "auto",
+          paddingBottom: "4px",
+          marginBottom: "16px",
+        }}
+      >
         {subjects.map((s) => (
           <button
             key={s}
@@ -52,7 +55,7 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
       </div>
 
       {/* Entries */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%", overflow: "hidden" }}>
         {filtered.map((entry, i) => {
           const isMe = entry.user_id === currentUserId;
           const rank = i + 1;
@@ -68,6 +71,8 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
                 display: "flex",
                 alignItems: "center",
                 gap: "14px",
+                overflow: "hidden",
+                minWidth: 0,
               }}
             >
               <span style={{
