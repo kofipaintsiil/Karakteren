@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, BookMarked, Users, User } from "lucide-react";
+import { GraduationCap, BookMarked, Users, User, Settings } from "lucide-react";
 
 const tabs = [
-  { href: "/dashboard", label: "Eksamen", icon: GraduationCap },
-  { href: "/oving",     label: "Øving",   icon: BookMarked },
-  { href: "/toppliste", label: "Sosial",  icon: Users },
-  { href: "/profil",    label: "Profil",  icon: User },
+  { href: "/dashboard",    label: "Eksamen", icon: GraduationCap },
+  { href: "/oving",        label: "Øving",   icon: BookMarked },
+  { href: "/toppliste",    label: "Sosial",  icon: Users },
+  { href: "/profil",       label: "Profil",  icon: User },
+  { href: "/instillinger", label: "Innstill.", icon: Settings },
 ];
 
 export default function BottomNav() {

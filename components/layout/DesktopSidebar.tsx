@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Users, User, Sparkles } from "lucide-react";
+import { BookOpen, Users, User, Sparkles, Settings } from "lucide-react";
 import Blobb from "@/components/Blobb";
 
 const links = [
-  { href: "/dashboard", label: "Fag",      icon: BookOpen },
-  { href: "/toppliste", label: "Sosial",   icon: Users },
-  { href: "/profil",    label: "Profil",   icon: User },
-  { href: "/pricing",   label: "Premium",  icon: Sparkles },
+  { href: "/dashboard",    label: "Fag",          icon: BookOpen },
+  { href: "/toppliste",    label: "Sosial",        icon: Users },
+  { href: "/profil",       label: "Profil",        icon: User },
+  { href: "/instillinger", label: "Innstillinger", icon: Settings },
+  { href: "/pricing",      label: "Premium",       icon: Sparkles },
 ];
 
 export default function DesktopSidebar() {

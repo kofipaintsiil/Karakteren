@@ -17,7 +17,7 @@ export default async function ToplistePage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 16px" }}>
+      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 0" }}>
         <div style={{ marginBottom: "24px" }}>
           <h1 style={{ fontSize: "1.375rem", fontWeight: 800, color: "var(--text)", marginBottom: "4px" }}>
             Toppliste

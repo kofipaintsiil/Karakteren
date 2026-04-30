@@ -135,6 +135,7 @@ select:focus {
 /* Bottom nav: visible on mobile, hidden on desktop */
 .bottomnav-mobile {
   display: flex;
+  flex-direction: column;
   position: fixed;
   bottom: 0;
   left: 0;

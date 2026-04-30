@@ -42,7 +42,7 @@ export default async function ProfilPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 16px" }}>
+      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 0" }}>
 
         {/* User header */}
         <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "28px" }}>
