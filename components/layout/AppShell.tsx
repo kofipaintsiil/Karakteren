@@ -133,17 +133,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <TopNav />
-      <div
-        style={{
-          maxWidth: "1100px",
-          margin: "0 auto",
-          padding: "0 16px",
-          display: "flex",
-          alignItems: "flex-start",
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
+      <div className="app-container">
         <DesktopSidebar />
         <div
           ref={wrapRef}
@@ -157,10 +147,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             willChange: dragX !== 0 ? "transform" : "auto",
           }}
         >
-          <main
-            style={{ paddingBottom: "calc(68px + env(safe-area-inset-bottom))" }}
-            className="sm:pb-8"
-          >
+          <main className="main-content">
             {children}
           </main>
         </div>

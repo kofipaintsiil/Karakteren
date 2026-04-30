@@ -105,7 +105,59 @@ select:focus {
 @keyframes blink { 50% { opacity: 0; } }
 
 
-/* Duolingo-style 3D button base — opt in with .btn-3d */
+/* ─── Layout: reliable responsive helpers (no Tailwind dep) ──────── */
+
+/* App container: block on mobile, flex on desktop to accommodate sidebar */
+.app-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+  overflow: hidden;
+  position: relative;
+}
+@media (min-width: 768px) {
+  .app-container {
+    display: flex;
+    align-items: flex-start;
+  }
+}
+
+/* Sidebar: hidden on mobile, flex column on desktop */
+.sidebar-desktop {
+  display: none !important;
+}
+@media (min-width: 768px) {
+  .sidebar-desktop {
+    display: flex !important;
+  }
+}
+
+/* Bottom nav: visible on mobile, hidden on desktop */
+.bottomnav-mobile {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+}
+@media (min-width: 768px) {
+  .bottomnav-mobile {
+    display: none;
+  }
+}
+
+/* Main content area bottom padding — clears bottom nav on mobile, flat on desktop */
+.main-content {
+  padding-bottom: calc(68px + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .main-content {
+    padding-bottom: 32px;
+  }
+}
+
+/* ─── Duolingo-style 3D button base — opt in with .btn-3d ──────────── */
 .btn-3d {
   position: relative;
   transform: translateY(0);

@@ -27,7 +27,7 @@ export default function DesktopSidebar() {
       display: "flex",
       flexDirection: "column",
       gap: "4px",
-    }} className="hidden md:flex">
+    }} className="sidebar-desktop">
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
         <Blobb state="idle" size={56} />
       </div>

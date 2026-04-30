@@ -15,7 +15,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40" style={{
+    <nav className="bottomnav-mobile" style={{
       backgroundColor: "var(--surface)",
       borderTop: "2px solid var(--border)",
     }}>
