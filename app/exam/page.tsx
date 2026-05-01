@@ -4,8 +4,6 @@ import { Suspense } from "react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Blobb, { BlobbState } from "@/components/Blobb";
-import Button from "@/components/ui/Button";
-import { ChevronLeft, Send } from "lucide-react";
 import { pickRandomTopic } from "@/lib/mock-examiner";
 import { speak, stopSpeaking, unlockAudio, startRecording } from "@/lib/speech";
 import { saveSession } from "@/lib/sessions";
@@ -271,12 +269,13 @@ function ExamPageInner() {
   if (phase === "draw") {
     return (
       <>
-        <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+        <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px", fontFamily: "Inter, system-ui, sans-serif" }}>
           <button
             onClick={() => router.push("/dashboard")}
-            style={{ position: "absolute", top: "16px", left: "16px", display: "flex", alignItems: "center", gap: "4px", background: "none", border: "none", cursor: "pointer", fontSize: "14px", fontWeight: 700, color: "var(--text-muted)", fontFamily: "inherit" }}
+            style={{ position: "absolute", top: "16px", left: "16px", display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "var(--text-muted)", fontFamily: "inherit" }}
           >
-            <ChevronLeft size={16} /> Tilbake
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            Tilbake
           </button>
 
           <div style={{ textAlign: "center", maxWidth: "320px" }}>
@@ -285,26 +284,33 @@ function ExamPageInner() {
             </div>
             <div style={{
               display: "inline-block",
-              backgroundColor: "var(--coral-soft)",
-              border: "2px solid var(--coral-mid)",
+              backgroundColor: "var(--accent-bg)",
               borderRadius: "var(--r-full)",
               padding: "4px 16px",
               fontSize: "13px",
-              fontWeight: 700,
-              color: "var(--coral-press)",
+              fontWeight: 600,
+              color: "var(--accent-dark)",
               marginBottom: "16px",
             }}>
               {subjectLabel}
             </div>
-            <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", marginBottom: "10px" }}>
+            <h1 style={{ fontFamily: "Syne, sans-serif", fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", marginBottom: "10px", letterSpacing: "-0.5px" }}>
               Klar for eksamen?
             </h1>
-            <p style={{ fontSize: "14px", color: "var(--text-muted)", fontWeight: 600, marginBottom: "32px", lineHeight: 1.6 }}>
+            <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "32px", lineHeight: 1.6 }}>
               Blobb trekker et tema og stiller deg spørsmål. Svar høyt eller skriv svaret ditt.
             </p>
-            <Button size="lg" fullWidth onClick={startExam}>
+            <button
+              onClick={startExam}
+              style={{
+                width: "100%", padding: "14px", borderRadius: "var(--r-full)", border: "none",
+                backgroundColor: "var(--accent)", color: "#fff",
+                fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "15px",
+                cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+              }}
+            >
               Trekk tema og start
-            </Button>
+            </button>
           </div>
         </div>
         {showUpgrade && (
@@ -321,18 +327,26 @@ function ExamPageInner() {
   // --- DONE SCREEN ---
   if (phase === "done") {
     return (
-      <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+      <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px", fontFamily: "Inter, system-ui, sans-serif" }}>
         <div style={{ textAlign: "center", maxWidth: "320px" }}>
           <Blobb state={blobbState} size={130} />
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", marginTop: "24px", marginBottom: "10px" }}>
+          <h1 style={{ fontFamily: "Syne, sans-serif", fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", marginTop: "24px", marginBottom: "10px", letterSpacing: "-0.5px" }}>
             Eksamen ferdig!
           </h1>
-          <p style={{ fontSize: "14px", color: "var(--text-muted)", fontWeight: 600, marginBottom: "32px" }}>
+          <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "32px", lineHeight: 1.5 }}>
             Blobb har vurdert svarene dine.
           </p>
-          <Button size="lg" fullWidth onClick={() => router.push("/exam/feedback")}>
+          <button
+            onClick={() => router.push("/exam/feedback")}
+            style={{
+              width: "100%", padding: "14px", borderRadius: "var(--r-full)", border: "none",
+              backgroundColor: "var(--accent)", color: "#fff",
+              fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "15px",
+              cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+            }}
+          >
             Se karakter og tilbakemelding
-          </Button>
+          </button>
         </div>
       </div>
     );
@@ -344,21 +358,22 @@ function ExamPageInner() {
   const progressFill = exchangeCount / (exchangeCount + 4);
 
   return (
-    <div style={{ backgroundColor: "var(--bg)", height: "100dvh", display: "flex", flexDirection: "column" }}>
+    <div style={{ backgroundColor: "var(--bg)", height: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Inter, system-ui, sans-serif" }}>
 
       {/* Top bar */}
-      <div style={{ backgroundColor: "var(--surface)", borderBottom: "2px solid var(--border)", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+      <div style={{ backgroundColor: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
         <button
           onClick={() => { stopSpeaking(); router.push("/dashboard"); }}
-          style={{ display: "flex", alignItems: "center", gap: "4px", background: "none", border: "none", cursor: "pointer", fontSize: "14px", fontWeight: 700, color: "var(--text-muted)", fontFamily: "inherit" }}
+          style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "var(--text-muted)", fontFamily: "inherit" }}
         >
-          <ChevronLeft size={16} /> Avslutt
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Avslutt
         </button>
 
         {/* Progress bar */}
         <div style={{
           flex: 1,
-          height: "6px",
+          height: "4px",
           backgroundColor: "var(--border)",
           borderRadius: "var(--r-full)",
           margin: "0 16px",
@@ -367,35 +382,35 @@ function ExamPageInner() {
           <div style={{
             height: "100%",
             width: `${progressFill * 100}%`,
-            backgroundColor: "var(--coral)",
+            backgroundColor: "var(--accent)",
             borderRadius: "var(--r-full)",
             transition: "width 400ms ease-out",
           }} />
         </div>
 
-        <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-faint)", flexShrink: 0 }}>
+        <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--ink-light)", flexShrink: 0 }}>
           {exchangeCount} svar
         </span>
       </div>
 
       {/* Blobb + topic */}
-      <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: "14px", flexShrink: 0, backgroundColor: "var(--surface)", borderBottom: "2px solid var(--border)" }}>
-        <Blobb state={blobbState} size={64} />
+      <div style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: "14px", flexShrink: 0, backgroundColor: "var(--surface)", borderBottom: "1px solid var(--border)" }}>
+        <Blobb state={blobbState} size={56} />
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--text-faint)", marginBottom: "4px" }}>
+          <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.7px", color: "var(--ink-light)", marginBottom: "3px" }}>
             {subjectLabel}{topicName ? ` — ${topicName}` : ""}
           </p>
           {isStreaming && (
-            <p style={{ fontSize: "13px", color: "var(--coral)", fontWeight: 700 }}>Blobb tenker...</p>
+            <p style={{ fontSize: "13px", color: "var(--accent)", fontWeight: 600 }}>Blobb tenker...</p>
           )}
           {isSpeaking && !isStreaming && (
-            <p style={{ fontSize: "13px", color: "var(--coral)", fontWeight: 700 }}>Blobb snakker...</p>
+            <p style={{ fontSize: "13px", color: "var(--accent)", fontWeight: 600 }}>Blobb snakker...</p>
           )}
           {phase === "grading" && (
-            <p style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 700 }}>Vurderer svarene dine...</p>
+            <p style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 600 }}>Vurderer svarene dine...</p>
           )}
           {!isExaminerTurn && phase === "conversation" && (
-            <p style={{ fontSize: "13px", color: "var(--green)", fontWeight: 700 }}>Din tur</p>
+            <p style={{ fontSize: "13px", color: "var(--green)", fontWeight: 600 }}>Din tur</p>
           )}
         </div>
       </div>
@@ -406,15 +421,14 @@ function ExamPageInner() {
           <div key={i} style={{
             alignSelf: m.role === "student" ? "flex-end" : "flex-start",
             maxWidth: "82%",
-            backgroundColor: m.role === "student" ? "var(--coral)" : "var(--surface)",
+            backgroundColor: m.role === "student" ? "var(--accent)" : "var(--surface)",
             color: m.role === "student" ? "#fff" : "var(--text)",
-            border: m.role === "student" ? "2px solid var(--coral-press)" : "2px solid var(--border)",
+            border: m.role === "student" ? "1px solid var(--accent-dark)" : "1px solid var(--border)",
             borderRadius: m.role === "student"
               ? "var(--r-lg) var(--r-lg) var(--r-sm) var(--r-lg)"
               : "var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm)",
             padding: "12px 16px",
             fontSize: "14px",
-            fontWeight: 500,
             lineHeight: 1.6,
           }}>
             {m.text}
@@ -427,11 +441,10 @@ function ExamPageInner() {
             alignSelf: "flex-start",
             maxWidth: "82%",
             backgroundColor: "var(--surface)",
-            border: "2px solid var(--border)",
+            border: "1px solid var(--border)",
             borderRadius: "var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm)",
             padding: "12px 16px",
             fontSize: "14px",
-            fontWeight: 500,
             lineHeight: 1.6,
             color: "var(--text)",
           }}>
@@ -440,7 +453,7 @@ function ExamPageInner() {
               display: "inline-block",
               width: "2px",
               height: "14px",
-              backgroundColor: "var(--coral)",
+              backgroundColor: "var(--accent)",
               marginLeft: "2px",
               verticalAlign: "middle",
               animation: "blink 1s step-end infinite",
@@ -453,13 +466,12 @@ function ExamPageInner() {
           <div style={{
             alignSelf: "flex-end",
             maxWidth: "82%",
-            backgroundColor: "var(--coral-soft)",
-            border: "2px dashed var(--coral-mid)",
+            backgroundColor: "var(--accent-bg)",
+            border: "1.5px dashed var(--accent)",
             borderRadius: "var(--r-lg) var(--r-lg) var(--r-sm) var(--r-lg)",
             padding: "12px 16px",
             fontSize: "14px",
-            fontWeight: 500,
-            color: "var(--coral-press)",
+            color: "var(--accent-dark)",
             lineHeight: 1.6,
           }}>
             {liveTranscript}
@@ -471,7 +483,7 @@ function ExamPageInner() {
       {phase === "conversation" && !isExaminerTurn && (
         <div style={{
           backgroundColor: "var(--surface)",
-          borderTop: "2px solid var(--border)",
+          borderTop: "1px solid var(--border)",
           padding: "12px 16px",
           paddingBottom: "calc(12px + env(safe-area-inset-bottom))",
           flexShrink: 0,
@@ -489,10 +501,9 @@ function ExamPageInner() {
                 height: "48px",
                 padding: "0 14px",
                 backgroundColor: "var(--bg)",
-                border: "2px solid var(--border)",
+                border: "1.5px solid var(--border)",
                 borderRadius: "var(--r-lg)",
                 fontSize: "14px",
-                fontWeight: 500,
                 color: "var(--text)",
                 fontFamily: "inherit",
                 outline: "none",
@@ -505,14 +516,13 @@ function ExamPageInner() {
                 style={{
                   width: "48px", height: "48px",
                   borderRadius: "var(--r-lg)",
-                  backgroundColor: "var(--coral)",
-                  border: "2px solid var(--coral-press)",
-                  boxShadow: "0 4px 0 var(--coral-press)",
+                  backgroundColor: "var(--accent)",
+                  border: "none",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   cursor: "pointer", flexShrink: 0,
                 }}
               >
-                <Send size={18} color="#fff" />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               </button>
             )}
             {!isTranscribing && (
@@ -521,11 +531,12 @@ function ExamPageInner() {
                 style={{
                   width: "56px", height: "56px",
                   borderRadius: "var(--r-full)",
-                  backgroundColor: isRecording ? "var(--error)" : "var(--coral)",
-                  border: isRecording ? "2px solid oklch(0.43 0.20 22)" : "2px solid var(--coral-press)",
-                  boxShadow: isRecording ? "0 4px 0 oklch(0.43 0.20 22)" : "0 4px 0 var(--coral-press)",
+                  backgroundColor: isRecording ? "oklch(58% 0.18 22)" : "var(--accent)",
+                  border: "none",
+                  boxShadow: isRecording ? "0 0 0 8px oklch(96% 0.06 22)" : "0 2px 12px rgba(0,0,0,0.15)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   cursor: "pointer", flexShrink: 0,
+                  transition: "all 0.2s ease",
                 }}
                 aria-label={isRecording ? "Stop innspilling" : "Start innspilling"}
               >
@@ -538,7 +549,7 @@ function ExamPageInner() {
             {isTranscribing && (
               <div style={{
                 width: "56px", height: "56px", borderRadius: "var(--r-full)",
-                backgroundColor: "var(--surface-2)", border: "2px solid var(--border)",
+                backgroundColor: "var(--bg-alt)", border: "1px solid var(--border)",
                 display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
               }}>
                 <span style={{ fontSize: "18px", animation: "blink 1s step-end infinite" }}>•••</span>
@@ -552,12 +563,12 @@ function ExamPageInner() {
       {phase === "grading" && (
         <div style={{
           backgroundColor: "var(--surface)",
-          borderTop: "2px solid var(--border)",
+          borderTop: "1px solid var(--border)",
           padding: "20px 16px",
           textAlign: "center",
           flexShrink: 0,
         }}>
-          <p style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-muted)" }}>
+          <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-muted)" }}>
             Blobb setter karakter...
           </p>
         </div>

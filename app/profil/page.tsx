@@ -1,12 +1,17 @@
 import AppShell from "@/components/layout/AppShell";
-import Button from "@/components/ui/Button";
-import Badge from "@/components/ui/Badge";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { fetchStats, fetchProfile } from "@/lib/sessions-server";
 import LogoutButton from "@/components/LogoutButton";
 import { redirect } from "next/navigation";
+
+function ChevronRight() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ color: "var(--ink-light)", flexShrink: 0 }}>
+      <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export default async function ProfilPage() {
   const supabase = await createClient();
@@ -21,7 +26,6 @@ export default async function ProfilPage() {
   const displayName = profile?.display_name ?? user.email?.split("@")[0] ?? "Elev";
   const initial = displayName[0]?.toUpperCase() ?? "E";
 
-  // Count sessions this month
   const start = new Date();
   start.setDate(1); start.setHours(0, 0, 0, 0);
   const { count: usedThisMonth } = await (await createClient())
@@ -35,64 +39,63 @@ export default async function ProfilPage() {
     .toLocaleDateString("nb-NO", { day: "numeric", month: "long" });
 
   const menuItems = [
-    { label: "Abonnement", href: "/pricing", badge: "Gratis" },
-    { label: "Personvern", href: "/profil/personvern", badge: null },
-    { label: "Hjelp og støtte", href: "/profil/hjelp", badge: null },
+    { label: "Abonnement", href: "/pricing", sublabel: "Gratis plan" },
+    { label: "Personvern", href: "/profil/personvern", sublabel: "Datapolitikk og cookies" },
+    { label: "Hjelp og støtte", href: "/profil/hjelp", sublabel: "Kontakt oss" },
   ];
 
   return (
     <AppShell>
-      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 0" }}>
+      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 0", fontFamily: "Inter, system-ui, sans-serif" }}>
 
         {/* User header */}
         <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "28px" }}>
           <div style={{
             width: "56px", height: "56px",
             borderRadius: "var(--r-full)",
-            backgroundColor: "var(--coral-soft)",
-            border: "2px solid var(--coral-mid)",
+            backgroundColor: "var(--accent-bg)",
+            border: "1px solid var(--border)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "22px", fontWeight: 800, color: "var(--coral-press)",
+            fontFamily: "Syne, sans-serif", fontSize: "22px", fontWeight: 800, color: "var(--accent-dark)",
           }}>
             {initial}
           </div>
           <div>
-            <p style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)" }}>{displayName}</p>
-            <p style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 600 }}>{user.email}</p>
+            <p style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "1rem", color: "var(--text)", letterSpacing: "-0.3px" }}>{displayName}</p>
+            <p style={{ fontSize: "13px", color: "var(--ink-light)", marginTop: "2px" }}>{user.email}</p>
           </div>
         </div>
 
         {/* Stats */}
         <div style={{
           backgroundColor: "var(--surface)",
-          border: "1.5px solid var(--border)",
+          border: "1px solid var(--border)",
           borderRadius: "var(--r-lg)",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
           padding: "20px",
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
           gap: "8px",
-          marginBottom: "16px",
+          marginBottom: "14px",
           textAlign: "center",
         }}>
           {[
             { value: stats?.total ?? 0, label: "Prøver" },
             { value: stats?.avg?.toFixed(1) ?? "—", label: "Snitt" },
-            { value: stats?.streak ?? 0, label: "Streak" },
+            { value: `${stats?.streak ?? 0}🔥`, label: "Dager på rad" },
           ].map((s) => (
             <div key={s.label}>
-              <p style={{ fontWeight: 800, fontSize: "1.375rem", color: "var(--text)" }}>{s.value}</p>
-              <p style={{ fontSize: "11px", color: "var(--text-muted)", fontWeight: 700, marginTop: "2px" }}>{s.label}</p>
+              <p style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "1.375rem", color: "var(--text)" }}>{s.value}</p>
+              <p style={{ fontSize: "11px", color: "var(--ink-light)", fontWeight: 600, marginTop: "2px" }}>{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* Free sessions remaining */}
         <div style={{
-          backgroundColor: "var(--yellow-soft)",
-          border: "1.5px solid var(--yellow)",
+          backgroundColor: "var(--accent-bg)",
+          border: "1px solid var(--accent)",
           borderRadius: "var(--r-lg)",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.07)",
           padding: "14px 16px",
           marginBottom: "24px",
           display: "flex",
@@ -100,22 +103,27 @@ export default async function ProfilPage() {
           justifyContent: "space-between",
         }}>
           <div>
-            <p style={{ fontSize: "13px", fontWeight: 800, color: "var(--text)" }}>
+            <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--accent-dark)" }}>
               {remaining} gratis {remaining === 1 ? "prøve" : "prøver"} igjen
             </p>
-            <p style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 600 }}>Nullstilles {resetDate}</p>
+            <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>Nullstilles {resetDate}</p>
           </div>
-          <Link href="/pricing">
-            <Button size="sm">Oppgrader</Button>
+          <Link href="/pricing" style={{
+            padding: "8px 16px", borderRadius: "var(--r-full)", border: "none",
+            backgroundColor: "var(--accent)", color: "#fff",
+            fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "13px",
+            textDecoration: "none",
+          }}>
+            Oppgrader
           </Link>
         </div>
 
         {/* Menu */}
         <div style={{
           backgroundColor: "var(--surface)",
-          border: "1.5px solid var(--border)",
+          border: "1px solid var(--border)",
           borderRadius: "var(--r-lg)",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
           overflow: "hidden",
           marginBottom: "16px",
         }}>
@@ -124,19 +132,17 @@ export default async function ProfilPage() {
               key={item.href}
               href={item.href}
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                display: "flex", alignItems: "center", justifyContent: "space-between",
                 padding: "14px 16px",
                 borderTop: i > 0 ? "1px solid var(--border)" : "none",
                 textDecoration: "none",
               }}
             >
-              <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>{item.label}</span>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                {item.badge && <Badge variant="default">{item.badge}</Badge>}
-                <ChevronRight size={16} style={{ color: "var(--text-faint)" }} />
+              <div>
+                <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>{item.label}</p>
+                <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>{item.sublabel}</p>
               </div>
+              <ChevronRight />
             </Link>
           ))}
         </div>
