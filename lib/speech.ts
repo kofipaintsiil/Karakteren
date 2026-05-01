@@ -1,4 +1,55 @@
-let currentAudio: HTMLAudioElement | null = null;
+// Singleton AudioContext — unlocked once on first user gesture, reused for all playback.
+// This is the key to iOS Safari audio: HTMLAudioElement.play() after an async fetch is blocked,
+// but a pre-unlocked AudioContext can decode and play blobs at any time.
+let audioCtx: AudioContext | null = null;
+let currentSource: AudioBufferSourceNode | null = null;
+
+function getAudioContext(): AudioContext | null {
+  if (typeof window === "undefined") return null;
+  const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+  if (!Ctx) return null;
+  if (!audioCtx || audioCtx.state === "closed") {
+    audioCtx = new Ctx();
+  }
+  return audioCtx;
+}
+
+async function playBlob(blob: Blob): Promise<void> {
+  const ctx = getAudioContext();
+  if (!ctx) return playWithElement(blob);
+
+  // Resume context if suspended (iOS may suspend it again)
+  if (ctx.state === "suspended") {
+    try { await ctx.resume(); } catch {}
+  }
+
+  try {
+    const arrayBuf = await blob.arrayBuffer();
+    const audioBuf = await ctx.decodeAudioData(arrayBuf);
+    return new Promise((resolve) => {
+      if (currentSource) { try { currentSource.stop(); } catch {} }
+      const src = ctx.createBufferSource();
+      src.buffer = audioBuf;
+      src.connect(ctx.destination);
+      currentSource = src;
+      src.onended = () => { currentSource = null; resolve(); };
+      src.start(0);
+    });
+  } catch {
+    return playWithElement(blob);
+  }
+}
+
+// HTMLAudioElement fallback (works on desktop, sometimes blocked on iOS)
+function playWithElement(blob: Blob): Promise<void> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.onended = () => { URL.revokeObjectURL(url); resolve(); };
+    audio.onerror = () => { URL.revokeObjectURL(url); resolve(); };
+    audio.play().catch(() => resolve());
+  });
+}
 
 export async function speak(text: string, lang = "nb-NO"): Promise<void> {
   stopSpeaking();
@@ -10,16 +61,12 @@ export async function speak(text: string, lang = "nb-NO"): Promise<void> {
     });
     if (res.ok && res.headers.get("content-type")?.includes("audio")) {
       const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      return new Promise((resolve) => {
-        const audio = new Audio(url);
-        currentAudio = audio;
-        audio.onended = () => { URL.revokeObjectURL(url); resolve(); };
-        audio.onerror = () => { URL.revokeObjectURL(url); resolve(); };
-        audio.play().catch(() => resolve());
-      });
+      await playBlob(blob);
+      return;
     }
   } catch {}
+
+  // SpeechSynthesis fallback
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !window.speechSynthesis) { resolve(); return; }
     window.speechSynthesis.cancel();
@@ -44,23 +91,30 @@ export async function speak(text: string, lang = "nb-NO"): Promise<void> {
 }
 
 export function stopSpeaking() {
-  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (currentSource) {
+    try { currentSource.stop(); } catch {}
+    currentSource = null;
+  }
   if (typeof window !== "undefined" && window.speechSynthesis) {
     window.speechSynthesis.cancel();
   }
 }
 
+// Must be called synchronously from a user gesture (onClick).
+// Unlocks the shared AudioContext so all subsequent async playback works on iOS.
 export function unlockAudio(): void {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  if (ctx.state === "suspended") {
+    ctx.resume().catch(() => {});
+  }
+  // Play silent buffer to fully unlock
   try {
-    const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!Ctx) return;
-    const ctx = new Ctx();
     const buf = ctx.createBuffer(1, 1, 22050);
     const src = ctx.createBufferSource();
     src.buffer = buf;
     src.connect(ctx.destination);
     src.start(0);
-    void ctx.close();
   } catch {}
 }
 
