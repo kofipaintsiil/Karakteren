@@ -80,10 +80,13 @@ export function startRecognition(
 
   if (!SpeechRecognition) return null;
 
+  let stopped = false;
+
   const recognition = new SpeechRecognition();
   recognition.lang = lang;
-  recognition.continuous = true;
+  recognition.continuous = false;   // iOS Safari does not support continuous:true
   recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
 
   recognition.onresult = (event: any) => {
     let interim = "";
@@ -97,11 +100,30 @@ export function startRecognition(
     else if (interim) onResult(interim, false);
   };
 
-  recognition.onend = onEnd;
-  recognition.onerror = () => onEnd();
-  recognition.start();
+  recognition.onend = () => {
+    if (stopped) { onEnd(); return; }
+    // Auto-restart to simulate continuous recording on iOS
+    try { recognition.start(); } catch { stopped = true; onEnd(); }
+  };
+
+  recognition.onerror = (e: any) => {
+    if (stopped) return;
+    if (e.error === "no-speech") {
+      try { recognition.start(); } catch { stopped = true; onEnd(); }
+    } else {
+      stopped = true;
+      onEnd();
+    }
+  };
+
+  try {
+    recognition.start();
+  } catch {
+    return null;
+  }
 
   return () => {
+    stopped = true;
     try { recognition.stop(); } catch {}
   };
 }
