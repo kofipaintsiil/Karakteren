@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Blobb from "@/components/Blobb";
 
 const tabs = [
-  { href: "/dashboard",    label: "Hjem",      icon: HomeIcon },
-  { href: "/oving",        label: "Øving",     icon: BookIcon },
-  { href: "/toppliste",    label: "Sosial",    icon: UsersIcon },
-  { href: "/profil",       label: "Profil",    icon: ProfileIcon },
-  { href: "/instillinger", label: "Innst.",    icon: GearIcon },
+  { href: "/dashboard",  label: "Hjem",      icon: HomeIcon },
+  { href: "/oving",      label: "Velg tema", icon: BookIcon },
+  { href: "/eksamen",    label: "Eksamen",   icon: BlobbTabIcon },
+  { href: "/toppliste",  label: "Sosial",    icon: UsersIcon },
+  { href: "/profil",     label: "Profil",    icon: ProfileIcon },
 ];
 
 function HomeIcon({ active }: { active: boolean }) {
@@ -31,6 +32,10 @@ function BookIcon({ active }: { active: boolean }) {
       <path d="M9 7h7M9 11h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   );
+}
+
+function BlobbTabIcon({ active }: { active: boolean }) {
+  return <Blobb mood={active ? "happy" : "idle"} size={26} animate={false} />;
 }
 
 function UsersIcon({ active }: { active: boolean }) {
@@ -57,17 +62,6 @@ function ProfileIcon({ active }: { active: boolean }) {
   );
 }
 
-function GearIcon({ active }: { active: boolean }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8"
-        fill={active ? "currentColor" : "none"} fillOpacity={active ? 0.2 : 0} />
-      <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
-        stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export default function BottomNav() {
   const pathname = usePathname();
   const activeIdx = tabs.findIndex(t => pathname.startsWith(t.href));
@@ -82,7 +76,7 @@ export default function BottomNav() {
       {/* Slide indicator */}
       <div style={{
         height: "2px",
-        background: "var(--accent)",
+        backgroundColor: "var(--accent)",
         width: "20%",
         borderRadius: "0 0 2px 2px",
         transform: `translateX(${Math.max(0, activeIdx) * 100}%)`,
@@ -99,10 +93,10 @@ export default function BottomNav() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: "3px",
+              gap: "2px",
               textDecoration: "none",
               color: active ? "var(--accent-dark)" : "var(--ink-light)",
-              fontSize: "10px",
+              fontSize: "9.5px",
               fontWeight: active ? 600 : 400,
               fontFamily: "Inter, system-ui, sans-serif",
               padding: "4px 0 6px",

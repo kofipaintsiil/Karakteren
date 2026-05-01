@@ -6,7 +6,7 @@ import TopNav from "./TopNav";
 import BottomNav from "./BottomNav";
 import DesktopSidebar from "./DesktopSidebar";
 
-const SECTIONS = ["/dashboard", "/oving", "/toppliste", "/profil", "/instillinger"];
+const SECTIONS = ["/dashboard", "/oving", "/eksamen", "/toppliste", "/profil"];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
