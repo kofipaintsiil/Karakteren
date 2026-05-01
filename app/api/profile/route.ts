@@ -17,9 +17,9 @@ export async function PATCH(req: NextRequest) {
   );
 
   const { error } = await admin.from("profiles").upsert({
-    user_id: user.id,
+    id: user.id,
     display_name: display_name.trim(),
-  }, { onConflict: "user_id" });
+  }, { onConflict: "id" });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });

@@ -30,8 +30,8 @@ export async function POST(req: NextRequest) {
   const avatar_url = urlData.publicUrl;
 
   await admin.from("profiles").upsert(
-    { user_id: user.id, avatar_url },
-    { onConflict: "user_id" }
+    { id: user.id, avatar_url },
+    { onConflict: "id" }
   );
 
   return NextResponse.json({ avatar_url });

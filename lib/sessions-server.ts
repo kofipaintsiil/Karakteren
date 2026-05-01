@@ -146,11 +146,11 @@ export async function fetchLeaderboard(subject?: string): Promise<LeaderboardEnt
 
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("user_id, display_name, show_on_leaderboard");
+    .select("id, display_name, show_on_leaderboard");
 
-  type Profile = { user_id: string; display_name: string | null; show_on_leaderboard: boolean | null };
+  type Profile = { id: string; display_name: string | null; show_on_leaderboard: boolean | null };
   const profileMap: Record<string, Profile> = {};
-  (profiles as Profile[] ?? []).forEach((p) => { profileMap[p.user_id] = p; });
+  (profiles as Profile[] ?? []).forEach((p) => { profileMap[p.id] = p; });
 
   const entries: LeaderboardEntry[] = Object.entries(byUser)
     .filter(([uid]) => profileMap[uid]?.show_on_leaderboard !== false)
@@ -175,7 +175,7 @@ export async function fetchProfile(userId: string) {
   const { data } = await supabase
     .from("profiles")
     .select("display_name, show_on_leaderboard")
-    .eq("user_id", userId)
+    .eq("id", userId)
     .single();
   return data as { display_name: string | null; show_on_leaderboard: boolean | null } | null;
 }
