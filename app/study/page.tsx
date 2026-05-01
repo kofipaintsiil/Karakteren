@@ -5,9 +5,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Blobb, { BlobbState } from "@/components/Blobb";
 import Button from "@/components/ui/Button";
-import { Mic, MicOff, ChevronLeft, Send, CheckSquare, Square } from "lucide-react";
+import { ChevronLeft, Send, CheckSquare, Square } from "lucide-react";
 import { getSubjectData } from "@/lib/mock-examiner";
-import { speak, stopSpeaking, startRecognition, isSpeechRecognitionSupported } from "@/lib/speech";
+import { speak, stopSpeaking, unlockAudio, startRecording } from "@/lib/speech";
 
 type Phase = "select" | "conversation" | "done";
 
@@ -56,7 +56,7 @@ function StudyPageInner() {
   const [isRecording, setIsRecording] = useState(false);
   const [liveTranscript, setLiveTranscript] = useState("");
   const [typedAnswer, setTypedAnswer] = useState("");
-  const [hasMic, setHasMic] = useState(true);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const [exchangeCount, setExchangeCount] = useState(0);
 
   const stopRecognitionRef = useRef<(() => void) | null>(null);
@@ -64,7 +64,6 @@ function StudyPageInner() {
   const messagesRef = useRef<Message[]>([]);
   const selectedTopicsRef = useRef<string[]>([]);
 
-  useEffect(() => { if (!isSpeechRecognitionSupported()) setHasMic(false); }, []);
   useEffect(() => { messagesRef.current = messages; }, [messages]);
   useEffect(() => { selectedTopicsRef.current = selectedTopics; }, [selectedTopics]);
 
@@ -126,6 +125,7 @@ function StudyPageInner() {
   }
 
   async function startStudy() {
+    unlockAudio();
     const topics = selectedTopicsRef.current;
     if (topics.length === 0) return;
 
@@ -191,16 +191,18 @@ function StudyPageInner() {
 
   async function toggleRecording() {
     if (isRecording) {
-      void stopRecordingAndReview(liveTranscript);
+      stopRecognitionRef.current?.();
+      stopRecognitionRef.current = null;
+      setIsRecording(false);
+      setIsTranscribing(true);
     } else {
       setLiveTranscript("");
       setTypedAnswer("");
-      const stop = await startRecognition(
-        (text, isFinal) => {
-          setLiveTranscript(text);
-          if (isFinal) void stopRecordingAndReview(text);
+      const stop = await startRecording(
+        async (text) => {
+          setIsTranscribing(false);
+          if (text.trim()) await stopRecordingAndReview(text);
         },
-        () => setIsRecording(false),
         subject === "engelsk" ? "en-US" : "nb-NO"
       );
       if (stop) {
@@ -484,9 +486,9 @@ function StudyPageInner() {
                 <Send size={18} color="#fff" />
               </button>
             )}
-            {hasMic && (
+            {!isTranscribing && (
               <button
-                onClick={toggleRecording}
+                onClick={() => void toggleRecording()}
                 style={{
                   width: "56px", height: "56px", borderRadius: "var(--r-full)",
                   backgroundColor: isRecording ? "var(--error)" : "var(--blue)",
@@ -497,8 +499,20 @@ function StudyPageInner() {
                 }}
                 aria-label={isRecording ? "Stop innspilling" : "Start innspilling"}
               >
-                {isRecording ? <MicOff size={22} color="#fff" /> : <Mic size={22} color="#fff" />}
+                {isRecording
+                  ? <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                  : <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                }
               </button>
+            )}
+            {isTranscribing && (
+              <div style={{
+                width: "56px", height: "56px", borderRadius: "var(--r-full)",
+                backgroundColor: "var(--surface-2)", border: "2px solid var(--border)",
+                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+              }}>
+                <span style={{ fontSize: "18px", animation: "blink 1s step-end infinite" }}>•••</span>
+              </div>
             )}
           </div>
         </div>

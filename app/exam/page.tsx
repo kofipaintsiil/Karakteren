@@ -5,9 +5,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Blobb, { BlobbState } from "@/components/Blobb";
 import Button from "@/components/ui/Button";
-import { Mic, MicOff, ChevronLeft, Send } from "lucide-react";
+import { ChevronLeft, Send } from "lucide-react";
 import { pickRandomTopic } from "@/lib/mock-examiner";
-import { speak, stopSpeaking, startRecognition, isSpeechRecognitionSupported } from "@/lib/speech";
+import { speak, stopSpeaking, unlockAudio, startRecording } from "@/lib/speech";
 import { saveSession } from "@/lib/sessions";
 import { canStartExam } from "@/lib/limits";
 import UpgradeModal from "@/components/UpgradeModal";
@@ -60,13 +60,11 @@ function ExamPageInner() {
   const [limitInfo, setLimitInfo] = useState({ used: 0, limit: 3 });
   const [typedAnswer, setTypedAnswer] = useState("");
   const [exchangeCount, setExchangeCount] = useState(0);
-  const [hasMic, setHasMic] = useState(true);
+  const [isTranscribing, setIsTranscribing] = useState(false);
 
   const stopRecognitionRef = useRef<(() => void) | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<Message[]>([]);
-
-  useEffect(() => { if (!isSpeechRecognitionSupported()) setHasMic(false); }, []);
 
   // Keep messages ref in sync for use in callbacks
   useEffect(() => {
@@ -146,6 +144,7 @@ function ExamPageInner() {
   }
 
   async function startExam() {
+    unlockAudio();
     const { allowed, used, limit } = await canStartExam();
     if (!allowed) {
       setLimitInfo({ used, limit });
@@ -240,16 +239,18 @@ function ExamPageInner() {
 
   async function toggleRecording() {
     if (isRecording) {
-      void stopRecordingAndReview(liveTranscript);
+      stopRecognitionRef.current?.();
+      stopRecognitionRef.current = null;
+      setIsRecording(false);
+      setIsTranscribing(true);
     } else {
       setLiveTranscript("");
       setTypedAnswer("");
-      const stop = await startRecognition(
-        (text, isFinal) => {
-          setLiveTranscript(text);
-          if (isFinal) void stopRecordingAndReview(text);
+      const stop = await startRecording(
+        async (text) => {
+          setIsTranscribing(false);
+          if (text.trim()) await stopRecordingAndReview(text);
         },
-        () => setIsRecording(false),
         subject === "engelsk" ? "en-US" : "nb-NO"
       );
       if (stop) {
@@ -304,11 +305,6 @@ function ExamPageInner() {
             <Button size="lg" fullWidth onClick={startExam}>
               Trekk tema og start
             </Button>
-            {!hasMic && (
-              <p style={{ marginTop: "12px", fontSize: "12px", color: "var(--text-faint)", fontWeight: 600 }}>
-                Mikrofon ikke tilgjengelig — du kan skrive svarene dine
-              </p>
-            )}
           </div>
         </div>
         {showUpgrade && (
@@ -519,9 +515,9 @@ function ExamPageInner() {
                 <Send size={18} color="#fff" />
               </button>
             )}
-            {hasMic && (
+            {!isTranscribing && (
               <button
-                onClick={toggleRecording}
+                onClick={() => void toggleRecording()}
                 style={{
                   width: "56px", height: "56px",
                   borderRadius: "var(--r-full)",
@@ -533,8 +529,20 @@ function ExamPageInner() {
                 }}
                 aria-label={isRecording ? "Stop innspilling" : "Start innspilling"}
               >
-                {isRecording ? <MicOff size={22} color="#fff" /> : <Mic size={22} color="#fff" />}
+                {isRecording
+                  ? <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                  : <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                }
               </button>
+            )}
+            {isTranscribing && (
+              <div style={{
+                width: "56px", height: "56px", borderRadius: "var(--r-full)",
+                backgroundColor: "var(--surface-2)", border: "2px solid var(--border)",
+                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+              }}>
+                <span style={{ fontSize: "18px", animation: "blink 1s step-end infinite" }}>•••</span>
+              </div>
             )}
           </div>
         </div>
