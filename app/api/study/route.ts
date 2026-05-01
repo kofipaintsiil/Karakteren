@@ -52,7 +52,8 @@ Regler:
 - Bruk fagbegreper fra LK20-pensum for ${subjectLabel}
 - Ikke gi forelesninger — still heller spørsmål og la eleven forklare
 - Sett aldri [FERDIG] de første 3 elevresponsene
-- [FERDIG] skal bare stå som absolutt siste tekst i meldingen`;
+- [FERDIG] skal bare stå som absolutt siste tekst i meldingen
+- Skriv kun ren tekst — ingen markdown-formatering, ingen **bold**, ingen *kursiv*, ingen lister med - eller *`;
 }
 
 export async function POST(req: NextRequest) {

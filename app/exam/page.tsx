@@ -60,15 +60,13 @@ function ExamPageInner() {
   const [limitInfo, setLimitInfo] = useState({ used: 0, limit: 3 });
   const [typedAnswer, setTypedAnswer] = useState("");
   const [exchangeCount, setExchangeCount] = useState(0);
-  const [hasMic, setHasMic] = useState(false);
+  const [hasMic, setHasMic] = useState(true);
 
   const stopRecognitionRef = useRef<(() => void) | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<Message[]>([]);
 
-  useEffect(() => {
-    setHasMic(isSpeechRecognitionSupported());
-  }, []);
+  useEffect(() => { if (!isSpeechRecognitionSupported()) setHasMic(false); }, []);
 
   // Keep messages ref in sync for use in callbacks
   useEffect(() => {

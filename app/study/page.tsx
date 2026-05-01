@@ -29,6 +29,16 @@ const SUBJECT_LABELS: Record<string, string> = {
 
 const BLUE_PRESS = "oklch(0.48 0.19 240)";
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*\*(.*?)\*\*\*/gs, "$1")
+    .replace(/\*\*(.*?)\*\*/gs, "$1")
+    .replace(/\*(.*?)\*/gs, "$1")
+    .replace(/_(.*?)_/gs, "$1")
+    .replace(/`([^`]+)`/gs, "$1")
+    .replace(/^#{1,6}\s+/gm, "");
+}
+
 function StudyPageInner() {
   const params = useSearchParams();
   const router = useRouter();
@@ -46,7 +56,7 @@ function StudyPageInner() {
   const [isRecording, setIsRecording] = useState(false);
   const [liveTranscript, setLiveTranscript] = useState("");
   const [typedAnswer, setTypedAnswer] = useState("");
-  const [hasMic, setHasMic] = useState(false);
+  const [hasMic, setHasMic] = useState(true);
   const [exchangeCount, setExchangeCount] = useState(0);
 
   const stopRecognitionRef = useRef<(() => void) | null>(null);
@@ -54,7 +64,7 @@ function StudyPageInner() {
   const messagesRef = useRef<Message[]>([]);
   const selectedTopicsRef = useRef<string[]>([]);
 
-  useEffect(() => { setHasMic(isSpeechRecognitionSupported()); }, []);
+  useEffect(() => { if (!isSpeechRecognitionSupported()) setHasMic(false); }, []);
   useEffect(() => { messagesRef.current = messages; }, [messages]);
   useEffect(() => { selectedTopicsRef.current = selectedTopics; }, [selectedTopics]);
 
@@ -408,7 +418,7 @@ function StudyPageInner() {
             fontWeight: 500,
             lineHeight: 1.6,
           }}>
-            {m.text}
+            {m.role === "examiner" ? stripMarkdown(m.text) : m.text}
           </div>
         ))}
 
@@ -419,7 +429,7 @@ function StudyPageInner() {
             borderRadius: "var(--r-lg) var(--r-lg) var(--r-lg) var(--r-sm)",
             padding: "12px 16px", fontSize: "14px", fontWeight: 500, lineHeight: 1.6, color: "var(--text)",
           }}>
-            {streamingText}
+            {stripMarkdown(streamingText)}
             <span style={{ display: "inline-block", width: "2px", height: "14px", backgroundColor: "var(--blue)", marginLeft: "2px", verticalAlign: "middle", animation: "blink 1s step-end infinite" }} />
           </div>
         )}
