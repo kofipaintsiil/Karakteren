@@ -60,6 +60,23 @@ export interface Database {
         };
         Update: Partial<Database["public"]["Tables"]["subscriptions"]["Insert"]>;
       };
+      profiles: {
+        Row: {
+          user_id: string;
+          display_name: string | null;
+          avatar_url: string | null;
+          show_on_leaderboard: boolean | null;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          display_name?: string | null;
+          avatar_url?: string | null;
+          show_on_leaderboard?: boolean | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
+      };
     };
   };
 }

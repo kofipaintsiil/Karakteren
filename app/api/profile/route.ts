@@ -10,7 +10,7 @@ export async function PATCH(req: NextRequest) {
   const { display_name } = body;
   if (!display_name?.trim()) return NextResponse.json({ error: "Name required" }, { status: 400 });
 
-  const { error } = await supabase.from("profiles").upsert({
+  const { error } = await (supabase.from("profiles") as any).upsert({
     user_id: user.id,
     display_name: display_name.trim(),
   }, { onConflict: "user_id" });

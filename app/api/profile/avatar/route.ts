@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
   const avatar_url = urlData.publicUrl;
 
-  await supabase.from("profiles").upsert(
+  await (supabase.from("profiles") as any).upsert(
     { user_id: user.id, avatar_url },
     { onConflict: "user_id" }
   );
