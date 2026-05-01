@@ -59,6 +59,8 @@ function ExamPageInner() {
   const [typedAnswer, setTypedAnswer] = useState("");
   const [exchangeCount, setExchangeCount] = useState(0);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [micError, setMicError] = useState<string | null>(null);
+  const transcribeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const stopRecognitionRef = useRef<(() => void) | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -241,15 +243,22 @@ function ExamPageInner() {
       stopRecognitionRef.current = null;
       setIsRecording(false);
       setIsTranscribing(true);
+      // Safety timeout — if transcription hangs, reset after 20s
+      transcribeTimeoutRef.current = setTimeout(() => {
+        setIsTranscribing(false);
+      }, 20000);
     } else {
+      setMicError(null);
       setLiveTranscript("");
       setTypedAnswer("");
       const stop = await startRecording(
         async (text) => {
+          if (transcribeTimeoutRef.current) clearTimeout(transcribeTimeoutRef.current);
           setIsTranscribing(false);
           if (text.trim()) await stopRecordingAndReview(text);
         },
-        subject === "engelsk" ? "en-US" : "nb-NO"
+        subject === "engelsk" ? "en-US" : "nb-NO",
+        (err) => setMicError(err),
       );
       if (stop) {
         stopRecognitionRef.current = stop;
@@ -262,6 +271,7 @@ function ExamPageInner() {
     return () => {
       stopSpeaking();
       stopRecognitionRef.current?.();
+      if (transcribeTimeoutRef.current) clearTimeout(transcribeTimeoutRef.current);
     };
   }, []);
 
@@ -478,6 +488,20 @@ function ExamPageInner() {
           </div>
         )}
       </div>
+
+      {/* Mic error banner */}
+      {micError && (
+        <div style={{
+          backgroundColor: "var(--error-bg)",
+          borderTop: "1px solid var(--error)",
+          padding: "10px 16px",
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px",
+          flexShrink: 0,
+        }}>
+          <p style={{ fontSize: "13px", color: "var(--error)", lineHeight: 1.4 }}>{micError}</p>
+          <button onClick={() => setMicError(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--error)", fontSize: "18px", flexShrink: 0 }}>×</button>
+        </div>
+      )}
 
       {/* Input area */}
       {phase === "conversation" && !isExaminerTurn && (

@@ -50,8 +50,6 @@ export function stopSpeaking() {
   }
 }
 
-// Must be called synchronously from a user gesture (onClick) before any awaits.
-// This unlocks audio playback on iOS Safari for all subsequent async audio.play() calls.
 export function unlockAudio(): void {
   try {
     const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -68,39 +66,67 @@ export function unlockAudio(): void {
 
 function getSupportedMimeType(): string {
   if (typeof MediaRecorder === "undefined") return "";
-  return (
-    ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg"].find(
-      (t) => MediaRecorder.isTypeSupported(t)
-    ) ?? ""
-  );
+  const types = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/mp4",
+    "audio/ogg;codecs=opus",
+    "audio/ogg",
+  ];
+  return types.find((t) => MediaRecorder.isTypeSupported(t)) ?? "";
 }
 
-// Records audio via MediaRecorder, then transcribes with Whisper via /api/stt.
-// Returns a stop() function. Call stop() to end recording — onTranscript fires with the text.
+function mimeToExt(mime: string): string {
+  if (mime.includes("mp4") || mime.includes("m4a")) return "m4a";
+  if (mime.includes("ogg")) return "ogg";
+  return "webm";
+}
+
 export async function startRecording(
   onTranscript: (text: string) => void,
-  lang = "nb-NO"
+  lang = "nb-NO",
+  onError?: (msg: string) => void,
 ): Promise<(() => void) | null> {
-  if (typeof window === "undefined" || typeof MediaRecorder === "undefined") return null;
+  if (typeof window === "undefined") return null;
+
+  if (typeof MediaRecorder === "undefined") {
+    onError?.("Nettleseren din støtter ikke opptak. Prøv Chrome eller Safari 14.3+.");
+    return null;
+  }
 
   let stream: MediaStream;
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  } catch {
+  } catch (err: unknown) {
+    const name = (err as { name?: string })?.name;
+    if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+      onError?.("Mikrofonillatelse nektet. Åpne nettleserinnstillinger og tillat mikrofon for denne siden.");
+    } else if (name === "NotFoundError") {
+      onError?.("Ingen mikrofon funnet på enheten.");
+    } else {
+      onError?.("Kunne ikke starte mikrofon. Sjekk at du er på HTTPS og har gitt tillatelse.");
+    }
     return null;
   }
 
   const mimeType = getSupportedMimeType();
-  const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
-  const chunks: Blob[] = [];
+  let recorder: MediaRecorder;
+  try {
+    recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+  } catch {
+    recorder = new MediaRecorder(stream);
+  }
 
+  const chunks: Blob[] = [];
   recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
 
   recorder.onstop = async () => {
     stream.getTracks().forEach((t) => t.stop());
-    const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+    const actualMime = recorder.mimeType || mimeType || "audio/webm";
+    const ext = mimeToExt(actualMime);
+    const blob = new Blob(chunks, { type: actualMime });
     const form = new FormData();
-    form.append("audio", blob, "audio.webm");
+    form.append("audio", blob, `audio.${ext}`);
     form.append("lang", lang.startsWith("en") ? "en" : "no");
     try {
       const res = await fetch("/api/stt", { method: "POST", body: form });
