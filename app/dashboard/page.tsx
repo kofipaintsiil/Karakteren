@@ -4,7 +4,7 @@ import AppShell from "@/components/layout/AppShell";
 import GradeChart from "@/components/GradeChart";
 import WeakAreas from "@/components/WeakAreas";
 import { createClient } from "@/lib/supabase/server";
-import { fetchStats, fetchSessions } from "@/lib/sessions-server";
+import { fetchStats, fetchSessions, fetchProfile } from "@/lib/sessions-server";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -49,9 +49,11 @@ export default async function DashboardPage() {
     ? await Promise.all([fetchStats(user.id), fetchSessions(user.id)])
     : [null, []];
 
+  const profile = user ? await fetchProfile(user.id) : null;
+  const displayName = profile?.display_name ?? user?.email?.split("@")[0] ?? "Elev";
+
   const recentSessions = sessions.slice(0, 6);
   const streak = stats?.streak ?? 0;
-  const displayName = user?.email?.split("@")[0] ?? "Elev";
 
   return (
     <AppShell>
@@ -91,7 +93,7 @@ export default async function DashboardPage() {
 
         {/* New exam CTA */}
         <div style={{ marginBottom: "20px" }}>
-          <Link href="/exam" style={{
+          <Link href="/eksamen" style={{
             display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
             backgroundColor: "var(--accent)", color: "#fff",
             fontWeight: 600, fontSize: "15px",
@@ -99,7 +101,7 @@ export default async function DashboardPage() {
             textDecoration: "none",
             boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
           }}>
-            + Ny prøve
+            Gå til eksamen →
           </Link>
         </div>
 

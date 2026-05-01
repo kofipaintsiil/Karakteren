@@ -202,3 +202,22 @@ select:focus {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Dark mode overrides */
+[data-dark="true"] {
+  --bg:          #141210;
+  --bg-alt:      #1E1B18;
+  --surface:     #1E1B18;
+  --surface-2:   #241F1B;
+  --border:      rgba(255,255,255,0.08);
+  --border-mid:  rgba(255,255,255,0.12);
+  --border-dark: rgba(255,255,255,0.18);
+  --text:        #F5F0EA;
+  --text-muted:  #9B948A;
+  --text-faint:  #555048;
+  --ink:         #F5F0EA;
+  --ink-mid:     #9B948A;
+  --ink-light:   #555048;
+  --accent-bg:   oklch(22% 0.06 70);
+  color-scheme:  dark;
+}

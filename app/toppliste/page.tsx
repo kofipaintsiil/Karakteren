@@ -2,6 +2,7 @@ import AppShell from "@/components/layout/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { fetchLeaderboard } from "@/lib/sessions-server";
 import LeaderboardClient from "./LeaderboardClient";
+import InviteClient from "./InviteClient";
 
 const SUBJECTS = ["Alle", "Norsk", "Matematikk", "Naturfag", "Fysikk", "Kjemi", "Biologi", "Historie", "Samfunnsfag", "Engelsk", "Geografi"];
 
@@ -54,6 +55,7 @@ export default async function ToplistePage() {
           </div>
         )}
 
+        <InviteClient />
         <LeaderboardClient
           entries={entries}
           subjects={SUBJECTS}
