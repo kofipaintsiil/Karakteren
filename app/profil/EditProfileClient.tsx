@@ -22,8 +22,13 @@ export default function EditProfileClient({ initialName, initialAvatar }: Props)
       body: JSON.stringify({ display_name: name }),
     });
     setSaving(false);
-    setMsg(res.ok ? "Navn lagret ✓" : "Feil – prøv igjen");
-    setTimeout(() => setMsg(""), 3000);
+    if (res.ok) {
+      setMsg("Navn lagret ✓");
+    } else {
+      const body = await res.json().catch(() => ({}));
+      setMsg(`Feil: ${body.error ?? res.status}`);
+    }
+    setTimeout(() => setMsg(""), 6000);
   }
 
   async function uploadAvatar(e: React.ChangeEvent<HTMLInputElement>) {
@@ -39,6 +44,9 @@ export default function EditProfileClient({ initialName, initialAvatar }: Props)
     if (res.ok) {
       const { avatar_url } = await res.json();
       setAvatar(avatar_url);
+    } else {
+      const body = await res.json().catch(() => ({}));
+      alert(`Profilbilde feil: ${body.error ?? res.status}`);
     }
   }
 
