@@ -64,27 +64,56 @@ function LoginForm() {
     }
 
     if (mode === "signup") {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      // Use server-side admin route so the account is confirmed immediately
+      // (Supabase free tier doesn't reliably deliver confirmation emails)
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setLoading(false);
+        const msg = json.error ?? "";
+        setMessage({ type: "error", text: ERROR_MESSAGES[msg] ?? (msg.includes("already") ? "Denne e-posten er allerede registrert. Logg inn i stedet." : msg || "Noe gikk galt.") });
+        return;
+      }
+      // Account created & confirmed — sign in straight away
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       setLoading(false);
-      if (error) {
-        setMessage({ type: "error", text: ERROR_MESSAGES[error.message] ?? error.message });
-      } else if (data.session) {
-        // Auto-confirmed (email confirmation off) — redirect immediately
-        window.location.href = next;
+      if (signInError) {
+        setMessage({ type: "error", text: ERROR_MESSAGES[signInError.message] ?? signInError.message });
       } else {
-        // Email confirmation required
-        setMessage({ type: "success", text: "Konto opprettet! Sjekk e-posten din for å bekrefte kontoen (sjekk også søppelpost)." });
-        setMode("login");
+        window.location.href = next;
       }
       return;
     }
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    // If email not yet confirmed, auto-confirm via admin and retry
+    if (error?.message === "Email not confirmed") {
+      const res = await fetch("/api/auth/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
+        setLoading(false);
+        if (retryError) {
+          setMessage({ type: "error", text: ERROR_MESSAGES[retryError.message] ?? retryError.message });
+        } else {
+          window.location.href = next;
+        }
+        return;
+      }
+    }
+
     setLoading(false);
     if (error) {
       setMessage({ type: "error", text: ERROR_MESSAGES[error.message] ?? error.message });
     } else {
-      // Full reload so the server-side middleware reads the new session cookie
       window.location.href = next;
     }
   }
