@@ -31,11 +31,11 @@ const BLUE_PRESS = "oklch(0.48 0.19 240)";
 
 function stripMarkdown(text: string): string {
   return text
-    .replace(/\*\*\*(.*?)\*\*\*/gs, "$1")
-    .replace(/\*\*(.*?)\*\*/gs, "$1")
-    .replace(/\*(.*?)\*/gs, "$1")
-    .replace(/_(.*?)_/gs, "$1")
-    .replace(/`([^`]+)`/gs, "$1")
+    .replace(/\*\*\*(.*?)\*\*\*/g, "$1")
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/_(.*?)_/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
     .replace(/^#{1,6}\s+/gm, "");
 }
 
@@ -189,13 +189,13 @@ function StudyPageInner() {
     } catch {}
   }
 
-  function toggleRecording() {
+  async function toggleRecording() {
     if (isRecording) {
       void stopRecordingAndReview(liveTranscript);
     } else {
       setLiveTranscript("");
       setTypedAnswer("");
-      const stop = startRecognition(
+      const stop = await startRecognition(
         (text, isFinal) => {
           setLiveTranscript(text);
           if (isFinal) void stopRecordingAndReview(text);

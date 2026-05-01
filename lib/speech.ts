@@ -65,20 +65,29 @@ export function stopSpeaking() {
   }
 }
 
-// Speech recognition — returns a cleanup function
+// Speech recognition — async to allow getUserMedia permission request first
 type RecognitionCallback = (transcript: string, isFinal: boolean) => void;
 
-export function startRecognition(
+export async function startRecognition(
   onResult: RecognitionCallback,
   onEnd: () => void,
   lang = "nb-NO"
-): (() => void) | null {
+): Promise<(() => void) | null> {
   if (typeof window === "undefined") return null;
 
   const SpeechRecognition =
     (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
   if (!SpeechRecognition) return null;
+
+  // iOS Safari requires getUserMedia to be called before SpeechRecognition
+  // will activate the microphone. This must be the first await in the
+  // user-gesture call chain.
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach((t) => t.stop());
+  } catch {
+    // Permission denied or getUserMedia not supported — fall through and try anyway
+  }
 
   let stopped = false;
 
@@ -102,7 +111,6 @@ export function startRecognition(
 
   recognition.onend = () => {
     if (stopped) { onEnd(); return; }
-    // Auto-restart to simulate continuous recording on iOS
     try { recognition.start(); } catch { stopped = true; onEnd(); }
   };
 

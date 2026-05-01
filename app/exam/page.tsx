@@ -238,13 +238,13 @@ function ExamPageInner() {
     } catch {}
   }
 
-  function toggleRecording() {
+  async function toggleRecording() {
     if (isRecording) {
       void stopRecordingAndReview(liveTranscript);
     } else {
       setLiveTranscript("");
       setTypedAnswer("");
-      const stop = startRecognition(
+      const stop = await startRecognition(
         (text, isFinal) => {
           setLiveTranscript(text);
           if (isFinal) void stopRecordingAndReview(text);
