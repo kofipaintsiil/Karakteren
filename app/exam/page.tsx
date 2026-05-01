@@ -59,8 +59,11 @@ function ExamPageInner() {
   const [typedAnswer, setTypedAnswer] = useState("");
   const [exchangeCount, setExchangeCount] = useState(0);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [isRequestingMic, setIsRequestingMic] = useState(false);
   const [micError, setMicError] = useState<string | null>(null);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
   const transcribeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stopRecognitionRef = useRef<(() => void) | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -239,30 +242,53 @@ function ExamPageInner() {
 
   async function toggleRecording() {
     if (isRecording) {
+      // Stop recording
+      if (recordingTimerRef.current) { clearInterval(recordingTimerRef.current); recordingTimerRef.current = null; }
+      if (recordingSeconds < 1) {
+        // Too short — just cancel
+        stopRecognitionRef.current?.();
+        stopRecognitionRef.current = null;
+        setIsRecording(false);
+        setRecordingSeconds(0);
+        setMicError("Hold inne mikrofonen litt lengre og snakk tydelig.");
+        return;
+      }
       stopRecognitionRef.current?.();
       stopRecognitionRef.current = null;
       setIsRecording(false);
+      setRecordingSeconds(0);
       setIsTranscribing(true);
-      // Safety timeout — if transcription hangs, reset after 20s
       transcribeTimeoutRef.current = setTimeout(() => {
         setIsTranscribing(false);
-      }, 20000);
+        setMicError("Transkribering tok for lang tid — prøv igjen.");
+      }, 25000);
     } else {
+      // Start recording
       setMicError(null);
       setLiveTranscript("");
       setTypedAnswer("");
+      setIsRequestingMic(true);
       const stop = await startRecording(
         async (text) => {
           if (transcribeTimeoutRef.current) clearTimeout(transcribeTimeoutRef.current);
           setIsTranscribing(false);
-          if (text.trim()) await stopRecordingAndReview(text);
+          if (text.trim()) {
+            await stopRecordingAndReview(text);
+          } else {
+            setMicError("Ingen tale registrert — prøv igjen og snakk tydelig.");
+          }
         },
         subject === "engelsk" ? "en-US" : "nb-NO",
         (err) => setMicError(err),
       );
+      setIsRequestingMic(false);
       if (stop) {
         stopRecognitionRef.current = stop;
         setIsRecording(true);
+        setRecordingSeconds(0);
+        recordingTimerRef.current = setInterval(() => {
+          setRecordingSeconds((s) => s + 1);
+        }, 1000);
       }
     }
   }
@@ -272,6 +298,7 @@ function ExamPageInner() {
       stopSpeaking();
       stopRecognitionRef.current?.();
       if (transcribeTimeoutRef.current) clearTimeout(transcribeTimeoutRef.current);
+      if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
     };
   }, []);
 
@@ -549,35 +576,56 @@ function ExamPageInner() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               </button>
             )}
-            {!isTranscribing && (
-              <button
-                onClick={() => void toggleRecording()}
-                style={{
-                  width: "56px", height: "56px",
-                  borderRadius: "var(--r-full)",
-                  backgroundColor: isRecording ? "oklch(58% 0.18 22)" : "var(--accent)",
-                  border: "none",
-                  boxShadow: isRecording ? "0 0 0 8px oklch(96% 0.06 22)" : "0 2px 12px rgba(0,0,0,0.15)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer", flexShrink: 0,
-                  transition: "all 0.2s ease",
-                }}
-                aria-label={isRecording ? "Stop innspilling" : "Start innspilling"}
-              >
-                {isRecording
-                  ? <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
-                  : <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-                }
-              </button>
-            )}
-            {isTranscribing && (
+            {/* Mic button — shows different states clearly */}
+            {isRequestingMic ? (
               <div style={{
                 width: "56px", height: "56px", borderRadius: "var(--r-full)",
                 backgroundColor: "var(--bg-alt)", border: "1px solid var(--border)",
                 display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
               }}>
-                <span style={{ fontSize: "18px", animation: "blink 1s step-end infinite" }}>•••</span>
+                <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-muted)", textAlign: "center", lineHeight: 1.2 }}>Venter...</span>
               </div>
+            ) : isTranscribing ? (
+              <div style={{
+                width: "56px", height: "56px", borderRadius: "var(--r-full)",
+                backgroundColor: "var(--accent-bg)", border: "2px solid var(--accent)",
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0, gap: "2px",
+              }}>
+                <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--accent-dark)", textAlign: "center", lineHeight: 1.2 }}>Tolker...</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => void toggleRecording()}
+                disabled={isRequestingMic}
+                style={{
+                  width: "56px", height: "56px",
+                  borderRadius: "var(--r-full)",
+                  backgroundColor: isRecording ? "oklch(58% 0.18 22)" : "var(--accent)",
+                  border: "none",
+                  boxShadow: isRecording
+                    ? "0 0 0 6px oklch(94% 0.06 22)"
+                    : "0 2px 12px rgba(0,0,0,0.15)",
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", flexShrink: 0,
+                  transition: "all 0.2s ease",
+                  gap: "1px",
+                }}
+                aria-label={isRecording ? "Stop innspilling" : "Start innspilling"}
+              >
+                {isRecording ? (
+                  <>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                    <span style={{ fontSize: "9px", color: "white", fontWeight: 700 }}>{recordingSeconds}s</span>
+                  </>
+                ) : (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="23"/>
+                    <line x1="8" y1="23" x2="16" y2="23"/>
+                  </svg>
+                )}
+              </button>
             )}
           </div>
         </div>
