@@ -2,60 +2,115 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, BookMarked, Users, User, Settings } from "lucide-react";
 
 const tabs = [
-  { href: "/dashboard",    label: "Eksamen", icon: GraduationCap },
-  { href: "/oving",        label: "Øving",   icon: BookMarked },
-  { href: "/toppliste",    label: "Sosial",  icon: Users },
-  { href: "/profil",       label: "Profil",  icon: User },
-  { href: "/instillinger", label: "Innstill.", icon: Settings },
+  { href: "/dashboard",    label: "Hjem",      icon: HomeIcon },
+  { href: "/oving",        label: "Øving",     icon: BookIcon },
+  { href: "/toppliste",    label: "Sosial",    icon: UsersIcon },
+  { href: "/profil",       label: "Profil",    icon: ProfileIcon },
+  { href: "/instillinger", label: "Innst.",    icon: GearIcon },
 ];
+
+function HomeIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12L12 4L21 12V20C21 20.5523 20.5523 21 20 21H15V16H9V21H4C3.44772 21 3 20.5523 3 20V12Z"
+        fill={active ? "currentColor" : "none"} fillOpacity={active ? 0.18 : 0}
+        stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function BookIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+        fill={active ? "currentColor" : "none"} fillOpacity={active ? 0.15 : 0}
+        stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+      <path d="M9 7h7M9 11h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function UsersIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <circle cx="9" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.8"
+        fill={active ? "currentColor" : "none"} fillOpacity={active ? 0.15 : 0} />
+      <path d="M2 20C2 17 5.13 15 9 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <circle cx="17" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.8"
+        fill={active ? "currentColor" : "none"} fillOpacity={active ? 0.15 : 0} />
+      <path d="M14 20C14 17.8 15.3 16 17 16C18.7 16 20 17.8 20 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function ProfileIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.8"
+        fill={active ? "currentColor" : "none"} fillOpacity={active ? 0.2 : 0} />
+      <path d="M5 19C5 16.2386 8.13401 14 12 14C15.866 14 19 16.2386 19 19"
+        stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function GearIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8"
+        fill={active ? "currentColor" : "none"} fillOpacity={active ? 0.2 : 0} />
+      <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+        stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const activeIdx = tabs.findIndex(t => pathname.startsWith(t.href));
 
   return (
     <nav className="bottomnav-mobile" style={{
-      backgroundColor: "rgba(250,248,244,0.92)",
+      backgroundColor: "rgba(250,248,244,0.94)",
       backdropFilter: "blur(14px)",
       WebkitBackdropFilter: "blur(14px)",
-      borderTop: "1px solid rgba(0,0,0,0.07)",
+      borderTop: "1px solid rgba(0,0,0,0.08)",
     }}>
-      <div style={{ display: "flex", height: "62px", alignItems: "center", padding: "0 8px" }}>
-        {tabs.map(({ href, label, icon: Icon }) => {
-          const active = pathname.startsWith(href);
+      {/* Slide indicator */}
+      <div style={{
+        height: "2px",
+        background: "var(--accent)",
+        width: "20%",
+        borderRadius: "0 0 2px 2px",
+        transform: `translateX(${Math.max(0, activeIdx) * 100}%)`,
+        transition: "transform 0.25s cubic-bezier(0.4,0,0.2,1)",
+      }} />
+
+      <div style={{ display: "flex", height: "56px", alignItems: "center" }}>
+        {tabs.map(({ href, label, icon: Icon }, i) => {
+          const active = activeIdx === i;
           return (
             <Link key={href} href={href} style={{
               flex: 1,
               display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
               justifyContent: "center",
+              gap: "3px",
               textDecoration: "none",
+              color: active ? "var(--accent-dark)" : "var(--ink-light)",
+              fontSize: "10px",
+              fontWeight: active ? 600 : 400,
+              fontFamily: "Inter, system-ui, sans-serif",
+              padding: "4px 0 6px",
+              transition: "color 0.15s ease",
+              WebkitTapHighlightColor: "transparent",
             }}>
-              <div style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "3px",
-                padding: "6px 10px",
-                borderRadius: "var(--r-md)",
-                backgroundColor: active ? "var(--coral-soft)" : "transparent",
-                color: active ? "var(--coral)" : "var(--text-faint)",
-                transition: "background-color 150ms ease-out",
-                minWidth: "52px",
-              }}>
-                <Icon size={20} strokeWidth={active ? 2.5 : 1.75} />
-                <span style={{
-                  fontSize: "9.5px",
-                  fontWeight: active ? 700 : 500,
-                  lineHeight: 1,
-                  whiteSpace: "nowrap",
-                  letterSpacing: "0.01em",
-                }}>
-                  {label}
-                </span>
-              </div>
+              <Icon active={active} />
+              {label}
             </Link>
           );
         })}

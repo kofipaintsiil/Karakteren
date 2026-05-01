@@ -1,113 +1,115 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Blobb from "@/components/Blobb";
-import Button from "@/components/ui/Button";
-import { useState } from "react";
+import type { BlobbMood } from "@/components/Blobb";
 
-const steps = [
+const STEPS: { mood: BlobbMood; title: string; desc: string; quote: string }[] = [
   {
-    blobbState: "happy" as const,
+    mood: "idle",
     title: "Hei! Jeg er Blobb.",
-    body: "Jeg er din personlige eksamenstrener. Litt sarkastisk, men jeg er egentlig på din side.",
+    desc: "Din personlige eksamenstrener. Litt sarkastisk, men jeg er egentlig på din side.",
     quote: "Greit, la oss se hva du faktisk kan da...",
   },
   {
-    blobbState: "thinking" as const,
+    mood: "thinking",
     title: "Slik fungerer det",
-    body: "Jeg trekker et tema fra pensum, stiller spørsmål akkurat som en ekte sensor, og gir deg karakter 1–6 til slutt.",
-    quote: "Ingen dom. Ingen vitner. Bare øving.",
+    desc: "Jeg trekker et tema, stiller spørsmål — akkurat som en ekte sensor. Du svarer. Jeg dømmer.",
+    quote: "Nei, \"jeg husker det ikke\" er ikke et svar.",
   },
   {
-    blobbState: "listening" as const,
-    title: "Svar høyt eller skriv",
-    body: "Du kan bruke mikrofonen til å snakke, eller skrive svaret ditt. Velg det som passer deg best.",
-    quote: "Vil du ha et hint? Selvfølgelig vil du det.",
-  },
-  {
-    blobbState: "idle" as const,
-    title: "3 gratis prøver per måned",
-    body: "Du starter med 3 gratis prøver. Oppgrader til Premium for ubegrenset øving.",
-    quote: "6'er energi. Nesten.",
+    mood: "happy",
+    title: "Du får karakter 1–6",
+    desc: "Etter hver prøve gir jeg deg detaljert tilbakemelding. Hva var bra, hva var meh, og hva du bør jobbe med.",
+    quote: "Okay, det var faktisk ganske bra.",
   },
 ];
 
 export default function WelcomePage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
-  const current = steps[step];
-  const isLast = step === steps.length - 1;
+  const s = STEPS[step];
 
   return (
     <div style={{
-      backgroundColor: "var(--bg)",
-      minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "24px",
+      minHeight: "100dvh", backgroundColor: "var(--bg)",
+      fontFamily: "Inter, system-ui, sans-serif",
+      display: "flex", flexDirection: "column",
+      padding: "24px 24px 40px",
+      maxWidth: "480px", margin: "0 auto",
     }}>
-      <div style={{ width: "100%", maxWidth: "360px", textAlign: "center" }}>
 
-        {/* Step dots */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginBottom: "32px" }}>
-          {steps.map((_, i) => (
-            <div key={i} style={{
-              width: i === step ? "24px" : "8px",
-              height: "8px",
-              borderRadius: "var(--r-full)",
-              backgroundColor: i === step ? "var(--coral)" : "var(--border)",
-              transition: "width 300ms ease-out, background-color 300ms",
-            }} />
-          ))}
-        </div>
+      {/* Progress dots */}
+      <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginBottom: "36px", marginTop: "8px" }}>
+        {STEPS.map((_, i) => (
+          <div key={i} style={{
+            height: "5px", borderRadius: "3px",
+            backgroundColor: i <= step ? "var(--accent)" : "var(--border)",
+            width: i === step ? "28px" : "14px",
+            transition: "all 0.3s ease",
+          }} />
+        ))}
+      </div>
 
-        {/* Blobb */}
-        <div style={{ marginBottom: "24px" }}>
-          <Blobb state={current.blobbState} size={120} />
-        </div>
+      {/* Blobb */}
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
+        <Blobb mood={s.mood} size={130} animate />
+      </div>
 
-        {/* Content */}
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", marginBottom: "12px" }}>
-          {current.title}
-        </h1>
-        <p style={{ fontSize: "15px", color: "var(--text-muted)", fontWeight: 600, lineHeight: 1.7, marginBottom: "20px" }}>
-          {current.body}
-        </p>
+      {/* Dark quote box */}
+      <div style={{
+        backgroundColor: "var(--text)", color: "var(--bg)",
+        borderRadius: "var(--r-lg)", padding: "14px 18px",
+        fontSize: "13px", fontStyle: "italic",
+        marginBottom: "28px", position: "relative", lineHeight: 1.5,
+      }}>
+        <span style={{ position: "absolute", top: -1, left: "16px", fontSize: "20px", color: "var(--accent)" }}>&ldquo;</span>
+        <span style={{ paddingLeft: "12px" }}>{s.quote}</span>
+      </div>
 
-        {/* Blobb quote */}
-        <div style={{
-          backgroundColor: "var(--coral-soft)",
-          border: "2px solid var(--coral-mid)",
-          borderRadius: "var(--r-lg)",
-          padding: "14px 18px",
-          marginBottom: "32px",
-          fontSize: "14px",
-          fontWeight: 700,
-          color: "var(--coral-press)",
-          fontStyle: "italic",
-        }}>
-          &ldquo;{current.quote}&rdquo;
-        </div>
+      <h2 style={{
+        fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "26px",
+        letterSpacing: "-0.5px", marginBottom: "10px", color: "var(--text)",
+      }}>{s.title}</h2>
 
-        {/* Buttons */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {isLast ? (
-            <Button size="lg" fullWidth onClick={() => router.push("/dashboard")}>
-              Start øvingen!
-            </Button>
-          ) : (
-            <Button size="lg" fullWidth onClick={() => setStep((s) => s + 1)}>
-              Neste →
-            </Button>
-          )}
-          {!isLast && (
-            <Button variant="ghost" size="md" fullWidth onClick={() => router.push("/dashboard")}>
+      <p style={{ fontSize: "15px", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: "auto" }}>{s.desc}</p>
+
+      {/* Nav buttons */}
+      <div style={{ display: "flex", gap: "10px", marginTop: "40px" }}>
+        {step < STEPS.length - 1 ? (
+          <>
+            <button
+              onClick={() => router.push("/login?signup=1")}
+              style={{ fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "14px", color: "var(--text-muted)", background: "none", border: "none", cursor: "pointer", padding: "14px 16px" }}
+            >
               Hopp over
-            </Button>
-          )}
-        </div>
+            </button>
+            <button
+              onClick={() => setStep(s => s + 1)}
+              style={{
+                flex: 1, fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "15px",
+                backgroundColor: "var(--accent)", color: "#fff",
+                border: "none", borderRadius: "var(--r-full)", padding: "14px",
+                cursor: "pointer",
+              }}
+            >
+              Neste →
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => router.push("/login?signup=1")}
+            style={{
+              flex: 1, fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "15px",
+              backgroundColor: "var(--accent)", color: "#fff",
+              border: "none", borderRadius: "var(--r-full)", padding: "14px",
+              cursor: "pointer",
+            }}
+          >
+            Velg et fag →
+          </button>
+        )}
       </div>
     </div>
   );

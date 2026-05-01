@@ -3,44 +3,52 @@
 @import "tailwindcss";
 
 :root {
-  /* Brand / Accent — warm terracotta */
-  --coral:        oklch(0.65 0.14 45);
-  --coral-hover:  oklch(0.58 0.14 45);
-  --coral-press:  oklch(0.50 0.14 45);
-  --coral-soft:   oklch(0.96 0.04 45);
-  --coral-mid:    oklch(0.88 0.08 45);
+  /* ── Accent (warm amber-orange, hue 70) ── */
+  --accent:       oklch(0.65 0.14 70);
+  --accent-dark:  oklch(0.52 0.14 70);
+  --accent-bg:    oklch(0.96 0.04 70);
+
+  /* Legacy coral aliases → mapped to accent */
+  --coral:        oklch(0.65 0.14 70);
+  --coral-hover:  oklch(0.58 0.14 70);
+  --coral-press:  oklch(0.52 0.14 70);
+  --coral-soft:   oklch(0.96 0.04 70);
+  --coral-mid:    oklch(0.88 0.08 70);
+
+  /* ── Semantic colours ── */
+  --green:        oklch(0.62 0.14 150);
+  --green-press:  oklch(0.50 0.14 150);
+  --green-soft:   oklch(0.96 0.04 150);
 
   --yellow:       oklch(0.86 0.17 82);
   --yellow-press: oklch(0.74 0.17 82);
   --yellow-soft:  oklch(0.97 0.05 82);
 
-  --green:        oklch(0.70 0.19 150);
-  --green-press:  oklch(0.56 0.19 150);
-  --green-soft:   oklch(0.96 0.05 150);
-
   --blue:         oklch(0.62 0.19 240);
   --blue-soft:    oklch(0.95 0.05 240);
 
-  /* Surfaces — warm cream palette */
+  --error:        oklch(0.58 0.18 22);
+  --error-bg:     oklch(0.96 0.06 22);
+
+  /* ── Surfaces — warm cream ── */
   --bg:           #FAF8F4;
   --bg-alt:       #F2EDE6;
   --surface:      #FFFFFF;
   --surface-2:    #F7F4EF;
-  --border:       rgba(0, 0, 0, 0.09);
+  --border:       rgba(0, 0, 0, 0.08);
+  --border-mid:   rgba(0, 0, 0, 0.12);
   --border-dark:  rgba(0, 0, 0, 0.16);
 
-  /* Text */
+  /* ── Text ── */
   --text:         #141414;
-  --text-muted:   oklch(0.48 0.012 55);
-  --text-faint:   oklch(0.68 0.008 55);
+  --text-muted:   #555048;
+  --text-faint:   #9B948A;
+  /* Legacy aliases */
+  --ink:          #141414;
+  --ink-mid:      #555048;
+  --ink-light:    #9B948A;
 
-  /* Semantic */
-  --success:      oklch(0.68 0.18 150);
-  --success-press:oklch(0.54 0.18 150);
-  --warning:      oklch(0.76 0.17 75);
-  --error:        oklch(0.58 0.21 22);
-
-  /* Shape */
+  /* ── Shape ── */
   --r-sm:   8px;
   --r-md:   14px;
   --r-lg:   20px;
