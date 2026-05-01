@@ -5,16 +5,30 @@ import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 
 const SUBJECTS = [
-  { id: "norsk",       label: "Norsk",       emoji: "📝" },
-  { id: "matematikk",  label: "Matematikk",  emoji: "➗" },
-  { id: "fysikk",      label: "Fysikk",      emoji: "⚛️" },
-  { id: "kjemi",       label: "Kjemi",       emoji: "🧪" },
-  { id: "biologi",     label: "Biologi",     emoji: "🌱" },
-  { id: "historie",    label: "Historie",    emoji: "🏛️" },
-  { id: "naturfag",    label: "Naturfag",    emoji: "🌍" },
-  { id: "samfunnsfag", label: "Samfunnsfag", emoji: "🗺️" },
-  { id: "engelsk",     label: "Engelsk",     emoji: "🌐" },
-  { id: "geografi",    label: "Geografi",    emoji: "🗻" },
+  { id: "norsk",       label: "Norsk",       emoji: "📝", variants: null },
+  { id: "matematikk",  label: "Matematikk",  emoji: "➗", variants: [
+    { id: "matematikk-1t", label: "1T",  desc: "Vg1 teoretisk" },
+    { id: "matematikk-r1", label: "R1",  desc: "Vg2 realfag" },
+    { id: "matematikk-r2", label: "R2",  desc: "Vg3 realfag" },
+    { id: "matematikk-2p", label: "2P",  desc: "Vg2 praktisk" },
+  ]},
+  { id: "fysikk",      label: "Fysikk",      emoji: "⚛️", variants: [
+    { id: "fysikk-1", label: "Fysikk 1", desc: "Vg2" },
+    { id: "fysikk-2", label: "Fysikk 2", desc: "Vg3" },
+  ]},
+  { id: "kjemi",       label: "Kjemi",       emoji: "🧪", variants: [
+    { id: "kjemi-1", label: "Kjemi 1", desc: "Vg2" },
+    { id: "kjemi-2", label: "Kjemi 2", desc: "Vg3" },
+  ]},
+  { id: "biologi",     label: "Biologi",     emoji: "🌱", variants: [
+    { id: "biologi-1", label: "Biologi 1", desc: "Vg2" },
+    { id: "biologi-2", label: "Biologi 2", desc: "Vg3" },
+  ]},
+  { id: "historie",    label: "Historie",    emoji: "🏛️", variants: null },
+  { id: "naturfag",    label: "Naturfag",    emoji: "🌍", variants: null },
+  { id: "samfunnsfag", label: "Samfunnsfag", emoji: "🗺️", variants: null },
+  { id: "engelsk",     label: "Engelsk",     emoji: "🌐", variants: null },
+  { id: "geografi",    label: "Geografi",    emoji: "🗻", variants: null },
 ];
 
 const CHAPTERS: Record<string, { id: string; title: string; topics: string[] }[]> = {
@@ -25,27 +39,74 @@ const CHAPTERS: Record<string, { id: string; title: string; topics: string[] }[]
     { id: "c4", title: "Modernisme og samtid", topics: ["Ibsen", "Hamsun", "Fosse"] },
     { id: "c5", title: "Språkhistorie", topics: ["Bokmål", "Nynorsk", "Dialekter"] },
   ],
-  matematikk: [
-    { id: "m1", title: "Derivasjon", topics: ["Grenseverdi", "Kjerneregel", "Produktregel"] },
-    { id: "m2", title: "Integrasjon", topics: ["Bestemt integral", "Areal", "Volumberegning"] },
-    { id: "m3", title: "Funksjoner", topics: ["Polynomer", "Eksponential", "Logaritme"] },
-    { id: "m4", title: "Geometri", topics: ["Trigonometri", "Vektorer", "Koordinatsystem"] },
+  "matematikk-1t": [
+    { id: "1t-1", title: "Algebra", topics: ["Faktorisering", "Likninger", "Ulikheter"] },
+    { id: "1t-2", title: "Funksjoner", topics: ["Lineære", "Kvadratiske", "Eksponential"] },
+    { id: "1t-3", title: "Geometri", topics: ["Trigonometri", "Pytagoras", "Arealer"] },
+    { id: "1t-4", title: "Statistikk", topics: ["Sentralmål", "Spredning", "Normalfordeling"] },
+    { id: "1t-5", title: "Kombinatorikk og sannsynlighet", topics: ["Permutasjoner", "Kombinasjoner", "Betinget sannsynlighet"] },
   ],
-  fysikk: [
-    { id: "f1", title: "Mekanikk", topics: ["Newtons lover", "Energi", "Bevegelsesmengde"] },
-    { id: "f2", title: "Elektrisitet", topics: ["Ohms lov", "Kretser", "Kondensatorer"] },
-    { id: "f3", title: "Bølger og optikk", topics: ["Interferens", "Diffrakjon", "Lys"] },
+  "matematikk-r1": [
+    { id: "r1-1", title: "Derivasjon", topics: ["Grenseverdi", "Kjerneregel", "Produktregel"] },
+    { id: "r1-2", title: "Integrasjon", topics: ["Bestemt integral", "Areal", "Volum"] },
+    { id: "r1-3", title: "Vektorer", topics: ["Skalarproduktet", "Kryssprodukt", "Linjer i rom"] },
+    { id: "r1-4", title: "Geometri", topics: ["Trigonometri", "Sinussetningen", "Cosinussetningen"] },
+    { id: "r1-5", title: "Kombinatorikk", topics: ["Binomialkoeffisienter", "Rekker", "Induksjon"] },
   ],
-  kjemi: [
-    { id: "k1", title: "Syrer og baser", topics: ["pH", "Nøytralisering", "Buffere"] },
-    { id: "k2", title: "Organisk kjemi", topics: ["Alkaner", "Alkener", "Funksjonelle grupper"] },
-    { id: "k3", title: "Redoks", topics: ["Oksidasjon", "Reduksjon", "Galvaniske celler"] },
+  "matematikk-r2": [
+    { id: "r2-1", title: "Differensiallikninger", topics: ["Separable", "Lineære", "Systemer"] },
+    { id: "r2-2", title: "Integrasjon (avansert)", topics: ["Delbrøksoppspaltning", "Bytte", "Per partes"] },
+    { id: "r2-3", title: "Funksjonsdrøfting", topics: ["Ekstrema", "Vendepunkter", "Asymptoter"] },
+    { id: "r2-4", title: "Lineær algebra", topics: ["Matriser", "Determinant", "Egenverdier"] },
+    { id: "r2-5", title: "Tallteori og bevis", topics: ["Induksjon", "Komplekse tall", "Geometriske rekker"] },
   ],
-  biologi: [
-    { id: "b1", title: "Cellebiologi", topics: ["Cellemembranen", "Mitose", "Meiose"] },
-    { id: "b2", title: "Genetikk", topics: ["DNA", "Arvelighet", "Mutasjoner"] },
-    { id: "b3", title: "Evolusjon", topics: ["Naturlig seleksjon", "Adaptasjon", "Artsdannelse"] },
-    { id: "b4", title: "Fysiologi", topics: ["Nervesystemet", "Hormoner", "Immunforsvaret"] },
+  "matematikk-2p": [
+    { id: "2p-1", title: "Økonomi", topics: ["Rente", "Lån og sparing", "Budsjett"] },
+    { id: "2p-2", title: "Statistikk", topics: ["Gjennomsnitt", "Median", "Frekvens"] },
+    { id: "2p-3", title: "Sannsynlighet", topics: ["Utfallsrom", "Kombinatorikk", "Binomisk"] },
+    { id: "2p-4", title: "Geometri", topics: ["Areal", "Volum", "Trigonometri"] },
+    { id: "2p-5", title: "Funksjoner", topics: ["Lineære", "Proporsjonalitet", "Grafer"] },
+  ],
+  "fysikk-1": [
+    { id: "f1-1", title: "Mekanikk", topics: ["Newtons lover", "Energi", "Bevegelsesmengde"] },
+    { id: "f1-2", title: "Elektrisitet", topics: ["Ohms lov", "Kretser", "Kondensatorer"] },
+    { id: "f1-3", title: "Bølger og lyd", topics: ["Bølgelengde", "Frekvens", "Interferens"] },
+    { id: "f1-4", title: "Termodynamikk", topics: ["Varme", "Temperatur", "Gasslovene"] },
+  ],
+  "fysikk-2": [
+    { id: "f2-1", title: "Bølgefysikk", topics: ["Diffrakjon", "Polarisasjon", "Optikk"] },
+    { id: "f2-2", title: "Elektromagnetisme", topics: ["Faradays lov", "Induksjon", "Transformatorer"] },
+    { id: "f2-3", title: "Relativitetsteori", topics: ["Spesiell relativitet", "Tidsdilatasjon", "Lengdekontraksjon"] },
+    { id: "f2-4", title: "Atomfysikk", topics: ["Bohr-modellen", "Fotoelektrisk effekt", "Spektre"] },
+    { id: "f2-5", title: "Kjernefysikk", topics: ["Radioaktivitet", "Halveringstid", "Fisjon og fusjon"] },
+  ],
+  "kjemi-1": [
+    { id: "k1-1", title: "Periodesystemet", topics: ["Atomstruktur", "Elektronkonfigurasjon", "Periodetrender"] },
+    { id: "k1-2", title: "Kjemiske bindinger", topics: ["Ionebinding", "Kovalent binding", "Metall"] },
+    { id: "k1-3", title: "Syrer og baser", topics: ["pH", "Nøytralisering", "Buffere"] },
+    { id: "k1-4", title: "Redoks", topics: ["Oksidasjonstall", "Reduksjon", "Galvaniske celler"] },
+    { id: "k1-5", title: "Organisk kjemi (intro)", topics: ["Alkaner", "Alkener", "Alkoholer"] },
+  ],
+  "kjemi-2": [
+    { id: "k2-1", title: "Organisk kjemi (avansert)", topics: ["Funksjonelle grupper", "Reaksjonsmekanismer", "Stereokjemi"] },
+    { id: "k2-2", title: "Kjemisk likevekt", topics: ["Likevektskonstant", "Le Chateliers prinsipp", "Løselighetsproduktet"] },
+    { id: "k2-3", title: "Elektrokjemi", topics: ["Elektromotorisk kraft", "Elektrolyse", "Korrosjon"] },
+    { id: "k2-4", title: "Termokjemi", topics: ["Entalpi", "Entropi", "Gibbs energi"] },
+    { id: "k2-5", title: "Polymerer og biokjemi", topics: ["Proteiner", "DNA", "Karbohydrater"] },
+  ],
+  "biologi-1": [
+    { id: "b1-1", title: "Cellebiologi", topics: ["Cellemembranen", "Mitose", "Meiose"] },
+    { id: "b1-2", title: "Genetikk", topics: ["DNA-replikasjon", "Transkripsjon", "Translasjon"] },
+    { id: "b1-3", title: "Fysiologi (mennesket)", topics: ["Nervesystemet", "Hormoner", "Immunforsvaret"] },
+    { id: "b1-4", title: "Evolusjon", topics: ["Naturlig seleksjon", "Artsdannelse", "Fossiler"] },
+    { id: "b1-5", title: "Bioteknologi", topics: ["Genteknologi", "CRISPR", "GMO"] },
+  ],
+  "biologi-2": [
+    { id: "b2-1", title: "Genetikk (avansert)", topics: ["Krysningsanalyse", "Koppling", "Mutasjoner"] },
+    { id: "b2-2", title: "Immunforsvaret", topics: ["Antigen-antistoff", "T-celler", "B-celler"] },
+    { id: "b2-3", title: "Hormoner og regulering", topics: ["Endokrint system", "Feedback-mekanismer", "Reproduksjon"] },
+    { id: "b2-4", title: "Populasjonsbiologi", topics: ["Populasjonsvekst", "Bæreevne", "Artsinteraksjoner"] },
+    { id: "b2-5", title: "Atferdsbiologi", topics: ["Innate atferd", "Lært atferd", "Sosiale systemer"] },
   ],
   historie: [
     { id: "h1", title: "Mellomkrigstiden", topics: ["Versaillestraktaten", "Depresjon", "Fascisme"] },
@@ -103,20 +164,41 @@ function Checkmark() {
   );
 }
 
+type Step = "fag" | "variant" | "chapters";
+
 export default function OvingPage() {
   const router = useRouter();
-  const [step, setStep] = useState<"fag" | "chapters">("fag");
+  const [step, setStep] = useState<Step>("fag");
   const [selectedFag, setSelectedFag] = useState<string | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const recentSubjects = SUBJECTS.filter(s => ["norsk", "matematikk"].includes(s.id));
-  const chapters = selectedFag ? (CHAPTERS[selectedFag] ?? []) : [];
+
+  // The chapter key is the variant ID if selected, otherwise the base subject
+  const chapterKey = selectedVariant ?? selectedFag ?? "";
+  const chapters = CHAPTERS[chapterKey] ?? [];
   const allSelected = selected.size === chapters.length && chapters.length > 0;
-  const fag = SUBJECTS.find(s => s.id === selectedFag);
+
+  const baseFag = SUBJECTS.find(s => s.id === selectedFag);
+  const variantObj = baseFag?.variants?.find(v => v.id === selectedVariant);
 
   function pickSubject(id: string) {
+    const subj = SUBJECTS.find(s => s.id === id)!;
     setSelectedFag(id);
+    setSelectedVariant(null);
+    setSelected(new Set());
+    setExpanded(new Set());
+    if (subj.variants) {
+      setStep("variant");
+    } else {
+      setStep("chapters");
+    }
+  }
+
+  function pickVariant(variantId: string) {
+    setSelectedVariant(variantId);
     setSelected(new Set());
     setExpanded(new Set());
     setStep("chapters");
@@ -145,26 +227,23 @@ export default function OvingPage() {
 
   function startSession() {
     if (selected.size === 0) return;
-    const params = new URLSearchParams({ subject: selectedFag! });
-    const chapArr = Array.from(selected);
-    chapArr.forEach(id => params.append("chapter", id));
+    const params = new URLSearchParams({ subject: selectedVariant ?? selectedFag! });
+    Array.from(selected).forEach(id => params.append("chapter", id));
     router.push(`/exam?${params.toString()}`);
   }
 
+  // ── STEP 1: Subject picker ─────────────────────────────────────────
   if (step === "fag") {
     return (
       <AppShell>
         <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
-          {/* Header */}
-          <div style={{ padding: "20px 0 16px", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-            <div>
-              <h1 style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
-                Velg tema selv
-              </h1>
-              <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
-                Du bestemmer — velg fag og kapitler
-              </p>
-            </div>
+          <div style={{ padding: "20px 0 16px" }}>
+            <h1 style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
+              Velg tema selv
+            </h1>
+            <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
+              Du bestemmer — velg fag og kapitler
+            </p>
           </div>
 
           <div style={{ paddingBottom: "32px" }}>
@@ -189,6 +268,11 @@ export default function OvingPage() {
                     }}
                   >
                     <span>{s.emoji}</span> {s.label}
+                    {s.variants && (
+                      <span style={{ fontSize: "11px", color: "var(--ink-light)", fontWeight: 400 }}>
+                        {s.variants.length} nivåer
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -211,10 +295,19 @@ export default function OvingPage() {
                     fontFamily: "Inter, sans-serif", fontSize: "14px", fontWeight: 500,
                     cursor: "pointer", transition: "all 0.15s",
                     textAlign: "left", WebkitTapHighlightColor: "transparent",
+                    position: "relative",
                   }}
                 >
                   <span style={{ fontSize: "22px" }}>{s.emoji}</span>
-                  <span style={{ lineHeight: 1.2 }}>{s.label}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ lineHeight: 1.2 }}>{s.label}</div>
+                    {s.variants && (
+                      <div style={{ fontSize: "11px", color: "var(--ink-light)", marginTop: "2px" }}>
+                        {s.variants.map(v => v.label).join(" · ")}
+                      </div>
+                    )}
+                  </div>
+                  <ChevronRight size={14} />
                 </button>
               ))}
             </div>
@@ -224,14 +317,70 @@ export default function OvingPage() {
     );
   }
 
-  // step === "chapters"
+  // ── STEP 1b: Variant picker (for Math/Fysikk/Kjemi/Biologi) ────────
+  if (step === "variant" && baseFag?.variants) {
+    return (
+      <AppShell>
+        <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
+          {/* Back + title */}
+          <div style={{ padding: "16px 0 12px", borderBottom: "1px solid var(--border)" }}>
+            <button
+              onClick={() => setStep("fag")}
+              style={{
+                background: "none", border: "none", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: "6px",
+                color: "var(--text-muted)", fontFamily: "Inter, sans-serif", fontSize: "13px",
+                marginBottom: "12px", padding: 0, WebkitTapHighlightColor: "transparent",
+              }}
+            >
+              <ChevronLeft size={14} /> Tilbake
+            </button>
+            <h1 style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "20px", letterSpacing: "-0.3px", color: "var(--text)", marginBottom: "2px" }}>
+              {baseFag.emoji} {baseFag.label} — Velg nivå
+            </h1>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+              Velg hvilket kurs du øver til
+            </p>
+          </div>
+
+          <div style={{ paddingTop: "16px", paddingBottom: "32px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            {baseFag.variants.map(v => (
+              <button
+                key={v.id}
+                onClick={() => pickVariant(v.id)}
+                style={{
+                  display: "flex", flexDirection: "column", alignItems: "flex-start",
+                  gap: "4px",
+                  backgroundColor: "var(--surface)", color: "var(--text)",
+                  border: "1.5px solid var(--border)",
+                  borderRadius: "var(--r-lg)", padding: "18px 16px",
+                  fontFamily: "Inter, sans-serif",
+                  cursor: "pointer", transition: "all 0.15s",
+                  textAlign: "left", WebkitTapHighlightColor: "transparent",
+                }}
+              >
+                <span style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "18px", color: "var(--text)" }}>{v.label}</span>
+                <span style={{ fontSize: "12px", color: "var(--ink-light)" }}>{v.desc}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
+
+  // ── STEP 2: Chapter picker ──────────────────────────────────────────
+  const headingLabel = variantObj
+    ? `${baseFag?.emoji} ${baseFag?.label} ${variantObj.label}`
+    : `${baseFag?.emoji} ${baseFag?.label}`;
+
   return (
     <AppShell>
       <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
         {/* Back + title */}
         <div style={{ padding: "16px 0 12px", borderBottom: "1px solid var(--border)" }}>
           <button
-            onClick={() => setStep("fag")}
+            onClick={() => setStep(baseFag?.variants ? "variant" : "fag")}
             style={{
               background: "none", border: "none", cursor: "pointer",
               display: "flex", alignItems: "center", gap: "6px",
@@ -242,7 +391,7 @@ export default function OvingPage() {
             <ChevronLeft size={14} /> Tilbake
           </button>
           <h1 style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "20px", letterSpacing: "-0.3px", color: "var(--text)", marginBottom: "2px" }}>
-            {fag?.emoji} {fag?.label} — Kapitler
+            {headingLabel} — Kapitler
           </h1>
           <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>
             Velg hvilke kapitler Blobb stiller spørsmål fra
