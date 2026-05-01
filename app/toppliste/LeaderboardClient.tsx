@@ -52,10 +52,10 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
             <div
               key={entry.user_id}
               style={{
-                backgroundColor: isMe ? "var(--coral-soft)" : rank <= 3 ? "var(--surface)" : "var(--surface)",
-                border: `2px solid ${isMe ? "var(--coral)" : rank <= 3 ? "var(--coral-mid)" : "var(--border)"}`,
-                borderBottom: `4px solid ${isMe ? "var(--coral-press)" : rank <= 3 ? "var(--coral)" : "var(--border-dark)"}`,
+                backgroundColor: isMe ? "var(--coral-soft)" : "var(--surface)",
+                border: `1.5px solid ${isMe ? "var(--coral-mid)" : "var(--border)"}`,
                 borderRadius: "var(--r-lg)",
+                boxShadow: isMe ? "0 2px 8px rgba(0,0,0,0.10)" : "0 1px 4px rgba(0,0,0,0.06)",
                 padding: "14px 16px",
                 display: "flex",
                 alignItems: "center",

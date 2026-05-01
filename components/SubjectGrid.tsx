@@ -95,8 +95,7 @@ export default function SubjectGrid({ mode = "exam" }: SubjectGridProps) {
               style={{
                 width: "100%",
                 backgroundColor: s.color,
-                border: `2px solid ${s.border}`,
-                borderBottom: isExpanded ? `2px solid ${s.border}` : `4px solid ${s.border}`,
+                border: `1.5px solid ${s.border}`,
                 borderRadius: isExpanded ? "var(--r-lg) var(--r-lg) 0 0" : "var(--r-lg)",
                 padding: "14px 12px",
                 display: "flex",
@@ -105,6 +104,7 @@ export default function SubjectGrid({ mode = "exam" }: SubjectGridProps) {
                 cursor: "pointer",
                 textAlign: "left",
                 fontFamily: "inherit",
+                boxShadow: isExpanded ? "none" : "0 2px 6px rgba(0,0,0,0.07)",
               }}
               className="btn-3d"
             >
@@ -120,14 +120,14 @@ export default function SubjectGrid({ mode = "exam" }: SubjectGridProps) {
             {isExpanded && s.levels && (
               <div style={{
                 backgroundColor: s.color,
-                border: `2px solid ${s.border}`,
+                border: `1.5px solid ${s.border}`,
                 borderTop: "none",
-                borderBottom: `4px solid ${s.border}`,
                 borderRadius: "0 0 var(--r-lg) var(--r-lg)",
                 padding: "10px",
                 display: "grid",
                 gridTemplateColumns: `repeat(${s.levels.length <= 2 ? 2 : 4}, 1fr)`,
                 gap: "8px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.07)",
               }}>
                 {s.levels.map((lvl) => (
                   <button
@@ -135,13 +135,13 @@ export default function SubjectGrid({ mode = "exam" }: SubjectGridProps) {
                     onClick={() => { setExpanded(null); navigate(lvl.id); }}
                     style={{
                       backgroundColor: "var(--surface)",
-                      border: `2px solid ${s.border}`,
-                      borderBottom: `4px solid ${s.border}`,
+                      border: `1.5px solid ${s.border}`,
                       borderRadius: "var(--r-md)",
                       padding: "10px 6px",
                       cursor: "pointer",
                       fontFamily: "inherit",
                       textAlign: "center",
+                      boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
                     }}
                     className="btn-3d"
                   >

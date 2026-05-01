@@ -17,10 +17,12 @@ export default function BottomNav() {
 
   return (
     <nav className="bottomnav-mobile" style={{
-      backgroundColor: "var(--surface)",
-      borderTop: "2px solid var(--border)",
+      backgroundColor: "rgba(250,248,244,0.92)",
+      backdropFilter: "blur(14px)",
+      WebkitBackdropFilter: "blur(14px)",
+      borderTop: "1px solid rgba(0,0,0,0.07)",
     }}>
-      <div style={{ display: "flex", height: "60px", alignItems: "center", padding: "0 4px" }}>
+      <div style={{ display: "flex", height: "62px", alignItems: "center", padding: "0 8px" }}>
         {tabs.map(({ href, label, icon: Icon }) => {
           const active = pathname.startsWith(href);
           return (
@@ -35,20 +37,21 @@ export default function BottomNav() {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: "2px",
-                padding: "5px 10px",
-                borderRadius: "var(--r-full)",
+                gap: "3px",
+                padding: "6px 10px",
+                borderRadius: "var(--r-md)",
                 backgroundColor: active ? "var(--coral-soft)" : "transparent",
                 color: active ? "var(--coral)" : "var(--text-faint)",
                 transition: "background-color 150ms ease-out",
-                minWidth: "56px",
+                minWidth: "52px",
               }}>
-                <Icon size={19} strokeWidth={active ? 2.5 : 1.75} />
+                <Icon size={20} strokeWidth={active ? 2.5 : 1.75} />
                 <span style={{
-                  fontSize: "9px",
-                  fontWeight: active ? 700 : 600,
+                  fontSize: "9.5px",
+                  fontWeight: active ? 700 : 500,
                   lineHeight: 1,
                   whiteSpace: "nowrap",
+                  letterSpacing: "0.01em",
                 }}>
                   {label}
                 </span>

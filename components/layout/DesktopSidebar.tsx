@@ -41,13 +41,12 @@ export default function DesktopSidebar() {
             alignItems: "center",
             gap: "10px",
             padding: "10px 14px",
-            borderRadius: "var(--r-md)",
+            borderRadius: "var(--r-full)",
             textDecoration: "none",
             fontSize: "14px",
-            fontWeight: 700,
+            fontWeight: 600,
             backgroundColor: active ? "var(--coral-soft)" : "transparent",
-            color: active ? "var(--coral-press)" : "var(--text-muted)",
-            border: active ? "2px solid var(--coral-mid)" : "2px solid transparent",
+            color: active ? "var(--coral)" : "var(--text-muted)",
             transition: "background-color 150ms ease-out",
           }}>
             <Icon size={18} strokeWidth={active ? 2.5 : 1.75} />

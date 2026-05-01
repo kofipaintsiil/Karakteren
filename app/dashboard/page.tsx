@@ -71,8 +71,9 @@ export default async function DashboardPage() {
           {recentSessions.length === 0 ? (
             <div style={{
               backgroundColor: "var(--surface)",
-              border: "2px solid var(--border)",
+              border: "1.5px solid var(--border)",
               borderRadius: "var(--r-lg)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
               padding: "40px 24px",
               textAlign: "center",
             }}>
@@ -93,9 +94,9 @@ export default async function DashboardPage() {
                 <Link key={s.id} href={`/dashboard/session/${s.id}`} style={{ textDecoration: "none" }}>
                   <div style={{
                     backgroundColor: "var(--surface)",
-                    border: "2px solid var(--border)",
-                    borderBottom: "4px solid var(--border-dark)",
+                    border: "1.5px solid var(--border)",
                     borderRadius: "var(--r-md)",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
                     padding: "14px 16px",
                     display: "flex",
                     alignItems: "center",
@@ -125,9 +126,9 @@ export default async function DashboardPage() {
             {/* Streak */}
             <div style={{
               backgroundColor: streak > 0 ? "var(--yellow-soft)" : "var(--surface)",
-              border: `2px solid ${streak > 0 ? "var(--yellow-press)" : "var(--border)"}`,
-              borderBottom: `4px solid ${streak > 0 ? "var(--yellow-press)" : "var(--border-dark)"}`,
+              border: `1.5px solid ${streak > 0 ? "var(--yellow)" : "var(--border)"}`,
               borderRadius: "var(--r-lg)",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.07)",
               padding: "16px 20px",
               marginBottom: "12px",
               display: "flex",
@@ -147,12 +148,12 @@ export default async function DashboardPage() {
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-              <div style={{ backgroundColor: "var(--surface)", border: "2px solid var(--border)", borderBottom: "4px solid var(--border-dark)", borderRadius: "var(--r-md)", padding: "16px" }}>
+              <div style={{ backgroundColor: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", padding: "16px" }}>
                 <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Snittkarakter</p>
                 <p style={{ fontSize: "2rem", fontWeight: 800, lineHeight: 1, color: gradeColor(stats.avg) }}>{stats.avg}</p>
                 <p style={{ fontSize: "11px", color: "var(--text-faint)", marginTop: "4px" }}>av 6</p>
               </div>
-              <div style={{ backgroundColor: "var(--surface)", border: "2px solid var(--border)", borderBottom: "4px solid var(--border-dark)", borderRadius: "var(--r-md)", padding: "16px" }}>
+              <div style={{ backgroundColor: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", padding: "16px" }}>
                 <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Prøver totalt</p>
                 <p style={{ fontSize: "2rem", fontWeight: 800, lineHeight: 1, color: "var(--text)" }}>{stats.total}</p>
                 <p style={{ fontSize: "11px", color: "var(--text-faint)", marginTop: "4px" }}>{stats.bestSubject !== "—" ? `Best i ${stats.bestSubject}` : "Ingen data ennå"}</p>
@@ -165,7 +166,7 @@ export default async function DashboardPage() {
         {stats && stats.chartData.length > 1 && (
           <section className="mb-8">
             <h2 style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)", marginBottom: "12px" }}>Fremgang</h2>
-            <div style={{ backgroundColor: "var(--surface)", border: "2px solid var(--border)", borderBottom: "4px solid var(--border-dark)", borderRadius: "var(--r-lg)", padding: "16px" }}>
+            <div style={{ backgroundColor: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: "var(--r-lg)", boxShadow: "0 2px 8px rgba(0,0,0,0.07)", padding: "16px" }}>
               <GradeChart data={stats.chartData} />
             </div>
           </section>

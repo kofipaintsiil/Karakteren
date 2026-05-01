@@ -11,31 +11,31 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<Variant, { base: React.CSSProperties; shadow: string }> = {
   primary: {
-    base: { backgroundColor: "var(--coral)", color: "#fff", border: "2px solid var(--coral-press)" },
-    shadow: "0 4px 0 var(--coral-press)",
+    base: { backgroundColor: "var(--coral)", color: "#fff", border: "none" },
+    shadow: "0 2px 8px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.10)",
   },
   secondary: {
-    base: { backgroundColor: "var(--surface)", color: "var(--text)", border: "2px solid var(--border-dark)" },
-    shadow: "0 4px 0 var(--border-dark)",
+    base: { backgroundColor: "var(--surface)", color: "var(--text)", border: "1.5px solid var(--border-dark)" },
+    shadow: "0 1px 4px rgba(0,0,0,0.08)",
   },
   ghost: {
-    base: { backgroundColor: "transparent", color: "var(--text-muted)", border: "2px solid transparent" },
+    base: { backgroundColor: "transparent", color: "var(--text-muted)", border: "none" },
     shadow: "none",
   },
   success: {
-    base: { backgroundColor: "var(--green)", color: "#fff", border: "2px solid var(--green-press)" },
-    shadow: "0 4px 0 var(--green-press)",
+    base: { backgroundColor: "var(--green)", color: "#fff", border: "none" },
+    shadow: "0 2px 8px rgba(0,0,0,0.15)",
   },
   destructive: {
-    base: { backgroundColor: "var(--error)", color: "#fff", border: "2px solid oklch(0.43 0.20 22)" },
-    shadow: "0 4px 0 oklch(0.43 0.20 22)",
+    base: { backgroundColor: "var(--error)", color: "#fff", border: "none" },
+    shadow: "0 2px 8px rgba(0,0,0,0.15)",
   },
 };
 
 const sizeStyles: Record<Size, React.CSSProperties> = {
-  sm: { height: "38px", padding: "0 16px", fontSize: "13px", borderRadius: "var(--r-md)" },
-  md: { height: "48px", padding: "0 22px", fontSize: "15px", borderRadius: "var(--r-lg)" },
-  lg: { height: "56px", padding: "0 28px", fontSize: "16px", borderRadius: "var(--r-xl)" },
+  sm: { height: "36px", padding: "0 16px", fontSize: "13px", borderRadius: "var(--r-full)" },
+  md: { height: "48px", padding: "0 24px", fontSize: "15px", borderRadius: "var(--r-full)" },
+  lg: { height: "56px", padding: "0 32px", fontSize: "16px", borderRadius: "var(--r-full)" },
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(

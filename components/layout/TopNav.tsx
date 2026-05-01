@@ -14,8 +14,10 @@ export default function TopNav() {
 
   return (
     <header style={{
-      backgroundColor: "var(--surface)",
-      borderBottom: "2px solid var(--border)",
+      backgroundColor: "rgba(250,248,244,0.92)",
+      backdropFilter: "blur(14px)",
+      WebkitBackdropFilter: "blur(14px)",
+      borderBottom: "1px solid rgba(0,0,0,0.07)",
       position: "sticky",
       top: 0,
       zIndex: 40,
@@ -24,21 +26,21 @@ export default function TopNav() {
         maxWidth: "1100px",
         margin: "0 auto",
         padding: "0 16px",
-        height: "58px",
+        height: "56px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
       }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
           <span style={{
-            width: "32px", height: "32px",
+            width: "30px", height: "30px",
             borderRadius: "var(--r-md)",
             backgroundColor: "var(--coral)",
-            border: "2px solid var(--coral-press)",
             display: "flex", alignItems: "center", justifyContent: "center",
             color: "#fff", fontWeight: 800, fontSize: "14px",
+            fontFamily: "Syne, Inter, system-ui, sans-serif",
           }}>K</span>
-          <span style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)" }}>Karakteren</span>
+          <span style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text)", fontFamily: "Syne, Inter, system-ui, sans-serif" }}>Karakteren</span>
         </Link>
 
         {/* Shown on tablet/small desktop where sidebar isn't visible */}

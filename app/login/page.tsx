@@ -138,9 +138,9 @@ function LoginForm() {
         {/* Card */}
         <div style={{
           backgroundColor: "var(--surface)",
-          border: "2px solid var(--border)",
-          borderBottom: "4px solid var(--border-dark)",
+          border: "1.5px solid var(--border)",
           borderRadius: "var(--r-xl)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
           padding: "24px",
         }}>
           <h2 style={{ fontWeight: 800, fontSize: "1.125rem", marginBottom: "20px", color: "var(--text)" }}>

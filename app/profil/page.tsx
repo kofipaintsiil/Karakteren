@@ -65,9 +65,9 @@ export default async function ProfilPage() {
         {/* Stats */}
         <div style={{
           backgroundColor: "var(--surface)",
-          border: "2px solid var(--border)",
-          borderBottom: "4px solid var(--border-dark)",
+          border: "1.5px solid var(--border)",
           borderRadius: "var(--r-lg)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
           padding: "20px",
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
@@ -90,9 +90,9 @@ export default async function ProfilPage() {
         {/* Free sessions remaining */}
         <div style={{
           backgroundColor: "var(--yellow-soft)",
-          border: "2px solid var(--yellow)",
-          borderBottom: "4px solid var(--yellow-press)",
+          border: "1.5px solid var(--yellow)",
           borderRadius: "var(--r-lg)",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.07)",
           padding: "14px 16px",
           marginBottom: "24px",
           display: "flex",
@@ -113,8 +113,9 @@ export default async function ProfilPage() {
         {/* Menu */}
         <div style={{
           backgroundColor: "var(--surface)",
-          border: "2px solid var(--border)",
+          border: "1.5px solid var(--border)",
           borderRadius: "var(--r-lg)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
           overflow: "hidden",
           marginBottom: "16px",
         }}>
