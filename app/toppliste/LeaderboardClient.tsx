@@ -74,7 +74,7 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
               <span style={{
                 fontSize: rank <= 3 ? "22px" : "15px",
                 fontWeight: 800,
-                width: "32px",
+                width: "28px",
                 textAlign: "center",
                 color: rank <= 3 ? "inherit" : "var(--ink-light)",
                 flexShrink: 0,
@@ -82,6 +82,21 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
               }}>
                 {medals[rank - 1] ?? `#${rank}`}
               </span>
+              {/* Avatar */}
+              <div style={{
+                width: "36px", height: "36px", borderRadius: "var(--r-full)",
+                backgroundColor: "var(--accent-bg)",
+                flexShrink: 0, overflow: "hidden",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                border: isMe ? "2px solid var(--accent)" : "2px solid var(--border)",
+              }}>
+                {entry.avatar_url
+                  ? <img src={entry.avatar_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  : <span style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "14px", color: "var(--accent-dark)" }}>
+                      {entry.display_name.charAt(0).toUpperCase()}
+                    </span>
+                }
+              </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{
                   fontSize: "14px",

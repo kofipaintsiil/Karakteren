@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 import Blobb from "@/components/Blobb";
@@ -37,6 +37,24 @@ export default function EksamenPage() {
   const [examDate, setExamDate] = useState("");
   const [drawing, setDrawing] = useState(false);
   const [drawnTopic, setDrawnTopic] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("exam-date");
+    if (saved) setExamDate(saved);
+    const savedFag = localStorage.getItem("exam-fag");
+    if (savedFag) setSelectedFag(savedFag);
+  }, []);
+
+  function handleDateChange(v: string) {
+    setExamDate(v);
+    localStorage.setItem("exam-date", v);
+  }
+
+  function handleFagChange(id: string) {
+    setSelectedFag(id);
+    setDrawnTopic(null);
+    localStorage.setItem("exam-fag", id);
+  }
 
   const daysLeft = examDate
     ? Math.max(0, Math.ceil((new Date(examDate).getTime() - Date.now()) / 86400000))
@@ -89,7 +107,7 @@ export default function EksamenPage() {
             <input
               type="date"
               value={examDate}
-              onChange={e => setExamDate(e.target.value)}
+              onChange={e => handleDateChange(e.target.value)}
               style={{
                 width: "100%", padding: "11px 14px",
                 borderRadius: "var(--r-md)",
@@ -116,7 +134,7 @@ export default function EksamenPage() {
               {SUBJECTS.map(s => (
                 <button
                   key={s.id}
-                  onClick={() => { setSelectedFag(s.id); setDrawnTopic(null); }}
+                  onClick={() => handleFagChange(s.id)}
                   style={{
                     padding: "7px 14px", borderRadius: "var(--r-full)", border: "none",
                     backgroundColor: selectedFag === s.id ? "var(--text)" : "var(--bg-alt)",

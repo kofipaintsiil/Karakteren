@@ -121,6 +121,7 @@ export interface LeaderboardEntry {
   total_sessions: number;
   avg_grade: number;
   top_subject: string;
+  avatar_url: string | null;
 }
 
 export async function fetchLeaderboard(subject?: string): Promise<LeaderboardEntry[]> {
@@ -146,9 +147,9 @@ export async function fetchLeaderboard(subject?: string): Promise<LeaderboardEnt
 
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("id, display_name, show_on_leaderboard");
+    .select("id, display_name, show_on_leaderboard, avatar_url");
 
-  type Profile = { id: string; display_name: string | null; show_on_leaderboard: boolean | null };
+  type Profile = { id: string; display_name: string | null; show_on_leaderboard: boolean | null; avatar_url: string | null };
   const profileMap: Record<string, Profile> = {};
   (profiles as Profile[] ?? []).forEach((p) => { profileMap[p.id] = p; });
 
@@ -162,7 +163,8 @@ export async function fetchLeaderboard(subject?: string): Promise<LeaderboardEnt
       subjects.forEach((s) => { subjectCount[s] = (subjectCount[s] ?? 0) + 1; });
       const top_subject = Object.entries(subjectCount).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—";
       const display_name = profileMap[uid]?.display_name ?? "Anonym";
-      return { user_id: uid, display_name, total_sessions: grades.length, avg_grade: avg, top_subject };
+      const avatar_url = profileMap[uid]?.avatar_url ?? null;
+      return { user_id: uid, display_name, total_sessions: grades.length, avg_grade: avg, top_subject, avatar_url };
     })
     .sort((a, b) => b.avg_grade - a.avg_grade || b.total_sessions - a.total_sessions)
     .slice(0, 50);

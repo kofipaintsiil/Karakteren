@@ -16,6 +16,12 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
+  // Ensure bucket exists
+  const { data: buckets } = await admin.storage.listBuckets();
+  if (!buckets?.find(b => b.name === "avatars")) {
+    await admin.storage.createBucket("avatars", { public: true });
+  }
+
   const ext = file.name.split(".").pop() ?? "jpg";
   const path = `${user.id}/avatar.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
