@@ -274,12 +274,14 @@ function ExamPageInner() {
           setIsTranscribing(false);
           if (text.trim()) {
             await stopRecordingAndReview(text);
-          } else {
-            setMicError("Ingen tale registrert — prøv igjen og snakk tydelig.");
+          }
+          // If empty but no error was set, show generic message
+          else if (!text.trim()) {
+            setMicError((prev) => prev ?? "Ingen tale registrert — prøv igjen og snakk høyt og tydelig.");
           }
         },
         subject === "engelsk" ? "en-US" : "nb-NO",
-        (err) => setMicError(err),
+        (err) => { setIsTranscribing(false); setMicError(err); },
       );
       setIsRequestingMic(false);
       if (stop) {

@@ -199,17 +199,27 @@ export async function startRecording(
     const ext = mimeToExt(actualMime);
     const blob = new Blob(chunks, { type: actualMime });
 
-    // If blob is suspiciously small, audio was silent or too short
-    if (blob.size < 2000) { onTranscript(""); return; }
+    if (blob.size < 1000) {
+      onError?.(`Lydopptak var tomt (${blob.size} bytes, format: ${actualMime}). Sjekk at mikrofon er aktiv.`);
+      onTranscript("");
+      return;
+    }
 
     const form = new FormData();
     form.append("audio", blob, `audio.${ext}`);
     form.append("lang", lang.startsWith("en") ? "en" : "no");
     try {
       const res = await fetch("/api/stt", { method: "POST", body: form });
-      const { text } = res.ok ? await res.json() : { text: "" };
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        onError?.(`STT feil ${res.status}: ${body.error ?? "ukjent feil"}`);
+        onTranscript("");
+        return;
+      }
+      const { text } = await res.json();
       onTranscript(text ?? "");
-    } catch {
+    } catch (e) {
+      onError?.(`Nettverksfeil: ${(e as Error).message}`);
       onTranscript("");
     }
   };
