@@ -241,7 +241,14 @@ export async function startRecording(
   );
   if (webSpeechStop) return webSpeechStop;
 
-  // ── Fallback: MediaRecorder + Whisper ──
+  // ── Web Speech API not available — tell user to switch browser ──
+  const isMobile = typeof navigator !== "undefined" && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    onError?.("Taleinnspilling på iPhone/iPad krever Safari. Åpne karakteren.no i Safari og prøv igjen.");
+    return null;
+  }
+
+  // ── Fallback: MediaRecorder + Whisper (desktop only) ──
   if (typeof MediaRecorder === "undefined") {
     onError?.("Nettleseren din støtter ikke taleinnspilling. Prøv Chrome eller Safari.");
     return null;
