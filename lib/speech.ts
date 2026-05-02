@@ -198,6 +198,10 @@ export async function startRecording(
     const actualMime = recorder.mimeType || mimeType || "audio/webm";
     const ext = mimeToExt(actualMime);
     const blob = new Blob(chunks, { type: actualMime });
+
+    // If blob is suspiciously small, audio was silent or too short
+    if (blob.size < 2000) { onTranscript(""); return; }
+
     const form = new FormData();
     form.append("audio", blob, `audio.${ext}`);
     form.append("lang", lang.startsWith("en") ? "en" : "no");
@@ -210,6 +214,7 @@ export async function startRecording(
     }
   };
 
-  recorder.start(250);
+  // No timeslice — collect all data at once on stop (more reliable on iOS)
+  recorder.start();
   return () => { if (recorder.state !== "inactive") recorder.stop(); };
 }
