@@ -218,7 +218,7 @@ function ExamPageInner() {
     }
   }
 
-  async function stopRecordingAndReview(text: string) {
+  async function stopRecordingAndReview(text: string, alts: string[] = []) {
     stopRecognitionRef.current?.();
     stopRecognitionRef.current = null;
     setIsRecording(false);
@@ -226,20 +226,22 @@ function ExamPageInner() {
     const trimmed = text.trim();
     if (!trimmed) return;
 
-    setTypedAnswer(trimmed); // vis rå tekst umiddelbart
+    setTypedAnswer(trimmed);
+    setIsTranscribing(true);
 
-    // Korriger fagbegreper stille i bakgrunnen
     try {
       const res = await fetch("/api/correct-transcript", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: trimmed, subject, topic: topicName }),
+        body: JSON.stringify({ text: trimmed, alternatives: alts, subject, topic: topicName }),
       });
       if (res.ok) {
         const { text: corrected } = await res.json();
-        if (corrected && corrected !== trimmed) setTypedAnswer(corrected);
+        if (corrected) setTypedAnswer(corrected);
       }
     } catch {}
+
+    setIsTranscribing(false);
   }
 
   // Called directly from onClick — recognition.start() must be synchronous for iOS Safari
@@ -276,15 +278,22 @@ function ExamPageInner() {
     recognition.lang = subject === "engelsk" ? "en-US" : "nb-NO";
     recognition.continuous = false;
     recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
+    recognition.maxAlternatives = 3;
 
     let finalText = "";
+    let finalAlts: string[] = [];
     recognition.onresult = (e: SpeechRecognitionEvent) => {
       let interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        const t = e.results[i][0].transcript;
-        if (e.results[i].isFinal) finalText += t;
-        else interim += t;
+        if (e.results[i].isFinal) {
+          finalText += e.results[i][0].transcript;
+          // Collect all alternatives for the last final result
+          const alts: string[] = [];
+          for (let j = 0; j < e.results[i].length; j++) alts.push(e.results[i][j].transcript);
+          finalAlts = alts;
+        } else {
+          interim += e.results[i][0].transcript;
+        }
       }
       if (interim) setLiveTranscript(interim);
     };
@@ -297,7 +306,7 @@ function ExamPageInner() {
       setRecordingSeconds(0);
       const text = finalText.trim();
       if (text) {
-        void stopRecordingAndReview(text);
+        void stopRecordingAndReview(text, finalAlts);
       } else {
         setMicError("Ingen tale registrert — snakk høyt og tydelig, og prøv igjen.");
       }
@@ -645,7 +654,7 @@ function ExamPageInner() {
                 backgroundColor: "var(--accent-bg)", border: "2px solid var(--accent)",
                 display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0, gap: "2px",
               }}>
-                <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--accent-dark)", textAlign: "center", lineHeight: 1.2 }}>Tolker...</span>
+                <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--accent-dark)", textAlign: "center", lineHeight: 1.2 }}>AI fikser...</span>
               </div>
             ) : (
               <button

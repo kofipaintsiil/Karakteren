@@ -10,23 +10,37 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ text: null }, { status: 503 });
   }
 
-  const { text, subject, topic } = await req.json() as { text: string; subject: string; topic: string };
+  const { text, alternatives, subject, topic } = await req.json() as {
+    text: string;
+    alternatives?: string[];
+    subject: string;
+    topic: string;
+  };
   if (!text?.trim()) return NextResponse.json({ text });
 
+  const altSection = alternatives && alternatives.length > 1
+    ? `\nAlternativer fra talegjenkjenning (velg beste utgangspunkt):\n${alternatives.map((a, i) => `${i + 1}. "${a}"`).join("\n")}\n`
+    : "";
+
   const response = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
-    max_tokens: 256,
+    model: "claude-sonnet-4-6",
+    max_tokens: 512,
     messages: [{
       role: "user",
-      content: `Du korrigerer talegjenkjenningsfeil i et eksamenssvar. Faget er ${subject}, tema: "${topic}".
+      content: `Du er en norsk korrekturleser som fikser talegjenkjenningsfeil i eksamenssvar.
+Faget er ${subject}, tema: "${topic}".
 
-Rå transskribering: "${text}"
+Primær transskribering: "${text}"${altSection}
+Din oppgave:
+1. Korriger ord misforstått fonetisk (f.eks. "deribert" → "derivert", "integrel" → "integral", "fotosyn tese" → "fotosyntese", "ker nen" → "kjernen")
+2. Korriger fagbegreper og matematisk notasjon (f.eks. "x i andre" → "x²", "pi r kvadrat" → "πr²", "delta x" → "Δx", "e til x" → "eˣ")
+3. Korriger norske ord misforstått som noe annet (f.eks. "de" → "det", "å" → "og", "a" → "av")
+4. Fiks hakkete setningsstruktur fra talegjenkjenning
+5. Hvis et alternativ fra listen er mer korrekt enn primærtranskripsjon, bruk det som grunnlag
+6. IKKE legg til faglig innhold som ikke ble sagt
+7. IKKE endre meningen eller omformuler unødig
 
-Regler:
-- Korriger fagbegreper som er stavet feil eller lyder fonetisk feil (f.eks. "fotosyntes" → "fotosyntese", "adenosin trifosfat" → "adenosintrifosfat")
-- Korriger åpenbare norske ord som ble misforstått
-- IKKE endre meningen, legg til informasjon, eller omformuler setninger
-- Returner KUN den korrigerte teksten — ingen forklaring, ingen anførselstegn`,
+Returner KUN den korrigerte teksten — ingen forklaring, ingen anførselstegn.`,
     }],
   });
 
