@@ -126,26 +126,43 @@ export function stopSpeaking() {
     currentSource = null;
   }
   if (typeof window !== "undefined" && window.speechSynthesis) {
-    window.speechSynthesis.cancel();
+    // Only cancel if something is actively speaking — avoids wiping the iOS primer
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+      window.speechSynthesis.cancel();
+    }
   }
 }
 
 // Must be called synchronously from a user gesture (onClick).
-// Unlocks the shared AudioContext so all subsequent async playback works on iOS.
+// Unlocks AudioContext AND primes SpeechSynthesis so both work in subsequent async code on iOS.
 export function unlockAudio(): void {
+  // ── AudioContext unlock ──
   const ctx = getAudioContext();
-  if (!ctx) return;
-  if (ctx.state === "suspended") {
-    ctx.resume().catch(() => {});
+  if (ctx) {
+    if (ctx.state === "suspended") {
+      ctx.resume().catch(() => {});
+    }
+    try {
+      const buf = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch {}
   }
-  // Play silent buffer to fully unlock
-  try {
-    const buf = ctx.createBuffer(1, 1, 22050);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.connect(ctx.destination);
-    src.start(0);
-  } catch {}
+
+  // ── SpeechSynthesis primer ──
+  // iOS Safari only allows speechSynthesis.speak() from user-gesture context.
+  // Queuing a near-silent utterance here activates the audio session so that
+  // all subsequent speak() calls (even after async gaps) work correctly.
+  if (typeof window !== "undefined" && window.speechSynthesis) {
+    try {
+      const primer = new SpeechSynthesisUtterance(".");
+      primer.volume = 0.01;
+      primer.rate = 10;
+      window.speechSynthesis.speak(primer);
+    } catch {}
+  }
 }
 
 // ─── Web Speech API (free, real-time, works on iOS/Android/Chrome) ───────────
