@@ -204,25 +204,6 @@ function startWebSpeech(
   return () => { try { recognition.stop(); } catch {} };
 }
 
-// ─── MediaRecorder + Whisper fallback ────────────────────────────────────────
-
-function getSupportedMimeType(): string {
-  if (typeof MediaRecorder === "undefined") return "";
-  const types = [
-    "audio/webm;codecs=opus",
-    "audio/webm",
-    "audio/mp4",
-    "audio/ogg;codecs=opus",
-    "audio/ogg",
-  ];
-  return types.find((t) => MediaRecorder.isTypeSupported(t)) ?? "";
-}
-
-function mimeToExt(mime: string): string {
-  if (mime.includes("mp4") || mime.includes("m4a")) return "m4a";
-  if (mime.includes("ogg")) return "ogg";
-  return "webm";
-}
 
 export async function startRecording(
   onTranscript: (text: string) => void,
@@ -241,76 +222,12 @@ export async function startRecording(
   );
   if (webSpeechStop) return webSpeechStop;
 
-  // ── Web Speech API not available — tell user to switch browser ──
+  // Web Speech API not available on this browser
   const isMobile = typeof navigator !== "undefined" && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (isMobile) {
-    onError?.("Taleinnspilling på iPhone/iPad krever Safari. Åpne karakteren.no i Safari og prøv igjen.");
-    return null;
+    onError?.("Taleinnspilling på iPhone/iPad krever Safari. Åpne appen i Safari og prøv igjen.");
+  } else {
+    onError?.("Nettleseren din støtter ikke taleinnspilling. Åpne i Chrome eller Safari og prøv igjen.");
   }
-
-  // ── Fallback: MediaRecorder + Whisper (desktop only) ──
-  if (typeof MediaRecorder === "undefined") {
-    onError?.("Nettleseren din støtter ikke taleinnspilling. Prøv Chrome eller Safari.");
-    return null;
-  }
-
-  let stream: MediaStream;
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  } catch (err: unknown) {
-    const name = (err as { name?: string })?.name;
-    if (name === "NotAllowedError" || name === "PermissionDeniedError") {
-      onError?.("Mikrofonillatelse nektet. Åpne nettleserinnstillinger og tillat mikrofon.");
-    } else if (name === "NotFoundError") {
-      onError?.("Ingen mikrofon funnet på enheten.");
-    } else {
-      onError?.("Kunne ikke starte mikrofon.");
-    }
-    return null;
-  }
-
-  const mimeType = getSupportedMimeType();
-  let recorder: MediaRecorder;
-  try {
-    recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
-  } catch {
-    recorder = new MediaRecorder(stream);
-  }
-
-  const chunks: Blob[] = [];
-  recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-
-  recorder.onstop = async () => {
-    stream.getTracks().forEach((t) => t.stop());
-    const actualMime = recorder.mimeType || mimeType || "audio/webm";
-    const ext = mimeToExt(actualMime);
-    const blob = new Blob(chunks, { type: actualMime });
-
-    if (blob.size < 1000) {
-      onError?.(`Lydopptak var tomt (${blob.size} bytes). Sjekk at mikrofon er aktiv.`);
-      onTranscript("");
-      return;
-    }
-
-    const form = new FormData();
-    form.append("audio", blob, `audio.${ext}`);
-    form.append("lang", lang.startsWith("en") ? "en" : "no");
-    try {
-      const res = await fetch("/api/stt", { method: "POST", body: form });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        onError?.(`STT feil ${res.status}: ${body.error ?? "ukjent feil"}`);
-        onTranscript("");
-        return;
-      }
-      const { text } = await res.json();
-      onTranscript(text ?? "");
-    } catch (e) {
-      onError?.(`Nettverksfeil: ${(e as Error).message}`);
-      onTranscript("");
-    }
-  };
-
-  recorder.start();
-  return () => { if (recorder.state !== "inactive") recorder.stop(); };
+  return null;
 }
