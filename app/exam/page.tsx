@@ -242,59 +242,90 @@ function ExamPageInner() {
     } catch {}
   }
 
-  async function toggleRecording() {
+  // Called directly from onClick — recognition.start() must be synchronous for iOS Safari
+  function toggleRecording() {
     if (isRecording) {
-      // Stop recording
       if (recordingTimerRef.current) { clearInterval(recordingTimerRef.current); recordingTimerRef.current = null; }
-      if (recordingSeconds < 1) {
-        // Too short — just cancel
-        stopRecognitionRef.current?.();
-        stopRecognitionRef.current = null;
-        setIsRecording(false);
-        setRecordingSeconds(0);
-        setMicError("Hold inne mikrofonen litt lengre og snakk tydelig.");
-        return;
-      }
       stopRecognitionRef.current?.();
       stopRecognitionRef.current = null;
       setIsRecording(false);
       setRecordingSeconds(0);
-      setIsTranscribing(true);
-      transcribeTimeoutRef.current = setTimeout(() => {
-        setIsTranscribing(false);
-        setMicError("Transkribering tok for lang tid — prøv igjen.");
-      }, 25000);
-    } else {
-      // Start recording
-      setMicError(null);
-      setLiveTranscript("");
-      setTypedAnswer("");
-      setIsRequestingMic(true);
-      const stop = await startRecording(
-        async (text) => {
-          if (transcribeTimeoutRef.current) clearTimeout(transcribeTimeoutRef.current);
-          setIsTranscribing(false);
-          setLiveTranscript("");
-          if (text.trim()) {
-            await stopRecordingAndReview(text);
-          } else {
-            setMicError((prev) => prev ?? "Ingen tale registrert — snakk høyt og tydelig, og prøv igjen.");
-          }
-        },
-        subject === "engelsk" ? "en-US" : "nb-NO",
-        (err) => { setIsTranscribing(false); setMicError(err); },
-        (interim) => setLiveTranscript(interim),
-      );
-      setIsRequestingMic(false);
-      if (stop) {
-        stopRecognitionRef.current = stop;
-        setIsRecording(true);
-        setRecordingSeconds(0);
-        recordingTimerRef.current = setInterval(() => {
-          setRecordingSeconds((s) => s + 1);
-        }, 1000);
+      if (recordingSeconds < 1) {
+        setMicError("Hold mikrofonen inne litt lengre og snakk tydelig.");
       }
+      return;
     }
+
+    // ── Start: get recognition synchronously before any state updates ──
+    setMicError(null);
+    setLiveTranscript("");
+    setTypedAnswer("");
+
+    const SR = (typeof window !== "undefined") &&
+      (window.SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition);
+
+    if (!SR) {
+      const mob = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      setMicError(mob
+        ? "Taleinnspilling krever Safari på iPhone. Åpne appen i Safari."
+        : "Nettleseren støtter ikke taleinnspilling. Prøv Chrome eller Safari.");
+      return;
+    }
+
+    const recognition = new SR();
+    recognition.lang = subject === "engelsk" ? "en-US" : "nb-NO";
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    let finalText = "";
+    recognition.onresult = (e: SpeechRecognitionEvent) => {
+      let interim = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) finalText += t;
+        else interim += t;
+      }
+      if (interim) setLiveTranscript(interim);
+    };
+
+    recognition.onend = () => {
+      stopRecognitionRef.current = null;
+      setIsRecording(false);
+      setLiveTranscript("");
+      if (recordingTimerRef.current) { clearInterval(recordingTimerRef.current); recordingTimerRef.current = null; }
+      setRecordingSeconds(0);
+      const text = finalText.trim();
+      if (text) {
+        void stopRecordingAndReview(text);
+      } else {
+        setMicError("Ingen tale registrert — snakk høyt og tydelig, og prøv igjen.");
+      }
+    };
+
+    recognition.onerror = (e: SpeechRecognitionErrorEvent) => {
+      setIsRecording(false);
+      if (recordingTimerRef.current) { clearInterval(recordingTimerRef.current); recordingTimerRef.current = null; }
+      setRecordingSeconds(0);
+      if (e.error === "no-speech") {
+        setMicError("Ingen tale registrert — snakk høyt og tydelig, og prøv igjen.");
+      } else if (e.error === "not-allowed") {
+        setMicError("Mikrofonillatelse nektet. Gå til Innstillinger → Safari → Mikrofon og tillat tilgang.");
+      } else {
+        setMicError(`Talegjenkjenning feilet: ${e.error}`);
+      }
+    };
+
+    // ← Called synchronously here, directly from the button click
+    try { recognition.start(); } catch {
+      setMicError("Kunne ikke starte mikrofon. Prøv igjen.");
+      return;
+    }
+
+    stopRecognitionRef.current = () => { try { recognition.stop(); } catch {} };
+    setIsRecording(true);
+    setRecordingSeconds(0);
+    recordingTimerRef.current = setInterval(() => setRecordingSeconds((s) => s + 1), 1000);
   }
 
   useEffect(() => {
@@ -471,7 +502,8 @@ function ExamPageInner() {
               <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
             </svg>
             Hør igjen
-        </div>
+          </button>
+        )}
       </div>
 
       {/* Messages */}
@@ -617,7 +649,7 @@ function ExamPageInner() {
               </div>
             ) : (
               <button
-                onClick={() => void toggleRecording()}
+                onClick={toggleRecording}
                 disabled={isRequestingMic}
                 style={{
                   width: "56px", height: "56px",
