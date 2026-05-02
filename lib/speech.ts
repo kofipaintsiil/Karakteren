@@ -75,19 +75,18 @@ export async function speak(text: string, lang = "nb-NO"): Promise<void> {
       }
     } catch {}
 
-    // SpeechSynthesis fallback — onend is unreliable on iOS, so always set a timeout
+    // SpeechSynthesis fallback
     return new Promise((resolve) => {
       if (typeof window === "undefined" || !window.speechSynthesis) { resolve(); return; }
       window.speechSynthesis.cancel();
-      // iOS sometimes never fires onend — fallback timer
-      const safetyTimer = setTimeout(resolve, estimatedDurationMs(text) + 1500);
+      const safetyTimer = setTimeout(resolve, estimatedDurationMs(text) + 2000);
       const done = () => { clearTimeout(safetyTimer); resolve(); };
-      const trySpeak = () => {
+
+      const trySpeak = (voices: SpeechSynthesisVoice[]) => {
         const utt = new SpeechSynthesisUtterance(text);
         utt.lang = lang;
-        utt.rate = 0.92;
+        utt.rate = 0.9;
         utt.pitch = 1.0;
-        const voices = window.speechSynthesis.getVoices();
         const norVoice =
           voices.find((v) => v.name.toLowerCase().includes("nora")) ??
           voices.find((v) => v.name.toLowerCase().includes("malin")) ??
@@ -97,8 +96,20 @@ export async function speak(text: string, lang = "nb-NO"): Promise<void> {
         utt.onerror = done;
         window.speechSynthesis.speak(utt);
       };
-      if (window.speechSynthesis.getVoices().length > 0) trySpeak();
-      else window.speechSynthesis.onvoiceschanged = () => { trySpeak(); };
+
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) { trySpeak(voices); return; }
+
+      // Poll — onvoiceschanged is unreliable on iOS
+      let tries = 0;
+      const poll = setInterval(() => {
+        const v = window.speechSynthesis.getVoices();
+        if (v.length > 0 || tries++ > 30) { clearInterval(poll); trySpeak(v); }
+      }, 100);
+      window.speechSynthesis.onvoiceschanged = () => {
+        clearInterval(poll);
+        trySpeak(window.speechSynthesis.getVoices());
+      };
     });
   };
 

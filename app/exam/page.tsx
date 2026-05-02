@@ -51,6 +51,7 @@ function ExamPageInner() {
   const [streamingText, setStreamingText] = useState("");
   const [blobbState, setBlobbState] = useState<BlobbState>("idle");
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [lastExaminerText, setLastExaminerText] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [liveTranscript, setLiveTranscript] = useState("");
@@ -79,6 +80,7 @@ function ExamPageInner() {
   }, [messages, liveTranscript, streamingText]);
 
   const examinerSpeak = useCallback(async (text: string, nextState: BlobbState = "listening") => {
+    setLastExaminerText(text);
     setIsSpeaking(true);
     setBlobbState("talking");
     await speak(text, subject === "engelsk" ? "en-GB" : "nb-NO");
@@ -451,6 +453,24 @@ function ExamPageInner() {
           {!isExaminerTurn && phase === "conversation" && (
             <p style={{ fontSize: "13px", color: "var(--green)", fontWeight: 600 }}>Din tur</p>
           )}
+        </div>
+        {/* Replay button — always visible so user can re-hear the question */}
+        {lastExaminerText && !isSpeaking && !isStreaming && phase === "conversation" && (
+          <button
+            onClick={() => examinerSpeak(lastExaminerText)}
+            style={{
+              display: "flex", alignItems: "center", gap: "5px",
+              background: "none", border: "1px solid var(--border)",
+              borderRadius: "var(--r-full)", padding: "5px 10px",
+              cursor: "pointer", fontSize: "12px", fontWeight: 600,
+              color: "var(--text-muted)", flexShrink: 0,
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+            Hør igjen
         </div>
       </div>
 
