@@ -302,7 +302,10 @@ function ExamPageInner() {
             interim += e.results[i][0].transcript;
           }
         }
-        if (interim) setLiveTranscript(interim);
+        // Show accumulated finals in the answer box so text builds up and never disappears on pause
+        setTypedAnswer(finalText.trim());
+        // Show current in-progress words as a separate live hint
+        setLiveTranscript(interim);
       };
 
       rec.onend = () => {
