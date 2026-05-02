@@ -115,7 +115,8 @@ export default function EksamenPage() {
   }
 
   function startExam() {
-    router.push(`/exam?subject=${activeKey}`);
+    if (!drawnTopic) return;
+    router.push(`/exam?subject=${activeKey}&topic=${encodeURIComponent(drawnTopic)}`);
   }
 
   const canDraw = !activeFag.variants || selectedVariant !== null;
