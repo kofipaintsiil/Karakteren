@@ -265,8 +265,8 @@ function ExamPageInner() {
             interim += e.results[i][0].transcript;
           }
         }
-        setTypedAnswer(finalText.trim());
-        setLiveTranscript(interim);
+        // Show everything in the live chat bubble — input field stays empty during recording
+        setLiveTranscript((finalText + interim).trim());
       };
 
       rec.onend = () => {
@@ -485,9 +485,13 @@ function ExamPageInner() {
           </div>
         )}
 
-        {liveTranscript && (
-          <div style={{ alignSelf: "flex-end", maxWidth: "84%", backgroundColor: "var(--accent-bg)", border: "1.5px dashed var(--accent)", borderRadius: "18px 18px 4px 18px", padding: "11px 15px", fontSize: "14px", color: "var(--accent-dark)", lineHeight: 1.55 }}>
-            {liveTranscript}
+        {(liveTranscript || isRecording) && (
+          <div style={{ alignSelf: "flex-end", maxWidth: "84%", backgroundColor: "var(--accent-bg)", border: "1.5px solid var(--accent)", borderRadius: "18px 18px 4px 18px", padding: "11px 15px", fontSize: "14px", color: "var(--accent-dark)", lineHeight: 1.55, display: "flex", flexDirection: "column", gap: "6px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: "var(--accent)", flexShrink: 0, animation: "blink 1s step-end infinite" }} />
+              <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--accent)" }}>Tar opp{recordingSeconds > 0 ? ` · ${recordingSeconds}s` : ""}</span>
+            </div>
+            {liveTranscript && <span>{liveTranscript}</span>}
           </div>
         )}
       </div>
