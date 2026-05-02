@@ -51,43 +51,62 @@ function playWithElement(blob: Blob): Promise<void> {
   });
 }
 
+// Estimate reading time so we always resolve even if audio/speech events fail
+function estimatedDurationMs(text: string): number {
+  return Math.max(2000, (text.split(" ").length / 2.5) * 1000);
+}
+
 export async function speak(text: string, lang = "nb-NO"): Promise<void> {
   stopSpeaking();
-  try {
-    const res = await fetch("/api/tts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
-    if (res.ok && res.headers.get("content-type")?.includes("audio")) {
-      const blob = await res.blob();
-      await playBlob(blob);
-      return;
-    }
-  } catch {}
 
-  // SpeechSynthesis fallback
-  return new Promise((resolve) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) { resolve(); return; }
-    window.speechSynthesis.cancel();
-    const trySpeak = () => {
-      const utt = new SpeechSynthesisUtterance(text);
-      utt.lang = lang;
-      utt.rate = 0.92;
-      utt.pitch = 1.0;
-      const voices = window.speechSynthesis.getVoices();
-      const norVoice =
-        voices.find((v) => v.name.toLowerCase().includes("nora")) ??
-        voices.find((v) => v.name.toLowerCase().includes("malin")) ??
-        voices.find((v) => v.lang.startsWith("nb") || v.lang.startsWith("no"));
-      if (norVoice) utt.voice = norVoice;
-      utt.onend = () => resolve();
-      utt.onerror = () => resolve();
-      window.speechSynthesis.speak(utt);
-    };
-    if (window.speechSynthesis.getVoices().length > 0) trySpeak();
-    else window.speechSynthesis.onvoiceschanged = () => { trySpeak(); };
-  });
+  const timeout = estimatedDurationMs(text) + 3000;
+
+  const doSpeak = async (): Promise<void> => {
+    try {
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (res.ok && res.headers.get("content-type")?.includes("audio")) {
+        const blob = await res.blob();
+        await playBlob(blob);
+        return;
+      }
+    } catch {}
+
+    // SpeechSynthesis fallback — onend is unreliable on iOS, so always set a timeout
+    return new Promise((resolve) => {
+      if (typeof window === "undefined" || !window.speechSynthesis) { resolve(); return; }
+      window.speechSynthesis.cancel();
+      // iOS sometimes never fires onend — fallback timer
+      const safetyTimer = setTimeout(resolve, estimatedDurationMs(text) + 1500);
+      const done = () => { clearTimeout(safetyTimer); resolve(); };
+      const trySpeak = () => {
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.lang = lang;
+        utt.rate = 0.92;
+        utt.pitch = 1.0;
+        const voices = window.speechSynthesis.getVoices();
+        const norVoice =
+          voices.find((v) => v.name.toLowerCase().includes("nora")) ??
+          voices.find((v) => v.name.toLowerCase().includes("malin")) ??
+          voices.find((v) => v.lang.startsWith("nb") || v.lang.startsWith("no"));
+        if (norVoice) utt.voice = norVoice;
+        utt.onend = done;
+        utt.onerror = done;
+        window.speechSynthesis.speak(utt);
+      };
+      if (window.speechSynthesis.getVoices().length > 0) trySpeak();
+      else window.speechSynthesis.onvoiceschanged = () => { trySpeak(); };
+    });
+  };
+
+  // Hard cap — speak() must ALWAYS resolve so the UI never gets stuck
+  return Promise.race([
+    doSpeak(),
+    new Promise<void>((resolve) => setTimeout(resolve, timeout)),
+  ]);
 }
 
 export function stopSpeaking() {
