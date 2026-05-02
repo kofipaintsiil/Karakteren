@@ -16,9 +16,9 @@ export default async function ToplistePage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 0", fontFamily: "Inter, system-ui, sans-serif" }}>
+      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 0", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
         <div style={{ marginBottom: "24px" }}>
-          <h1 style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "4px" }}>
+          <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "4px" }}>
             Toppliste
           </h1>
           <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
@@ -42,12 +42,12 @@ export default async function ToplistePage() {
               <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.8px", color: "var(--accent-dark)", marginBottom: "2px" }}>
                 Din plassering
               </p>
-              <p style={{ fontFamily: "Syne, sans-serif", fontSize: "1.25rem", fontWeight: 800, color: "var(--accent-dark)" }}>
+              <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "1.25rem", fontWeight: 800, color: "var(--accent-dark)" }}>
                 #{userRank}
               </p>
             </div>
             <div style={{ textAlign: "right" }}>
-              <p style={{ fontFamily: "Syne, sans-serif", fontSize: "20px", fontWeight: 800, color: "var(--accent-dark)" }}>
+              <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "20px", fontWeight: 800, color: "var(--accent-dark)" }}>
                 {entries[userRank - 1]?.avg_grade?.toFixed(1) ?? "—"}
               </p>
               <p style={{ fontSize: "11px", color: "var(--accent)", fontWeight: 600 }}>snittkarakter</p>
@@ -72,7 +72,7 @@ export default async function ToplistePage() {
             textAlign: "center",
           }}>
             <div style={{ fontSize: "36px", marginBottom: "12px" }}>🏆</div>
-            <p style={{ fontFamily: "Syne, sans-serif", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Ingen resultater ennå</p>
+            <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Ingen resultater ennå</p>
             <p style={{ fontSize: "14px", color: "var(--text-muted)" }}>
               Vær den første på listen!
             </p>

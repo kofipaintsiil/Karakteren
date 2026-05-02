@@ -34,7 +34,7 @@ export default function WelcomePage() {
   return (
     <div style={{
       minHeight: "100dvh", backgroundColor: "var(--bg)",
-      fontFamily: "Inter, system-ui, sans-serif",
+      fontFamily: "Plus Jakarta Sans, system-ui, sans-serif",
       display: "flex", flexDirection: "column",
       padding: "24px 24px 40px",
       maxWidth: "480px", margin: "0 auto",
@@ -69,7 +69,7 @@ export default function WelcomePage() {
       </div>
 
       <h2 style={{
-        fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "26px",
+        fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "26px",
         letterSpacing: "-0.5px", marginBottom: "10px", color: "var(--text)",
       }}>{s.title}</h2>
 
@@ -81,14 +81,14 @@ export default function WelcomePage() {
           <>
             <button
               onClick={() => router.push("/login?signup=1")}
-              style={{ fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "14px", color: "var(--text-muted)", background: "none", border: "none", cursor: "pointer", padding: "14px 16px" }}
+              style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "14px", color: "var(--text-muted)", background: "none", border: "none", cursor: "pointer", padding: "14px 16px" }}
             >
               Hopp over
             </button>
             <button
               onClick={() => setStep(s => s + 1)}
               style={{
-                flex: 1, fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "15px",
+                flex: 1, fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
                 backgroundColor: "var(--accent)", color: "#fff",
                 border: "none", borderRadius: "var(--r-full)", padding: "14px",
                 cursor: "pointer",
@@ -101,7 +101,7 @@ export default function WelcomePage() {
           <button
             onClick={() => router.push("/login?signup=1")}
             style={{
-              flex: 1, fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "15px",
+              flex: 1, fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
               backgroundColor: "var(--accent)", color: "#fff",
               border: "none", borderRadius: "var(--r-full)", padding: "14px",
               cursor: "pointer",

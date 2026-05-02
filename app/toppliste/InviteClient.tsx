@@ -35,7 +35,7 @@ export default function InviteClient() {
       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
         <span style={{ fontSize: "24px" }}>👋</span>
         <div>
-          <p style={{ fontFamily: "Syne, sans-serif", fontWeight: 700, fontSize: "15px", color: "var(--text)" }}>
+          <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "15px", color: "var(--text)" }}>
             Inviter venner
           </p>
           <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>
@@ -49,7 +49,7 @@ export default function InviteClient() {
           style={{
             flex: 1, padding: "11px", borderRadius: "var(--r-full)", border: "none",
             backgroundColor: "var(--accent)", color: "#fff",
-            fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "14px",
+            fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "14px",
             cursor: "pointer",
           }}
         >
@@ -61,7 +61,7 @@ export default function InviteClient() {
             padding: "11px 16px", borderRadius: "var(--r-full)",
             border: "1.5px solid var(--border)",
             backgroundColor: "var(--surface)", color: "var(--text)",
-            fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "14px",
+            fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "14px",
             cursor: "pointer", minWidth: "100px",
           }}
         >

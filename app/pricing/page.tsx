@@ -32,10 +32,10 @@ function CheckIcon({ color = "var(--green)" }: { color?: string }) {
 export default function PricingPage() {
   return (
     <AppShell>
-      <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif", paddingBottom: "32px" }}>
+      <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", paddingBottom: "32px" }}>
 
         <div style={{ padding: "24px 0 20px", textAlign: "center" }}>
-          <h1 style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "26px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "8px" }}>
+          <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "26px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "8px" }}>
             Enkelt og ærlig
           </h1>
           <p style={{ fontSize: "14px", color: "var(--text-muted)", lineHeight: 1.5 }}>
@@ -53,15 +53,15 @@ export default function PricingPage() {
             padding: "22px",
             boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
           }}>
-            <p style={{ fontFamily: "Syne, sans-serif", fontWeight: 700, fontSize: "18px", color: "var(--text)", marginBottom: "6px" }}>Gratis</p>
+            <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "18px", color: "var(--text)", marginBottom: "6px" }}>Gratis</p>
             <div style={{ display: "flex", alignItems: "baseline", gap: "4px", marginBottom: "20px" }}>
-              <span style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "36px", color: "var(--text)" }}>0</span>
+              <span style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "36px", color: "var(--text)" }}>0</span>
               <span style={{ fontSize: "14px", color: "var(--text-muted)", paddingBottom: "4px" }}>kr/mnd</span>
             </div>
             <Link href="/login?signup=1" style={{
               display: "block", width: "100%", padding: "13px", borderRadius: "var(--r-full)",
               border: "1.5px solid var(--border)", backgroundColor: "var(--bg-alt)",
-              color: "var(--text)", fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "14px",
+              color: "var(--text)", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "14px",
               textAlign: "center", textDecoration: "none", marginBottom: "20px",
               transition: "background-color 0.15s",
             }}>
@@ -87,14 +87,14 @@ export default function PricingPage() {
             <span style={{
               position: "absolute", top: "14px", right: "14px",
               backgroundColor: "var(--accent)", color: "#fff",
-              fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "11px",
+              fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "11px",
               padding: "3px 10px", borderRadius: "var(--r-full)",
             }}>
               POPULÆR
             </span>
-            <p style={{ fontFamily: "Syne, sans-serif", fontWeight: 700, fontSize: "18px", color: "var(--bg)", marginBottom: "6px" }}>Premium</p>
+            <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "18px", color: "var(--bg)", marginBottom: "6px" }}>Premium</p>
             <div style={{ display: "flex", alignItems: "baseline", gap: "4px", marginBottom: "20px" }}>
-              <span style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "36px", color: "#fff" }}>99</span>
+              <span style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "36px", color: "#fff" }}>99</span>
               <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)", paddingBottom: "4px" }}>kr/mnd</span>
             </div>
             <div style={{ marginBottom: "20px" }}>

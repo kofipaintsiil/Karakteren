@@ -24,7 +24,7 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
     : entries.filter((e) => e.top_subject === activeSubject);
 
   return (
-    <div style={{ width: "100%", fontFamily: "Inter, system-ui, sans-serif" }}>
+    <div style={{ width: "100%", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
       {/* Subject filter pills */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "16px" }}>
         {subjects.map((s) => (
@@ -78,7 +78,7 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
                 textAlign: "center",
                 color: rank <= 3 ? "inherit" : "var(--ink-light)",
                 flexShrink: 0,
-                fontFamily: "Syne, sans-serif",
+                fontFamily: "Plus Jakarta Sans, system-ui, sans-serif",
               }}>
                 {medals[rank - 1] ?? `#${rank}`}
               </span>
@@ -92,7 +92,7 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
               }}>
                 {entry.avatar_url
                   ? <img src={entry.avatar_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  : <span style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "14px", color: "var(--accent-dark)" }}>
+                  : <span style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "14px", color: "var(--accent-dark)" }}>
                       {entry.display_name.charAt(0).toUpperCase()}
                     </span>
                 }
@@ -113,7 +113,7 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
                 </p>
               </div>
               <span style={{
-                fontFamily: "Syne, sans-serif",
+                fontFamily: "Plus Jakarta Sans, system-ui, sans-serif",
                 fontWeight: 800,
                 fontSize: "18px",
                 color,

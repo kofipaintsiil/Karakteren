@@ -70,7 +70,7 @@ export default function EditProfileClient({ initialName, initialAvatar }: Props)
         >
           {avatar
             ? <img src={avatar} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            : <span style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "28px", color: "var(--accent-dark)" }}>{initials}</span>
+            : <span style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "28px", color: "var(--accent-dark)" }}>{initials}</span>
           }
           <div style={{
             position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.35)",
@@ -88,7 +88,7 @@ export default function EditProfileClient({ initialName, initialAvatar }: Props)
         </button>
         <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={uploadAvatar} />
         <div>
-          <p style={{ fontFamily: "Syne, sans-serif", fontWeight: 700, fontSize: "15px", color: "var(--text)", marginBottom: "4px" }}>Profilbilde</p>
+          <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "15px", color: "var(--text)", marginBottom: "4px" }}>Profilbilde</p>
           <p style={{ fontSize: "12px", color: "var(--ink-light)" }}>Klikk for å laste opp bilde</p>
         </div>
       </div>
@@ -109,7 +109,7 @@ export default function EditProfileClient({ initialName, initialAvatar }: Props)
               flex: 1, padding: "11px 14px",
               borderRadius: "var(--r-md)",
               border: "1.5px solid var(--border)",
-              fontFamily: "Inter, sans-serif", fontSize: "15px", color: "var(--text)",
+              fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "15px", color: "var(--text)",
               backgroundColor: "var(--bg)", outline: "none",
             }}
           />
@@ -119,7 +119,7 @@ export default function EditProfileClient({ initialName, initialAvatar }: Props)
             style={{
               padding: "11px 18px", borderRadius: "var(--r-md)", border: "none",
               backgroundColor: "var(--accent)", color: "#fff",
-              fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "14px",
+              fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "14px",
               cursor: "pointer", opacity: (saving || !name.trim() || name === initialName) ? 0.5 : 1,
               flexShrink: 0,
             }}

@@ -306,7 +306,7 @@ function ExamPageInner() {
   if (phase === "draw") {
     return (
       <>
-        <div style={{ backgroundColor: "var(--bg)", minHeight: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Inter, system-ui, sans-serif" }}>
+        <div style={{ backgroundColor: "var(--bg)", minHeight: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
           {/* Top bar */}
           <div style={{ padding: "14px 16px", display: "flex", alignItems: "center" }}>
             <button
@@ -334,7 +334,7 @@ function ExamPageInner() {
                 {presetTopic ? (
                   <>
                     <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>Trukket tema</p>
-                    <p style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "22px", color: "#fff", letterSpacing: "-0.3px" }}>{presetTopic}</p>
+                    <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", color: "#fff", letterSpacing: "-0.3px" }}>{presetTopic}</p>
                     <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)" }}>{subjectLabel}</p>
                   </>
                 ) : (
@@ -343,7 +343,7 @@ function ExamPageInner() {
                     <div style={{ backgroundColor: "var(--accent-bg)", borderRadius: "var(--r-full)", padding: "4px 16px", fontSize: "13px", fontWeight: 600, color: "var(--accent-dark)" }}>
                       {subjectLabel}
                     </div>
-                    <h1 style={{ fontFamily: "Syne, sans-serif", fontSize: "1.4rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.5px" }}>
+                    <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "1.4rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.5px" }}>
                       Klar for eksamen?
                     </h1>
                     <p style={{ fontSize: "14px", color: "var(--text-muted)", lineHeight: 1.6 }}>
@@ -359,7 +359,7 @@ function ExamPageInner() {
                 style={{
                   width: "100%", padding: "15px", borderRadius: "var(--r-full)", border: "none",
                   backgroundColor: "var(--accent)", color: "#fff",
-                  fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "15px",
+                  fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "15px",
                   cursor: "pointer", boxShadow: "0 2px 16px rgba(0,0,0,0.14)",
                   WebkitTapHighlightColor: "transparent",
                 }}
@@ -377,7 +377,7 @@ function ExamPageInner() {
   // ── DONE SCREEN ──
   if (phase === "done") {
     return (
-      <div style={{ backgroundColor: "var(--bg)", minHeight: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Inter, system-ui, sans-serif" }}>
+      <div style={{ backgroundColor: "var(--bg)", minHeight: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
         <div style={{ padding: "14px 16px" }}>
           <button onClick={() => router.push("/dashboard")} style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "var(--text-muted)", fontFamily: "inherit", padding: 0 }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -386,7 +386,7 @@ function ExamPageInner() {
         </div>
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 20px", textAlign: "center" }}>
           <Blobb state={blobbState} size={120} />
-          <h1 style={{ fontFamily: "Syne, sans-serif", fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", marginTop: "24px", marginBottom: "8px", letterSpacing: "-0.5px" }}>
+          <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", marginTop: "24px", marginBottom: "8px", letterSpacing: "-0.5px" }}>
             Eksamen ferdig!
           </h1>
           <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "32px", lineHeight: 1.5 }}>
@@ -394,7 +394,7 @@ function ExamPageInner() {
           </p>
           <button
             onClick={() => router.push("/exam/feedback")}
-            style={{ width: "100%", maxWidth: "340px", padding: "15px", borderRadius: "var(--r-full)", border: "none", backgroundColor: "var(--accent)", color: "#fff", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "15px", cursor: "pointer", boxShadow: "0 2px 16px rgba(0,0,0,0.12)" }}
+            style={{ width: "100%", maxWidth: "340px", padding: "15px", borderRadius: "var(--r-full)", border: "none", backgroundColor: "var(--accent)", color: "#fff", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "15px", cursor: "pointer", boxShadow: "0 2px 16px rgba(0,0,0,0.12)" }}
           >
             Se karakter og tilbakemelding
           </button>
@@ -408,7 +408,7 @@ function ExamPageInner() {
   const progressFill = exchangeCount / (exchangeCount + 4);
 
   return (
-    <div style={{ backgroundColor: "var(--bg)", height: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Inter, system-ui, sans-serif" }}>
+    <div style={{ backgroundColor: "var(--bg)", height: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
 
       {/* ── Top bar ── */}
       <div style={{ backgroundColor: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "0 16px", height: "52px", display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>

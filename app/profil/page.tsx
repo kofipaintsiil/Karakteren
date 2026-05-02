@@ -42,9 +42,9 @@ export default async function ProfilPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 0", fontFamily: "Inter, system-ui, sans-serif" }}>
+      <div style={{ maxWidth: "640px", margin: "0 auto", padding: "24px 0", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
 
-        <h1 style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "4px" }}>
+        <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "4px" }}>
           Profil
         </h1>
         <p style={{ fontSize: "13px", color: "var(--ink-light)", marginBottom: "28px" }}>{user.email}</p>
@@ -72,7 +72,7 @@ export default async function ProfilPage() {
             { value: `${stats?.streak ?? 0}🔥`, label: "Dager på rad" },
           ].map((s) => (
             <div key={s.label}>
-              <p style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, fontSize: "1.375rem", color: "var(--text)" }}>{s.value}</p>
+              <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "1.375rem", color: "var(--text)" }}>{s.value}</p>
               <p style={{ fontSize: "11px", color: "var(--ink-light)", fontWeight: 600, marginTop: "2px" }}>{s.label}</p>
             </div>
           ))}
@@ -93,7 +93,7 @@ export default async function ProfilPage() {
                 <div key={s.subject}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
                     <span style={{ fontSize: "13px", color: "var(--text)" }}>{s.subject}</span>
-                    <span style={{ fontFamily: "Syne, sans-serif", fontWeight: 700, fontSize: "13px", color: gradeColor(s.avg) }}>{s.avg}/6</span>
+                    <span style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "13px", color: gradeColor(s.avg) }}>{s.avg}/6</span>
                   </div>
                   <div style={{ height: "5px", backgroundColor: "var(--bg-alt)", borderRadius: "3px", overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${(s.avg / 6) * 100}%`, backgroundColor: gradeColor(s.avg), borderRadius: "3px", transition: "width 0.8s ease" }} />
@@ -119,7 +119,7 @@ export default async function ProfilPage() {
           <Link href="/pricing" style={{
             padding: "8px 16px", borderRadius: "var(--r-full)",
             backgroundColor: "var(--accent)", color: "#fff",
-            fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "13px",
+            fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "13px",
             textDecoration: "none",
           }}>
             Oppgrader

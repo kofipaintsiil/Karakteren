@@ -1,59 +1,59 @@
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap");
 
 @import "tailwindcss";
 
 :root {
-  /* ── Accent (warm amber-orange, hue 70) ── */
-  --accent:       oklch(0.65 0.14 70);
-  --accent-dark:  oklch(0.52 0.14 70);
-  --accent-bg:    oklch(0.96 0.04 70);
+  /* ── Coral accent (DESIGN.md spec) ── */
+  --accent:       oklch(0.63 0.17 28);
+  --accent-dark:  oklch(0.47 0.16 28);
+  --accent-bg:    oklch(0.93 0.06 28);
 
-  /* Legacy coral aliases → mapped to accent */
-  --coral:        oklch(0.65 0.14 70);
-  --coral-hover:  oklch(0.58 0.14 70);
-  --coral-press:  oklch(0.52 0.14 70);
-  --coral-soft:   oklch(0.96 0.04 70);
-  --coral-mid:    oklch(0.88 0.08 70);
+  /* Coral aliases */
+  --coral:        oklch(0.63 0.17 28);
+  --coral-hover:  oklch(0.55 0.17 28);
+  --coral-press:  oklch(0.47 0.16 28);
+  --coral-soft:   oklch(0.93 0.06 28);
+  --coral-mid:    oklch(0.86 0.10 28);
 
   /* ── Semantic colours ── */
-  --green:        oklch(0.62 0.14 150);
-  --green-press:  oklch(0.50 0.14 150);
-  --green-soft:   oklch(0.96 0.04 150);
+  --green:        oklch(0.58 0.16 155);
+  --green-press:  oklch(0.48 0.16 155);
+  --green-soft:   oklch(0.96 0.04 155);
 
-  --yellow:       oklch(0.86 0.17 82);
-  --yellow-press: oklch(0.74 0.17 82);
-  --yellow-soft:  oklch(0.97 0.05 82);
+  --yellow:       oklch(0.87 0.14 82);
+  --yellow-press: oklch(0.74 0.14 82);
+  --yellow-soft:  oklch(0.96 0.05 82);
 
   --blue:         oklch(0.62 0.19 240);
   --blue-soft:    oklch(0.95 0.05 240);
 
-  --error:        oklch(0.58 0.18 22);
-  --error-bg:     oklch(0.96 0.06 22);
+  --error:        oklch(0.55 0.20 20);
+  --error-bg:     oklch(0.97 0.04 20);
 
-  /* ── Surfaces — warm cream ── */
-  --bg:           #FAF8F4;
-  --bg-alt:       #F2EDE6;
-  --surface:      #FFFFFF;
-  --surface-2:    #F7F4EF;
-  --border:       rgba(0, 0, 0, 0.08);
-  --border-mid:   rgba(0, 0, 0, 0.12);
-  --border-dark:  rgba(0, 0, 0, 0.16);
+  /* ── Surfaces — warm paper (DESIGN.md spec) ── */
+  --bg:           oklch(0.99 0.006 65);
+  --bg-alt:       oklch(0.94 0.009 65);
+  --surface:      oklch(0.97 0.008 65);
+  --surface-2:    oklch(0.94 0.009 65);
+  --border:       oklch(0.90 0.008 65);
+  --border-mid:   oklch(0.86 0.008 65);
+  --border-dark:  oklch(0.82 0.008 65);
 
   /* ── Text ── */
-  --text:         #141414;
-  --text-muted:   #555048;
-  --text-faint:   #9B948A;
+  --text:         oklch(0.17 0.012 55);
+  --text-muted:   oklch(0.48 0.012 55);
+  --text-faint:   oklch(0.72 0.010 55);
   /* Legacy aliases */
-  --ink:          #141414;
-  --ink-mid:      #555048;
-  --ink-light:    #9B948A;
+  --ink:          oklch(0.17 0.012 55);
+  --ink-mid:      oklch(0.48 0.012 55);
+  --ink-light:    oklch(0.72 0.010 55);
 
-  /* ── Shape ── */
+  /* ── Shape (DESIGN.md spec) ── */
   --r-sm:   8px;
-  --r-md:   14px;
-  --r-lg:   20px;
-  --r-xl:   28px;
-  --r-full: 999px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-xl:   24px;
+  --r-full: 9999px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -67,10 +67,10 @@ html {
 }
 
 body {
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
-  line-height: 1.55;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
   overflow-x: hidden;
@@ -78,21 +78,20 @@ body {
 }
 
 h1, h2, h3, .font-display {
-  font-family: "Syne", "Inter", system-ui, sans-serif;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  line-height: 1.2;
 }
 
-/* Card utility — white surface, soft border, subtle shadow */
+/* Card utility — warm surface, single border, no shadow by default */
 .card {
   background-color: var(--surface);
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--r-md);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 .card-lg {
   background-color: var(--surface);
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
 /* Hide scrollbars on swipe containers */
@@ -218,6 +217,6 @@ select:focus {
   --ink:         #F5F0EA;
   --ink-mid:     #9B948A;
   --ink-light:   #555048;
-  --accent-bg:   oklch(22% 0.06 70);
+  --accent-bg:   oklch(22% 0.06 28);
   color-scheme:  dark;
 }
