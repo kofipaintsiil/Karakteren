@@ -21,7 +21,10 @@ export async function POST(req: NextRequest) {
     headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
     body: whisperForm,
   });
-  if (!res.ok) return NextResponse.json({ error: "Transkribering feilet." }, { status: 500 });
+  if (!res.ok) {
+    const errBody = await res.text();
+    return NextResponse.json({ error: `Whisper: ${res.status} — ${errBody}` }, { status: 500 });
+  }
   const data = await res.json();
   return NextResponse.json({ text: data.text ?? "" });
 }
