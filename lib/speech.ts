@@ -137,6 +137,64 @@ export function unlockAudio(): void {
   } catch {}
 }
 
+// ─── Web Speech API (free, real-time, works on iOS/Android/Chrome) ───────────
+
+function getRecognition(): SpeechRecognition | null {
+  if (typeof window === "undefined") return null;
+  const SR = window.SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition;
+  if (!SR) return null;
+  return new SR();
+}
+
+function startWebSpeech(
+  onTranscript: (text: string) => void,
+  onInterim: (text: string) => void,
+  lang: string,
+  onError?: (msg: string) => void,
+): (() => void) | null {
+  const recognition = getRecognition();
+  if (!recognition) return null;
+
+  recognition.lang = lang;
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+
+  let finalText = "";
+
+  recognition.onresult = (e: SpeechRecognitionEvent) => {
+    let interim = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalText += t;
+      else interim += t;
+    }
+    if (interim) onInterim(interim);
+  };
+
+  recognition.onend = () => { onTranscript(finalText.trim()); };
+
+  recognition.onerror = (e: SpeechRecognitionErrorEvent) => {
+    if (e.error === "no-speech") { onTranscript(""); return; }
+    if (e.error === "not-allowed") {
+      onError?.("Mikrofonillatelse nektet. Åpne nettleserinnstillinger og tillat mikrofon.");
+    } else {
+      onError?.(`Talegjenkjenning feilet: ${e.error}`);
+    }
+    onTranscript("");
+  };
+
+  try {
+    recognition.start();
+  } catch {
+    return null;
+  }
+
+  return () => { try { recognition.stop(); } catch {} };
+}
+
+// ─── MediaRecorder + Whisper fallback ────────────────────────────────────────
+
 function getSupportedMimeType(): string {
   if (typeof MediaRecorder === "undefined") return "";
   const types = [
@@ -159,11 +217,22 @@ export async function startRecording(
   onTranscript: (text: string) => void,
   lang = "nb-NO",
   onError?: (msg: string) => void,
+  onInterim?: (text: string) => void,
 ): Promise<(() => void) | null> {
   if (typeof window === "undefined") return null;
 
+  // ── Try Web Speech API first (free, real-time, works on iOS/Android) ──
+  const webSpeechStop = startWebSpeech(
+    onTranscript,
+    onInterim ?? (() => {}),
+    lang,
+    onError,
+  );
+  if (webSpeechStop) return webSpeechStop;
+
+  // ── Fallback: MediaRecorder + Whisper ──
   if (typeof MediaRecorder === "undefined") {
-    onError?.("Nettleseren din støtter ikke opptak. Prøv Chrome eller Safari 14.3+.");
+    onError?.("Nettleseren din støtter ikke taleinnspilling. Prøv Chrome eller Safari.");
     return null;
   }
 
@@ -173,11 +242,11 @@ export async function startRecording(
   } catch (err: unknown) {
     const name = (err as { name?: string })?.name;
     if (name === "NotAllowedError" || name === "PermissionDeniedError") {
-      onError?.("Mikrofonillatelse nektet. Åpne nettleserinnstillinger og tillat mikrofon for denne siden.");
+      onError?.("Mikrofonillatelse nektet. Åpne nettleserinnstillinger og tillat mikrofon.");
     } else if (name === "NotFoundError") {
       onError?.("Ingen mikrofon funnet på enheten.");
     } else {
-      onError?.("Kunne ikke starte mikrofon. Sjekk at du er på HTTPS og har gitt tillatelse.");
+      onError?.("Kunne ikke starte mikrofon.");
     }
     return null;
   }
@@ -200,7 +269,7 @@ export async function startRecording(
     const blob = new Blob(chunks, { type: actualMime });
 
     if (blob.size < 1000) {
-      onError?.(`Lydopptak var tomt (${blob.size} bytes, format: ${actualMime}). Sjekk at mikrofon er aktiv.`);
+      onError?.(`Lydopptak var tomt (${blob.size} bytes). Sjekk at mikrofon er aktiv.`);
       onTranscript("");
       return;
     }
@@ -224,7 +293,6 @@ export async function startRecording(
     }
   };
 
-  // No timeslice — collect all data at once on stop (more reliable on iOS)
   recorder.start();
   return () => { if (recorder.state !== "inactive") recorder.stop(); };
 }

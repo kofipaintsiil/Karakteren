@@ -272,16 +272,16 @@ function ExamPageInner() {
         async (text) => {
           if (transcribeTimeoutRef.current) clearTimeout(transcribeTimeoutRef.current);
           setIsTranscribing(false);
+          setLiveTranscript("");
           if (text.trim()) {
             await stopRecordingAndReview(text);
-          }
-          // If empty but no error was set, show generic message
-          else if (!text.trim()) {
-            setMicError((prev) => prev ?? "Ingen tale registrert — prøv igjen og snakk høyt og tydelig.");
+          } else {
+            setMicError((prev) => prev ?? "Ingen tale registrert — snakk høyt og tydelig, og prøv igjen.");
           }
         },
         subject === "engelsk" ? "en-US" : "nb-NO",
         (err) => { setIsTranscribing(false); setMicError(err); },
+        (interim) => setLiveTranscript(interim),
       );
       setIsRequestingMic(false);
       if (stop) {
