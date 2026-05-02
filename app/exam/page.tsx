@@ -190,6 +190,7 @@ function ExamPageInner() {
     if (!trimmed) return;
     setTypedAnswer(trimmed);
     setIsTranscribing(true);
+    let result = trimmed;
     try {
       const res = await fetch("/api/correct-transcript", {
         method: "POST",
@@ -198,10 +199,12 @@ function ExamPageInner() {
       });
       if (res.ok) {
         const { text: corrected } = await res.json();
-        if (corrected) setTypedAnswer(corrected);
+        if (corrected) result = corrected;
       }
     } catch {}
     setIsTranscribing(false);
+    // Auto-submit — no need to press send after speaking
+    await handleStudentAnswer(result);
   }
 
   function toggleRecording() {
