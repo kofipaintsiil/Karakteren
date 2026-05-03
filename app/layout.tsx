@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import DarkModeProvider from "@/components/DarkModeProvider";
 import { LangProvider } from "@/components/LangProvider";
@@ -49,6 +50,14 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="nb" className="h-full">
+      {process.env.NEXT_PUBLIC_ADSENSE_ID && (
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
+          crossOrigin="anonymous"
+          strategy="lazyOnload"
+        />
+      )}
       <body className="min-h-full flex flex-col">
         <DarkModeProvider><LangProvider>{children}</LangProvider></DarkModeProvider>
       </body>

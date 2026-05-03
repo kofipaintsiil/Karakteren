@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Blobb, { BlobbState } from "@/components/Blobb";
 import AppShell from "@/components/layout/AppShell";
 import ShareCard from "@/components/ShareCard";
+import AdBanner from "@/components/AdBanner";
 
 interface SessionResult {
   grade: number;
@@ -173,6 +174,9 @@ export default function FeedbackPage() {
               gradeColor={cfg.color}
             />
           )}
+
+          {/* Ad — only shown to free users */}
+          <AdBanner />
 
           {/* Actions */}
           <button
