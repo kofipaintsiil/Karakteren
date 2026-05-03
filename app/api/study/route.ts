@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { requireAuth } from "@/lib/auth-guard";
+import { rateLimit } from "@/lib/rate-limit";
 
 const client = new Anthropic();
 
@@ -61,6 +63,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "AI ikke konfigurert." }, { status: 503 });
   }
 
+  const auth = await requireAuth();
+  if (!auth.ok) return auth.response;
+
+  const ip = req.headers.get("x-forwarded-for") ?? auth.userId;
+  if (!rateLimit(`study:${ip}`, 40, 60_000)) {
+    return NextResponse.json({ error: "For mange forespørsler" }, { status: 429 });
+  }
+
   const body = await req.json() as StudyRequest;
   const { subject, topics, messages, phase } = body;
 
@@ -92,15 +102,20 @@ export async function POST(req: NextRequest) {
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
     async start(controller) {
-      for await (const chunk of stream) {
-        if (
-          chunk.type === "content_block_delta" &&
-          chunk.delta.type === "text_delta"
-        ) {
-          controller.enqueue(encoder.encode(chunk.delta.text));
+      try {
+        for await (const chunk of stream) {
+          if (
+            chunk.type === "content_block_delta" &&
+            chunk.delta.type === "text_delta"
+          ) {
+            controller.enqueue(encoder.encode(chunk.delta.text));
+          }
         }
+      } catch {
+        // Client disconnected or stream error — close cleanly
+      } finally {
+        controller.close();
       }
-      controller.close();
     },
   });
 

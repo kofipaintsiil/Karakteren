@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@/lib/supabase/server";
 import { checkQuota } from "@/lib/quota";
+import { rateLimit } from "@/lib/rate-limit";
 
 const client = new Anthropic();
 
@@ -91,6 +92,11 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Ikke innlogget" }, { status: 401 });
 
+  const ip = req.headers.get("x-forwarded-for") ?? user.id;
+  if (!rateLimit(`exam:${ip}`, 50, 60_000)) {
+    return NextResponse.json({ error: "For mange forespørsler" }, { status: 429 });
+  }
+
   const body = await req.json() as ExamRequest;
   const { subject, topic, messages, phase } = body;
 
@@ -164,15 +170,20 @@ export async function POST(req: NextRequest) {
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
     async start(controller) {
-      for await (const chunk of stream) {
-        if (
-          chunk.type === "content_block_delta" &&
-          chunk.delta.type === "text_delta"
-        ) {
-          controller.enqueue(encoder.encode(chunk.delta.text));
+      try {
+        for await (const chunk of stream) {
+          if (
+            chunk.type === "content_block_delta" &&
+            chunk.delta.type === "text_delta"
+          ) {
+            controller.enqueue(encoder.encode(chunk.delta.text));
+          }
         }
+      } catch {
+        // Client disconnected or stream error — close cleanly
+      } finally {
+        controller.close();
       }
-      controller.close();
     },
   });
 
