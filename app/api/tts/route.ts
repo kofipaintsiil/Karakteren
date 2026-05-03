@@ -2,8 +2,35 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth-guard";
 import { rateLimit } from "@/lib/rate-limit";
 
-const ELEVENLABS_VOICE_ID = "BGEU6wFi2uNm6Kje1Yhk";
+// Override via ELEVENLABS_VOICE_ID env var in Vercel if you change voices
+const VOICE_ID = process.env.ELEVENLABS_VOICE_ID ?? "BGEU6wFi2uNm6Kje1Yhk";
+// Well-known public fallback (ElevenLabs "Charlotte" — multilingual)
+const FALLBACK_VOICE_ID = "XB0fDUnXU5powFXDhCwa";
 const MAX_TEXT_LENGTH = 1000;
+
+async function elevenLabsTTS(text: string, voiceId: string): Promise<ArrayBuffer | null> {
+  if (!process.env.ELEVENLABS_API_KEY) return null;
+  const res = await fetch(
+    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+    {
+      method: "POST",
+      headers: {
+        "xi-api-key": process.env.ELEVENLABS_API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text,
+        model_id: "eleven_multilingual_v2",
+        voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.2 },
+      }),
+      signal: AbortSignal.timeout(15_000),
+    }
+  );
+  if (res.ok) return res.arrayBuffer();
+  const errBody = await res.text().catch(() => "(no body)");
+  console.error(`[TTS] ElevenLabs voice=${voiceId} status=${res.status}:`, errBody);
+  return null;
+}
 
 export async function POST(req: NextRequest) {
   const auth = await requireAuth();
@@ -20,37 +47,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Tekst for lang" }, { status: 400 });
   }
 
-  // ElevenLabs — primary
   if (process.env.ELEVENLABS_API_KEY) {
-    try {
-      const res = await fetch(
-        `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
-        {
-          method: "POST",
-          headers: {
-            "xi-api-key": process.env.ELEVENLABS_API_KEY,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            text,
-            model_id: "eleven_multilingual_v2",
-            voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.2 },
-          }),
-          signal: AbortSignal.timeout(15_000),
-        }
-      );
-      if (res.ok) {
-        const audio = await res.arrayBuffer();
-        return new NextResponse(audio, {
-          headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" },
-        });
-      }
-    } catch {
-      // fall through to OpenAI
+    // Try configured voice first, then fall back to public voice
+    let audio = await elevenLabsTTS(text, VOICE_ID).catch((e) => {
+      console.error("[TTS] ElevenLabs primary error:", e);
+      return null;
+    });
+    if (!audio && VOICE_ID !== FALLBACK_VOICE_ID) {
+      console.warn("[TTS] Primary voice failed, trying fallback voice");
+      audio = await elevenLabsTTS(text, FALLBACK_VOICE_ID).catch((e) => {
+        console.error("[TTS] ElevenLabs fallback error:", e);
+        return null;
+      });
     }
+    if (audio) {
+      return new NextResponse(audio, {
+        headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" },
+      });
+    }
+  } else {
+    console.error("[TTS] ELEVENLABS_API_KEY is not set in environment");
   }
 
-  // OpenAI — fallback
+  // OpenAI — last resort
   if (process.env.OPENAI_API_KEY) {
     try {
       const res = await fetch("https://api.openai.com/v1/audio/speech", {
@@ -68,8 +87,10 @@ export async function POST(req: NextRequest) {
           headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" },
         });
       }
-    } catch {
-      // fall through
+      const errBody = await res.text().catch(() => "(no body)");
+      console.error(`[TTS] OpenAI ${res.status}:`, errBody);
+    } catch (e) {
+      console.error("[TTS] OpenAI fetch error:", e);
     }
   }
 
