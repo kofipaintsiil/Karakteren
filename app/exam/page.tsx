@@ -98,7 +98,7 @@ function ExamPageInner() {
   const [isRecording, setIsRecording] = useState(false);
   const [liveTranscript, setLiveTranscript] = useState("");
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const [limitInfo, setLimitInfo] = useState({ used: 0, limit: 3 });
+  const [limitInfo, setLimitInfo] = useState({ used: 0, limit: 3, isPremium: false });
   const [typedAnswer, setTypedAnswer] = useState("");
   const [exchangeCount, setExchangeCount] = useState(0);
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -140,6 +140,13 @@ function ExamPageInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subject, topic: currentTopic, messages: currentMessages, phase: apiPhase }),
       });
+      if (res.status === 429) {
+        const data = await res.json();
+        setLimitInfo({ used: data.used ?? 0, limit: data.limit ?? 3, isPremium: data.isPremium ?? false });
+        setShowUpgrade(true);
+        setIsStreaming(false);
+        return null;
+      }
       if (!res.ok || !res.body) return null;
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -175,8 +182,8 @@ function ExamPageInner() {
 
   async function startExam() {
     unlockAudio();
-    const { allowed, used, limit } = await canStartExam();
-    if (!allowed) { setLimitInfo({ used, limit }); setShowUpgrade(true); return; }
+    const { allowed, isPremium: premium, used, limit } = await canStartExam();
+    if (!allowed) { setLimitInfo({ used, limit, isPremium: premium }); setShowUpgrade(true); return; }
 
     const name = presetTopic ?? pickRandomTopic(subject).name;
     setTopicName(name);
@@ -405,7 +412,7 @@ function ExamPageInner() {
           </div>
         </div>
         </div>
-        {showUpgrade && <UpgradeModal used={limitInfo.used} limit={limitInfo.limit} onClose={() => setShowUpgrade(false)} />}
+        {showUpgrade && <UpgradeModal used={limitInfo.used} limit={limitInfo.limit} isPremium={limitInfo.isPremium} onClose={() => setShowUpgrade(false)} />}
       </>
     );
   }

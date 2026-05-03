@@ -1,6 +1,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 
-const FREE_LIMIT = 3;
+const FREE_LIMIT    = 3;
+const PREMIUM_LIMIT = 60;
 
 function createClient() {
   return createBrowserClient(
@@ -34,16 +35,20 @@ export async function isPremium(): Promise<boolean> {
 
   const { data } = await supabase
     .from("subscriptions")
-    .select("status")
+    .select("status, current_period_end")
     .eq("user_id", user.id)
     .single();
 
-  return data?.status === "active";
+  return (
+    data?.status === "active" &&
+    data?.current_period_end != null &&
+    new Date(data.current_period_end) > new Date()
+  );
 }
 
-export async function canStartExam(): Promise<{ allowed: boolean; used: number; limit: number }> {
+export async function canStartExam(): Promise<{ allowed: boolean; isPremium: boolean; used: number; limit: number }> {
   const premium = await isPremium();
-  if (premium) return { allowed: true, used: 0, limit: Infinity };
+  const limit = premium ? PREMIUM_LIMIT : FREE_LIMIT;
   const used = await getSessionsThisMonth();
-  return { allowed: used < FREE_LIMIT, used, limit: FREE_LIMIT };
+  return { allowed: used < limit, isPremium: premium, used, limit };
 }

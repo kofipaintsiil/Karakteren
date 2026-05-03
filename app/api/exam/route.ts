@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { createClient } from "@/lib/supabase/server";
+import { checkQuota } from "@/lib/quota";
 
 const client = new Anthropic();
 
@@ -85,8 +87,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "AI-eksaminatoren er ikke konfigurert ennå." }, { status: 503 });
   }
 
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Ikke innlogget" }, { status: 401 });
+
   const body = await req.json() as ExamRequest;
   const { subject, topic, messages, phase } = body;
+
+  // Only enforce quota on new exam starts, not follow-up turns or grading
+  if (phase === "opening") {
+    const quota = await checkQuota(user.id);
+    if (!quota.allowed) {
+      return NextResponse.json(
+        {
+          error: "quota_exceeded",
+          isPremium: quota.isPremium,
+          used: quota.used,
+          limit: quota.limit,
+        },
+        { status: 429 }
+      );
+    }
+  }
 
   // Grading phase — returns JSON, not streaming
   if (phase === "grade") {
