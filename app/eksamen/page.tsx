@@ -27,7 +27,7 @@ const SUBJECTS = [
   ]},
   { id: "historie",    label: "Historie",    emoji: "🏛️", variants: null },
   { id: "naturfag",    label: "Naturfag",    emoji: "🌍", variants: null },
-  { id: "samfunnsfag", label: "Samfunnsfag", emoji: "🗺️", variants: null },
+  { id: "samfunnsfag", label: "Samfunnskunnskap", emoji: "🗺️", variants: null },
   { id: "engelsk",     label: "Engelsk",     emoji: "🌐", variants: null },
   { id: "geografi",    label: "Geografi",    emoji: "🗻", variants: null },
   { id: "fransk",      label: "Fransk",      emoji: "🇫🇷", variants: [

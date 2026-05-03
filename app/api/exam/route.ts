@@ -24,7 +24,7 @@ interface ExamRequest {
 const SUBJECT_LABELS: Record<string, string> = {
   norsk: "Norsk", matematikk: "Matematikk", naturfag: "Naturfag",
   fysikk: "Fysikk", kjemi: "Kjemi", biologi: "Biologi",
-  historie: "Historie", samfunnsfag: "Samfunnsfag", engelsk: "Engelsk", geografi: "Geografi",
+  historie: "Historie", samfunnsfag: "Samfunnskunnskap", engelsk: "Engelsk", geografi: "Geografi",
   "fransk-1": "Français (Niveau I)", "fransk-2": "Français (Niveau II)",
 };
 
