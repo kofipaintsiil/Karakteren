@@ -92,9 +92,8 @@ export default function HjelpPage() {
 
         {/* Contact */}
         <div style={{
-          backgroundColor: "var(--coral-soft)",
-          border: "2px solid var(--coral-mid)",
-          borderBottom: "4px solid var(--coral)",
+          backgroundColor: "var(--accent-bg)",
+          border: "2px solid var(--accent)",
           borderRadius: "var(--r-lg)",
           padding: "20px",
           display: "flex",
@@ -104,8 +103,7 @@ export default function HjelpPage() {
           <div style={{
             width: "40px", height: "40px", flexShrink: 0,
             borderRadius: "var(--r-md)",
-            backgroundColor: "var(--coral)",
-            border: "2px solid var(--coral-press)",
+            backgroundColor: "var(--accent)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
             <Mail size={18} color="#fff" />
@@ -118,7 +116,7 @@ export default function HjelpPage() {
               Send oss en e-post på{" "}
               <a
                 href="mailto:hei@karakteren.no"
-                style={{ color: "var(--coral-press)", textDecoration: "none", fontWeight: 700 }}
+                style={{ color: "var(--accent-dark)", textDecoration: "none", fontWeight: 700 }}
               >
                 hei@karakteren.no
               </a>
