@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ELEVENLABS_VOICE_ID = "nhvaqgRyAq6BmFs3WcdX";
+const ELEVENLABS_VOICE_ID = "BGEU6wFi2uNm6Kje1Yhk";
 
 export async function POST(req: NextRequest) {
   const { text } = await req.json();
