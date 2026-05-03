@@ -3,7 +3,7 @@ import { requireAuth } from "@/lib/auth-guard";
 import { rateLimit } from "@/lib/rate-limit";
 
 // Override via ELEVENLABS_VOICE_ID env var in Vercel if you change voices
-const VOICE_ID = process.env.ELEVENLABS_VOICE_ID ?? "BGEU6wFi2uNm6Kje1Yhk";
+const VOICE_ID = process.env.ELEVENLABS_VOICE_ID ?? "2dhHLsmg0MVma2t041qT";
 // Well-known public fallback (ElevenLabs "Charlotte" — multilingual)
 const FALLBACK_VOICE_ID = "XB0fDUnXU5powFXDhCwa";
 const MAX_TEXT_LENGTH = 1000;
