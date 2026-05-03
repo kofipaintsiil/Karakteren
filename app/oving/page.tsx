@@ -236,9 +236,9 @@ export default function OvingPage() {
   if (step === "fag") {
     return (
       <AppShell>
-        <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
+        <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
           <div style={{ padding: "20px 0 16px" }}>
-            <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
+            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
               Velg tema selv
             </h1>
             <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
@@ -262,7 +262,7 @@ export default function OvingPage() {
                       backgroundColor: "var(--surface)", color: "var(--text)",
                       border: "1.5px solid var(--border)",
                       borderRadius: "var(--r-full)", padding: "8px 16px",
-                      fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "14px", fontWeight: 500,
+                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "14px", fontWeight: 500,
                       cursor: "pointer", transition: "all 0.15s",
                       WebkitTapHighlightColor: "transparent",
                     }}
@@ -292,7 +292,7 @@ export default function OvingPage() {
                     backgroundColor: "var(--surface)", color: "var(--text)",
                     border: "1.5px solid var(--border)",
                     borderRadius: "var(--r-lg)", padding: "14px 16px",
-                    fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "14px", fontWeight: 500,
+                    fontFamily: "Inter, system-ui, sans-serif", fontSize: "14px", fontWeight: 500,
                     cursor: "pointer", transition: "all 0.15s",
                     textAlign: "left", WebkitTapHighlightColor: "transparent",
                     position: "relative",
@@ -321,7 +321,7 @@ export default function OvingPage() {
   if (step === "variant" && baseFag?.variants) {
     return (
       <AppShell>
-        <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
+        <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
           {/* Back + title */}
           <div style={{ padding: "16px 0 12px", borderBottom: "1px solid var(--border)" }}>
             <button
@@ -329,13 +329,13 @@ export default function OvingPage() {
               style={{
                 background: "none", border: "none", cursor: "pointer",
                 display: "flex", alignItems: "center", gap: "6px",
-                color: "var(--text-muted)", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "13px",
+                color: "var(--text-muted)", fontFamily: "Inter, system-ui, sans-serif", fontSize: "13px",
                 marginBottom: "12px", padding: 0, WebkitTapHighlightColor: "transparent",
               }}
             >
               <ChevronLeft size={14} /> Tilbake
             </button>
-            <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", letterSpacing: "-0.3px", color: "var(--text)", marginBottom: "2px" }}>
+            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", letterSpacing: "-0.3px", color: "var(--text)", marginBottom: "2px" }}>
               {baseFag.emoji} {baseFag.label} — Velg nivå
             </h1>
             <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>
@@ -354,12 +354,12 @@ export default function OvingPage() {
                   backgroundColor: "var(--surface)", color: "var(--text)",
                   border: "1.5px solid var(--border)",
                   borderRadius: "var(--r-lg)", padding: "18px 16px",
-                  fontFamily: "Plus Jakarta Sans, system-ui, sans-serif",
+                  fontFamily: "Inter, system-ui, sans-serif",
                   cursor: "pointer", transition: "all 0.15s",
                   textAlign: "left", WebkitTapHighlightColor: "transparent",
                 }}
               >
-                <span style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "18px", color: "var(--text)" }}>{v.label}</span>
+                <span style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 800, fontSize: "18px", color: "var(--text)" }}>{v.label}</span>
                 <span style={{ fontSize: "12px", color: "var(--ink-light)" }}>{v.desc}</span>
               </button>
             ))}
@@ -376,7 +376,7 @@ export default function OvingPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
+      <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
         {/* Back + title */}
         <div style={{ padding: "16px 0 12px", borderBottom: "1px solid var(--border)" }}>
           <button
@@ -384,13 +384,13 @@ export default function OvingPage() {
             style={{
               background: "none", border: "none", cursor: "pointer",
               display: "flex", alignItems: "center", gap: "6px",
-              color: "var(--text-muted)", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "13px",
+              color: "var(--text-muted)", fontFamily: "Inter, system-ui, sans-serif", fontSize: "13px",
               marginBottom: "12px", padding: 0, WebkitTapHighlightColor: "transparent",
             }}
           >
             <ChevronLeft size={14} /> Tilbake
           </button>
-          <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", letterSpacing: "-0.3px", color: "var(--text)", marginBottom: "2px" }}>
+          <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", letterSpacing: "-0.3px", color: "var(--text)", marginBottom: "2px" }}>
             {headingLabel} — Kapitler
           </h1>
           <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>
@@ -411,7 +411,7 @@ export default function OvingPage() {
             onClick={toggleAll}
             style={{
               background: "none", border: "none", cursor: "pointer",
-              fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "13px", fontWeight: 600,
+              fontFamily: "Inter, system-ui, sans-serif", fontSize: "13px", fontWeight: 600,
               color: "var(--accent-dark)", padding: 0,
               WebkitTapHighlightColor: "transparent",
             }}
@@ -508,7 +508,7 @@ export default function OvingPage() {
             style={{
               width: "100%", padding: "14px", borderRadius: "var(--r-full)", border: "none",
               backgroundColor: "var(--accent)", color: "#fff",
-              fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
+              fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
               cursor: selected.size > 0 ? "pointer" : "default",
               opacity: selected.size > 0 ? 1 : 0.4,
               boxShadow: selected.size > 0 ? "0 2px 12px rgba(0,0,0,0.12)" : "none",

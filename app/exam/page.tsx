@@ -11,6 +11,7 @@ import { canStartExam } from "@/lib/limits";
 import UpgradeModal from "@/components/UpgradeModal";
 
 type Phase = "draw" | "conversation" | "grading" | "done";
+type InputMode = "voice" | "text";
 
 interface Message {
   role: "examiner" | "student";
@@ -38,12 +39,53 @@ const SUBJECT_LABELS: Record<string, string> = {
   "biologi-1": "Biologi 1", "biologi-2": "Biologi 2",
 };
 
+// Design tokens (Karakteren design spec)
+const KR = {
+  bg:         "#FAF8F4",
+  bgAlt:      "#F2EDE6",
+  ink:        "#141414",
+  inkMid:     "#555048",
+  inkLight:   "#9B948A",
+  card:       "#FFFFFF",
+  border:     "rgba(0,0,0,0.08)",
+  accent:     "oklch(65% 0.14 70)",
+  accentDark: "oklch(52% 0.14 70)",
+  accentBg:   "oklch(96% 0.04 70)",
+  green:      "oklch(62% 0.14 150)",
+  red:        "oklch(58% 0.18 22)",
+  redBg:      "oklch(96% 0.06 22)",
+  r:          "14px",
+  rLg:        "20px",
+  rFull:      "999px",
+  fontDisplay:"'Syne', system-ui, sans-serif",
+  fontBody:   "'Inter', system-ui, sans-serif",
+};
+
+function MicIcon({ size = 28, color = "white" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <rect x="9" y="2" width="6" height="11" rx="3" fill={color} />
+      <path d="M5 11C5 14.866 8.13401 18 12 18C15.866 18 19 14.866 19 11" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <line x1="12" y1="18" x2="12" y2="22" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <line x1="9" y1="22" x2="15" y2="22" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BackChevron() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
 function ExamPageInner() {
   const params = useSearchParams();
   const router = useRouter();
   const subject = params.get("subject") ?? "matematikk";
   const subjectLabel = SUBJECT_LABELS[subject] ?? subject;
-  const presetTopic = params.get("topic"); // passed from eksamen page — skip redraw
+  const presetTopic = params.get("topic");
 
   const [phase, setPhase] = useState<Phase>("draw");
   const [topicName, setTopicName] = useState<string>("");
@@ -62,18 +104,14 @@ function ExamPageInner() {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [micError, setMicError] = useState<string | null>(null);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [inputMode, setInputMode] = useState<InputMode>("voice");
+
+  const stopRecognitionRef = useRef<(() => void) | null>(null);
+  const messagesRef = useRef<Message[]>([]);
   const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const transcribeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const stopRecognitionRef = useRef<(() => void) | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const messagesRef = useRef<Message[]>([]);
-
   useEffect(() => { messagesRef.current = messages; }, [messages]);
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, liveTranscript, streamingText]);
 
   const examinerSpeak = useCallback(async (text: string, nextState: BlobbState = "listening") => {
     setLastExaminerText(text);
@@ -203,7 +241,6 @@ function ExamPageInner() {
       }
     } catch {}
     setIsTranscribing(false);
-    // Auto-submit — no need to press send after speaking
     await handleStudentAnswer(result);
   }
 
@@ -265,7 +302,6 @@ function ExamPageInner() {
             interim += e.results[i][0].transcript;
           }
         }
-        // Show everything in the live chat bubble — input field stays empty during recording
         setLiveTranscript((finalText + interim).trim());
       };
 
@@ -306,68 +342,68 @@ function ExamPageInner() {
   if (phase === "draw") {
     return (
       <>
-        <div style={{ backgroundColor: "var(--bg)", minHeight: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
-          {/* Top bar */}
-          <div style={{ padding: "14px 16px", display: "flex", alignItems: "center" }}>
+        <div className="exam-outer" style={{ fontFamily: KR.fontBody }}>
+        <div className="exam-card">
+          <div style={{ padding: "14px 20px", display: "flex", alignItems: "center" }}>
             <button
               onClick={() => router.back()}
-              style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "var(--text-muted)", fontFamily: "inherit", padding: 0 }}
+              style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: KR.inkLight, fontFamily: "inherit", padding: 0, WebkitTapHighlightColor: "transparent" }}
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <BackChevron />
               Tilbake
             </button>
           </div>
 
-          {/* Content */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 20px" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
             <div style={{ width: "100%", maxWidth: "380px", display: "flex", flexDirection: "column", gap: "16px" }}>
 
-              {/* Topic card */}
               <div style={{
-                backgroundColor: presetTopic ? "var(--text)" : "var(--surface)",
-                border: `1px solid ${presetTopic ? "var(--text)" : "var(--border)"}`,
-                borderRadius: "var(--r-lg)",
-                padding: "28px 20px",
+                backgroundColor: presetTopic ? KR.ink : KR.card,
+                border: `1px solid ${presetTopic ? KR.ink : KR.border}`,
+                borderRadius: KR.rLg,
+                padding: "32px 24px",
                 textAlign: "center",
-                display: "flex", flexDirection: "column", alignItems: "center", gap: "10px",
+                display: "flex", flexDirection: "column", alignItems: "center", gap: "12px",
+                boxShadow: "0 2px 16px rgba(0,0,0,0.06)",
               }}>
                 {presetTopic ? (
                   <>
-                    <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>Trukket tema</p>
-                    <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", color: "#fff", letterSpacing: "-0.3px" }}>{presetTopic}</p>
-                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)" }}>{subjectLabel}</p>
+                    <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", fontFamily: KR.fontBody }}>Trukket tema</p>
+                    <p style={{ fontFamily: KR.fontDisplay, fontWeight: 800, fontSize: "22px", color: "#fff", letterSpacing: "-0.3px" }}>{presetTopic}</p>
+                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", fontFamily: KR.fontBody }}>{subjectLabel}</p>
                   </>
                 ) : (
                   <>
                     <Blobb state="idle" size={100} />
-                    <div style={{ backgroundColor: "var(--accent-bg)", borderRadius: "var(--r-full)", padding: "4px 16px", fontSize: "13px", fontWeight: 600, color: "var(--accent-dark)" }}>
+                    <div style={{ backgroundColor: KR.accentBg, borderRadius: KR.rFull, padding: "4px 16px", fontSize: "13px", fontWeight: 600, color: KR.accentDark, fontFamily: KR.fontBody }}>
                       {subjectLabel}
                     </div>
-                    <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "1.4rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.5px" }}>
+                    <h1 style={{ fontFamily: KR.fontDisplay, fontSize: "1.4rem", fontWeight: 800, color: KR.ink, letterSpacing: "-0.5px", margin: 0 }}>
                       Klar for eksamen?
                     </h1>
-                    <p style={{ fontSize: "14px", color: "var(--text-muted)", lineHeight: 1.6 }}>
+                    <p style={{ fontSize: "14px", color: KR.inkMid, lineHeight: 1.6, fontFamily: KR.fontBody, margin: 0 }}>
                       Blobb trekker et tema og stiller deg spørsmål. Svar høyt eller skriv.
                     </p>
                   </>
                 )}
               </div>
 
-              {/* Start button */}
               <button
                 onClick={startExam}
                 style={{
-                  width: "100%", padding: "15px", borderRadius: "var(--r-full)", border: "none",
-                  backgroundColor: "var(--accent)", color: "#fff",
-                  fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "15px",
-                  cursor: "pointer", boxShadow: "0 2px 16px rgba(0,0,0,0.14)",
+                  width: "100%", padding: "15px", borderRadius: KR.rFull, border: "none",
+                  backgroundColor: KR.accent, color: "#fff",
+                  fontFamily: KR.fontBody, fontWeight: 700, fontSize: "15px",
+                  cursor: "pointer", boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
                   WebkitTapHighlightColor: "transparent",
+                  transition: "all 0.15s ease",
                 }}
               >
                 {presetTopic ? "Start eksamen →" : "Trekk tema og start"}
               </button>
             </div>
           </div>
+        </div>
         </div>
         {showUpgrade && <UpgradeModal used={limitInfo.used} limit={limitInfo.limit} onClose={() => setShowUpgrade(false)} />}
       </>
@@ -377,214 +413,304 @@ function ExamPageInner() {
   // ── DONE SCREEN ──
   if (phase === "done") {
     return (
-      <div style={{ backgroundColor: "var(--bg)", minHeight: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
-        <div style={{ padding: "14px 16px" }}>
-          <button onClick={() => router.push("/dashboard")} style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "var(--text-muted)", fontFamily: "inherit", padding: 0 }}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      <div className="exam-outer" style={{ fontFamily: KR.fontBody }}>
+      <div className="exam-card">
+        <div style={{ padding: "14px 20px" }}>
+          <button onClick={() => router.push("/dashboard")} style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: KR.inkLight, fontFamily: "inherit", padding: 0, WebkitTapHighlightColor: "transparent" }}>
+            <BackChevron />
             Dashboard
           </button>
         </div>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 20px", textAlign: "center" }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px", textAlign: "center" }}>
           <Blobb state={blobbState} size={120} />
-          <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", marginTop: "24px", marginBottom: "8px", letterSpacing: "-0.5px" }}>
+          <h1 style={{ fontFamily: KR.fontDisplay, fontSize: "1.5rem", fontWeight: 800, color: KR.ink, marginTop: "24px", marginBottom: "8px", letterSpacing: "-0.5px" }}>
             Eksamen ferdig!
           </h1>
-          <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "32px", lineHeight: 1.5 }}>
+          <p style={{ fontSize: "14px", color: KR.inkMid, marginBottom: "32px", lineHeight: 1.5 }}>
             Blobb har vurdert svarene dine.
           </p>
           <button
             onClick={() => router.push("/exam/feedback")}
-            style={{ width: "100%", maxWidth: "340px", padding: "15px", borderRadius: "var(--r-full)", border: "none", backgroundColor: "var(--accent)", color: "#fff", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "15px", cursor: "pointer", boxShadow: "0 2px 16px rgba(0,0,0,0.12)" }}
+            style={{ width: "100%", maxWidth: "340px", padding: "15px", borderRadius: KR.rFull, border: "none", backgroundColor: KR.accent, color: "#fff", fontFamily: KR.fontBody, fontWeight: 700, fontSize: "15px", cursor: "pointer", boxShadow: "0 4px 20px rgba(0,0,0,0.12)", WebkitTapHighlightColor: "transparent" }}
           >
             Se karakter og tilbakemelding
           </button>
         </div>
+      </div>
       </div>
     );
   }
 
   // ── CONVERSATION SCREEN ──
   const isExaminerTurn = isStreaming || isSpeaking || phase === "grading";
-  const progressFill = exchangeCount / (exchangeCount + 4);
+
+  // 3-segment progress: each segment covers ~2 exchanges
+  const segments = [0, 1, 2];
+  const completedSegments = Math.min(segments.length, Math.floor(exchangeCount / 2));
+
+  // Last examiner message for question card
+  const lastExaminerMsg = [...messages].reverse().find((m) => m.role === "examiner");
+  const questionText = streamingText || lastExaminerMsg?.text || "";
+
+  const mm = String(Math.floor(recordingSeconds / 60)).padStart(2, "0");
+  const ss = String(recordingSeconds % 60).padStart(2, "0");
 
   return (
-    <div style={{ backgroundColor: "var(--bg)", height: "100dvh", display: "flex", flexDirection: "column", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
+    <div className="exam-outer" style={{ fontFamily: KR.fontBody }}>
+    <div className="exam-card">
 
-      {/* ── Top bar ── */}
-      <div style={{ backgroundColor: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "0 16px", height: "52px", display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
-        <button
-          onClick={() => { stopSpeaking(); router.push("/dashboard"); }}
-          style={{ display: "flex", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "var(--text-muted)", fontFamily: "inherit", flexShrink: 0, padding: 0 }}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          Avslutt
-        </button>
-
-        <div style={{ flex: 1, height: "3px", backgroundColor: "var(--border)", borderRadius: "var(--r-full)", overflow: "hidden" }}>
-          <div style={{ height: "100%", width: `${progressFill * 100}%`, backgroundColor: "var(--accent)", borderRadius: "var(--r-full)", transition: "width 400ms ease-out" }} />
+      {/* ── Header ── */}
+      <div style={{
+        padding: "16px 24px 12px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        borderBottom: `1px solid ${KR.border}`,
+        flexShrink: 0,
+      }}>
+        <div>
+          <div style={{ fontWeight: 600, fontSize: "13px", color: KR.ink, fontFamily: KR.fontBody }}>{subjectLabel}</div>
+          {topicName && <div style={{ fontSize: "11px", color: KR.inkLight, fontFamily: KR.fontBody }}>{topicName}</div>}
         </div>
 
-        <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-faint)", flexShrink: 0 }}>
-          {exchangeCount} svar
-        </span>
+        {/* 3-segment progress bar */}
+        <div style={{ display: "flex", gap: "4px" }}>
+          {segments.map((i) => (
+            <div key={i} style={{
+              width: "28px", height: "4px", borderRadius: "2px",
+              background: i < completedSegments ? KR.green : i === completedSegments ? KR.accent : KR.border,
+              transition: "background 0.3s ease",
+            }} />
+          ))}
+        </div>
+
+        <button
+          onClick={() => { stopSpeaking(); router.push("/dashboard"); }}
+          style={{ background: "none", border: "none", cursor: "pointer", color: KR.inkLight, fontFamily: KR.fontBody, fontSize: "12px", padding: 0, WebkitTapHighlightColor: "transparent" }}
+        >
+          Avslutt
+        </button>
       </div>
 
-      {/* ── Blobb row ── */}
-      <div style={{ backgroundColor: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "10px 16px", display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
-        <Blobb state={blobbState} size={44} />
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-            {subjectLabel}{topicName ? ` · ${topicName}` : ""}
-          </p>
-          {isStreaming && <p style={{ fontSize: "13px", color: "var(--accent)", fontWeight: 600 }}>Blobb tenker...</p>}
-          {isSpeaking && !isStreaming && <p style={{ fontSize: "13px", color: "var(--accent)", fontWeight: 600 }}>Blobb snakker...</p>}
-          {phase === "grading" && <p style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 600 }}>Setter karakter...</p>}
-          {!isExaminerTurn && phase === "conversation" && (
-            <p style={{ fontSize: "13px", fontWeight: 600, color: "oklch(0.55 0.14 150)" }}>Din tur</p>
+      {/* ── Blobb area ── */}
+      <div style={{ padding: "20px 24px 12px", display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+        <div style={{ position: "relative" }}>
+          <Blobb state={blobbState} size={90} />
+          {(isStreaming || phase === "grading") && (
+            <div style={{ position: "absolute", top: 0, right: -14, display: "flex", gap: "3px", alignItems: "center" }}>
+              {[0, 1, 2].map((i) => (
+                <div key={i} style={{
+                  width: "5px", height: "5px", borderRadius: "50%",
+                  background: KR.accent, opacity: 0.7,
+                  animation: `pulse 1s ${i * 0.2}s infinite`,
+                }} />
+              ))}
+            </div>
           )}
         </div>
 
-        {lastExaminerText && !isSpeaking && !isStreaming && phase === "conversation" && (
-          <button
-            onClick={() => examinerSpeak(lastExaminerText)}
-            style={{ display: "flex", alignItems: "center", gap: "4px", background: "none", border: "1px solid var(--border)", borderRadius: "var(--r-full)", padding: "5px 10px", cursor: "pointer", fontSize: "12px", fontWeight: 600, color: "var(--text-muted)", flexShrink: 0, WebkitTapHighlightColor: "transparent" }}
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-            </svg>
-            Hør igjen
-          </button>
-        )}
-      </div>
-
-      {/* ── Messages ── */}
-      <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", padding: "16px 16px 8px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        {messages.map((m, i) => (
-          <div key={i} style={{
-            alignSelf: m.role === "student" ? "flex-end" : "flex-start",
-            maxWidth: "84%",
-            backgroundColor: m.role === "student" ? "var(--accent)" : "var(--surface)",
-            color: m.role === "student" ? "#fff" : "var(--text)",
-            border: `1px solid ${m.role === "student" ? "var(--accent-dark)" : "var(--border)"}`,
-            borderRadius: m.role === "student" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-            padding: "11px 15px",
-            fontSize: "14px",
-            lineHeight: 1.55,
-            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-          }}>
-            {m.text}
-          </div>
-        ))}
-
-        {streamingText && (
-          <div style={{ alignSelf: "flex-start", maxWidth: "84%", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "18px 18px 18px 4px", padding: "11px 15px", fontSize: "14px", lineHeight: 1.55, color: "var(--text)", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-            {streamingText}
-            <span style={{ display: "inline-block", width: "2px", height: "13px", backgroundColor: "var(--accent)", marginLeft: "2px", verticalAlign: "middle", animation: "blink 1s step-end infinite" }} />
+        {phase === "grading" && (
+          <div style={{ marginTop: "8px", fontFamily: KR.fontBody, fontSize: "13px", color: KR.inkMid, fontStyle: "italic" }}>
+            Setter karakter...
           </div>
         )}
-
-        {(liveTranscript || isRecording) && (
-          <div style={{ alignSelf: "flex-end", maxWidth: "84%", backgroundColor: "var(--accent-bg)", border: "1.5px solid var(--accent)", borderRadius: "18px 18px 4px 18px", padding: "11px 15px", fontSize: "14px", color: "var(--accent-dark)", lineHeight: 1.55, display: "flex", flexDirection: "column", gap: "6px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: "var(--accent)", flexShrink: 0, animation: "blink 1s step-end infinite" }} />
-              <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--accent)" }}>Tar opp{recordingSeconds > 0 ? ` · ${recordingSeconds}s` : ""}</span>
-            </div>
-            {liveTranscript && <span>{liveTranscript}</span>}
+        {isStreaming && phase !== "grading" && (
+          <div style={{ marginTop: "8px", fontFamily: KR.fontBody, fontSize: "13px", color: KR.inkMid, fontStyle: "italic" }}>
+            Hmm, la meg tenke...
+          </div>
+        )}
+        {isSpeaking && !isStreaming && (
+          <div style={{ marginTop: "8px", fontFamily: KR.fontBody, fontSize: "13px", color: KR.inkMid, fontStyle: "italic" }}>
+            Snakker...
           </div>
         )}
       </div>
+
+      {/* ── Question card ── */}
+      {questionText && (
+        <div style={{
+          margin: "0 24px",
+          background: KR.card,
+          border: `1px solid ${KR.border}`,
+          borderRadius: KR.rLg,
+          padding: "20px",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.06)",
+          flexShrink: 0,
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+            <div style={{ fontFamily: KR.fontBody, fontSize: "11px", color: KR.inkLight, fontWeight: 600, letterSpacing: "0.5px", textTransform: "uppercase" }}>Spørsmål</div>
+            {lastExaminerText && !isSpeaking && !isStreaming && phase === "conversation" && (
+              <button
+                onClick={() => examinerSpeak(lastExaminerText)}
+                style={{ display: "flex", alignItems: "center", gap: "3px", background: "none", border: `1px solid ${KR.border}`, borderRadius: KR.rFull, padding: "3px 8px", cursor: "pointer", fontSize: "11px", fontWeight: 600, color: KR.inkLight, fontFamily: KR.fontBody, WebkitTapHighlightColor: "transparent" }}
+              >
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+                Hør
+              </button>
+            )}
+          </div>
+          <p style={{ fontFamily: KR.fontBody, fontSize: "15px", color: KR.ink, lineHeight: 1.6, margin: 0 }}>
+            {questionText}
+            {streamingText && (
+              <span style={{ display: "inline-block", width: "2px", height: "13px", backgroundColor: KR.accent, marginLeft: "2px", verticalAlign: "middle", animation: "blink 1s step-end infinite" }} />
+            )}
+          </p>
+        </div>
+      )}
+
+      {/* ── Live transcript bubble ── */}
+      {liveTranscript && (
+        <div style={{
+          margin: "8px 24px 0",
+          background: KR.accentBg,
+          border: `1.5px solid ${KR.accent}`,
+          borderRadius: KR.r,
+          padding: "12px 16px",
+          flexShrink: 0,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: KR.accent, animation: "blink 1s step-end infinite", flexShrink: 0 }} />
+            <span style={{ fontSize: "11px", fontWeight: 600, color: KR.accentDark, fontFamily: KR.fontBody }}>Tar opp · {mm}:{ss}</span>
+          </div>
+          <p style={{ fontFamily: KR.fontBody, fontSize: "14px", color: KR.ink, margin: 0, lineHeight: 1.5 }}>{liveTranscript}</p>
+        </div>
+      )}
+
+      <div style={{ flex: 1 }} />
 
       {/* ── Mic error ── */}
       {micError && (
         <div style={{ backgroundColor: "oklch(97% 0.03 22)", borderTop: "1px solid oklch(88% 0.06 22)", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", flexShrink: 0 }}>
-          <p style={{ fontSize: "13px", color: "oklch(45% 0.15 22)", lineHeight: 1.4 }}>{micError}</p>
-          <button onClick={() => setMicError(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "oklch(55% 0.15 22)", fontSize: "18px", lineHeight: 1, flexShrink: 0, padding: "0 2px" }}>×</button>
+          <p style={{ fontSize: "13px", color: "oklch(45% 0.15 22)", lineHeight: 1.4, fontFamily: KR.fontBody }}>{micError}</p>
+          <button onClick={() => setMicError(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "oklch(55% 0.15 22)", fontSize: "20px", lineHeight: 1, flexShrink: 0, padding: "0 2px" }}>×</button>
         </div>
       )}
 
       {/* ── Input area ── */}
       {phase === "conversation" && !isExaminerTurn && (
-        <div style={{ backgroundColor: "var(--surface)", borderTop: "1px solid var(--border)", padding: "10px 16px", paddingBottom: "calc(10px + env(safe-area-inset-bottom))", flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: "8px" }}>
-            <input
-              type="text"
-              value={typedAnswer}
-              onChange={(e) => setTypedAnswer(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter" && typedAnswer.trim() && !isRecording) handleStudentAnswer(typedAnswer); }}
-              placeholder={isRecording ? "Snakker..." : "Skriv svaret ditt..."}
-              disabled={isRecording || isTranscribing}
-              style={{
-                flex: 1,
-                minHeight: "44px",
-                maxHeight: "120px",
-                padding: "11px 14px",
-                backgroundColor: "var(--bg)",
-                border: `1.5px solid ${isRecording ? "var(--accent)" : "var(--border)"}`,
-                borderRadius: "var(--r-lg)",
-                fontSize: "14px",
-                color: "var(--text)",
-                fontFamily: "inherit",
-                outline: "none",
-                transition: "border-color 0.2s",
-                resize: "none",
-              }}
-            />
-
-            {typedAnswer.trim() && !isRecording && !isTranscribing && (
+        <div style={{
+          padding: "12px 24px",
+          paddingBottom: `calc(12px + env(safe-area-inset-bottom))`,
+          borderTop: `1px solid ${KR.border}`,
+          backgroundColor: KR.bg,
+          flexShrink: 0,
+        }}>
+          {/* Mode toggle pill */}
+          <div style={{ display: "flex", background: KR.bgAlt, borderRadius: KR.rFull, padding: "3px", marginBottom: "16px" }}>
+            {(["voice", "text"] as const).map((m) => (
               <button
-                onClick={() => handleStudentAnswer(typedAnswer)}
-                style={{ width: "44px", height: "44px", borderRadius: "var(--r-lg)", backgroundColor: "var(--accent)", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.12)", WebkitTapHighlightColor: "transparent" }}
+                key={m}
+                onClick={() => setInputMode(m)}
+                style={{
+                  flex: 1, padding: "7px", borderRadius: KR.rFull, border: "none",
+                  background: inputMode === m ? KR.card : "transparent",
+                  color: inputMode === m ? KR.ink : KR.inkMid,
+                  fontFamily: KR.fontBody, fontWeight: 600, fontSize: "13px",
+                  cursor: "pointer", transition: "all 0.2s ease",
+                  boxShadow: inputMode === m ? "0 1px 6px rgba(0,0,0,0.1)" : "none",
+                  WebkitTapHighlightColor: "transparent",
+                }}
               >
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                {m === "voice" ? "🎤 Tale" : "⌨️ Tekst"}
               </button>
-            )}
+            ))}
+          </div>
 
-            {isTranscribing ? (
-              <div style={{ width: "52px", height: "44px", borderRadius: "var(--r-lg)", backgroundColor: "var(--accent-bg)", border: "1.5px solid var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <span style={{ fontSize: "9px", fontWeight: 700, color: "var(--accent-dark)", textAlign: "center", lineHeight: 1.2 }}>AI{"\n"}fikser</span>
-              </div>
-            ) : (
+          {inputMode === "voice" ? (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
               <button
                 onClick={toggleRecording}
                 style={{
-                  width: "52px", height: "52px",
-                  borderRadius: "var(--r-full)",
-                  backgroundColor: isRecording ? "oklch(52% 0.19 22)" : "var(--accent)",
-                  border: "none",
-                  boxShadow: isRecording ? "0 0 0 5px oklch(92% 0.07 22)" : "0 2px 12px rgba(0,0,0,0.15)",
-                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer", flexShrink: 0, gap: "1px",
-                  transition: "all 0.18s ease",
+                  width: "72px", height: "72px", borderRadius: "50%",
+                  background: isRecording ? KR.red : KR.accent,
+                  border: "none", cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: isRecording ? `0 0 0 8px ${KR.redBg}` : "0 4px 20px rgba(0,0,0,0.15)",
+                  transition: "all 0.2s ease",
                   WebkitTapHighlightColor: "transparent",
                 }}
                 aria-label={isRecording ? "Stop innspilling" : "Start innspilling"}
               >
-                {isRecording ? (
-                  <>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
-                    <span style={{ fontSize: "8px", color: "white", fontWeight: 700 }}>{recordingSeconds}s</span>
-                  </>
+                {isTranscribing ? (
+                  <span style={{ fontSize: "8px", fontWeight: 700, color: "white", textAlign: "center", lineHeight: 1.3, fontFamily: KR.fontBody }}>{"AI\nfikser"}</span>
+                ) : isRecording ? (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
                 ) : (
-                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                    <line x1="12" y1="19" x2="12" y2="23"/>
-                    <line x1="8" y1="23" x2="16" y2="23"/>
-                  </svg>
+                  <MicIcon size={28} color="white" />
                 )}
               </button>
-            )}
-          </div>
+
+              {isRecording ? (
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: KR.red, animation: "pulse 1s infinite", flexShrink: 0 }} />
+                  <span style={{ fontFamily: KR.fontBody, fontSize: "13px", color: KR.red, fontWeight: 600 }}>{mm}:{ss}</span>
+                  <button
+                    onClick={toggleRecording}
+                    style={{
+                      background: KR.accent, border: "none", cursor: "pointer",
+                      color: "white", borderRadius: KR.rFull, padding: "8px 18px",
+                      fontFamily: KR.fontBody, fontWeight: 600, fontSize: "13px",
+                      WebkitTapHighlightColor: "transparent",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    Send svar
+                  </button>
+                </div>
+              ) : (
+                <span style={{ fontFamily: KR.fontBody, fontSize: "12px", color: KR.inkLight }}>Trykk for å snakke</span>
+              )}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <textarea
+                value={typedAnswer}
+                onChange={(e) => setTypedAnswer(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey && typedAnswer.trim()) {
+                    e.preventDefault();
+                    void handleStudentAnswer(typedAnswer);
+                  }
+                }}
+                placeholder="Skriv svaret ditt her..."
+                style={{
+                  width: "100%", minHeight: "100px", padding: "14px",
+                  fontFamily: KR.fontBody, fontSize: "14px", lineHeight: 1.5,
+                  border: `1.5px solid ${typedAnswer ? KR.accent : KR.border}`,
+                  borderRadius: KR.r, resize: "none",
+                  background: KR.card, color: KR.ink,
+                  outline: "none", transition: "border-color 0.2s",
+                  boxSizing: "border-box",
+                }}
+              />
+              {typedAnswer.length > 10 && (
+                <button
+                  onClick={() => void handleStudentAnswer(typedAnswer)}
+                  style={{
+                    alignSelf: "flex-end",
+                    background: KR.accent, border: "none", cursor: "pointer",
+                    color: "white", borderRadius: KR.rFull, padding: "14px 28px",
+                    fontFamily: KR.fontBody, fontWeight: 600, fontSize: "15px",
+                    WebkitTapHighlightColor: "transparent",
+                    transition: "all 0.15s ease",
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+                  }}
+                >
+                  Send svar →
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
 
       {phase === "grading" && (
-        <div style={{ backgroundColor: "var(--surface)", borderTop: "1px solid var(--border)", padding: "18px 16px", textAlign: "center", flexShrink: 0, paddingBottom: "calc(18px + env(safe-area-inset-bottom))" }}>
-          <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-muted)" }}>Blobb setter karakter...</p>
+        <div style={{ borderTop: `1px solid ${KR.border}`, padding: "18px 24px", textAlign: "center", flexShrink: 0, paddingBottom: `calc(18px + env(safe-area-inset-bottom))` }}>
+          <p style={{ fontFamily: KR.fontBody, fontSize: "14px", fontWeight: 600, color: KR.inkMid }}>Blobb setter karakter...</p>
         </div>
       )}
+    </div>
     </div>
   );
 }
@@ -592,8 +718,10 @@ function ExamPageInner() {
 export default function ExamPage() {
   return (
     <Suspense fallback={
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100dvh", backgroundColor: "var(--bg)" }}>
-        <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-muted)" }}>Laster...</span>
+      <div className="exam-outer">
+        <div className="exam-card" style={{ alignItems: "center", justifyContent: "center" }}>
+          <span style={{ fontSize: "14px", fontWeight: 700, color: "#9B948A", fontFamily: "'Inter', system-ui, sans-serif" }}>Laster...</span>
+        </div>
       </div>
     }>
       <ExamPageInner />

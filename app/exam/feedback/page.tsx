@@ -48,7 +48,7 @@ export default function FeedbackPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", paddingBottom: "32px" }}>
+      <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif", paddingBottom: "32px" }}>
 
         {/* Grade hero */}
         <div style={{
@@ -81,14 +81,14 @@ export default function FeedbackPage() {
               />
             </svg>
             <div style={{ position: "absolute", textAlign: "center" }}>
-              <div style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 900, fontSize: "44px", color: cfg.color, lineHeight: 1, transition: "all 0.5s" }}>
+              <div style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 900, fontSize: "44px", color: cfg.color, lineHeight: 1, transition: "all 0.5s" }}>
                 {revealed ? grade : "?"}
               </div>
               <div style={{ fontSize: "10px", color: "var(--ink-light)", marginTop: "2px" }}>av 6</div>
             </div>
           </div>
 
-          <div style={{ marginTop: "12px", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 700, fontSize: "16px", color: "var(--text)" }}>{cfg.label}</div>
+          <div style={{ marginTop: "12px", fontFamily: "Syne, system-ui, sans-serif", fontWeight: 700, fontSize: "16px", color: "var(--text)" }}>{cfg.label}</div>
           {result && (
             <div style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "4px" }}>
               {result.subject} · {result.topic}
@@ -180,7 +180,7 @@ export default function FeedbackPage() {
             style={{
               width: "100%", padding: "14px", borderRadius: "var(--r-full)", border: "none",
               backgroundColor: "var(--accent)", color: "#fff",
-              fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
+              fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
               cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
             }}
           >
@@ -192,7 +192,7 @@ export default function FeedbackPage() {
               width: "100%", padding: "14px", borderRadius: "var(--r-full)",
               border: "1.5px solid var(--border)",
               backgroundColor: "var(--surface)", color: "var(--text)",
-              fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
+              fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
               cursor: "pointer",
             }}
           >

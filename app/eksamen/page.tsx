@@ -126,12 +126,12 @@ export default function EksamenPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
+      <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
 
         {/* Header */}
         <div style={{ padding: "20px 0 12px", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div>
-            <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
+            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
               Eksamen
             </h1>
             <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
@@ -158,7 +158,7 @@ export default function EksamenPage() {
                 width: "100%", padding: "11px 14px",
                 borderRadius: "var(--r-md)",
                 border: `1.5px solid ${examDate ? "var(--accent)" : "var(--border)"}`,
-                fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "15px", color: "var(--text)",
+                fontFamily: "Inter, system-ui, sans-serif", fontSize: "15px", color: "var(--text)",
                 backgroundColor: "var(--bg)", outline: "none",
                 boxSizing: "border-box",
               }}
@@ -185,7 +185,7 @@ export default function EksamenPage() {
                     padding: "7px 14px", borderRadius: "var(--r-full)", border: "none",
                     backgroundColor: selectedFag === s.id ? "var(--text)" : "var(--bg-alt)",
                     color: selectedFag === s.id ? "var(--bg)" : "var(--text-muted)",
-                    fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "13px", fontWeight: 500,
+                    fontFamily: "Inter, system-ui, sans-serif", fontSize: "13px", fontWeight: 500,
                     cursor: "pointer", transition: "all 0.15s",
                     WebkitTapHighlightColor: "transparent",
                   }}
@@ -211,7 +211,7 @@ export default function EksamenPage() {
                       padding: "10px 16px", borderRadius: "var(--r-md)", border: "none",
                       backgroundColor: selectedVariant === v.id ? "var(--accent)" : "var(--bg-alt)",
                       color: selectedVariant === v.id ? "#fff" : "var(--text)",
-                      fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "14px", fontWeight: 600,
+                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "14px", fontWeight: 600,
                       cursor: "pointer", transition: "all 0.15s",
                       WebkitTapHighlightColor: "transparent",
                     }}
@@ -252,7 +252,7 @@ export default function EksamenPage() {
             ) : drawnTopic ? (
               <>
                 <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.8px", textTransform: "uppercase" }}>Trukket tema</p>
-                <p style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", color: "#fff", letterSpacing: "-0.3px" }}>{drawnTopic}</p>
+                <p style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", color: "#fff", letterSpacing: "-0.3px" }}>{drawnTopic}</p>
                 <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>{activeFag.emoji} {activeLabel}</p>
               </>
             ) : (
@@ -275,7 +275,7 @@ export default function EksamenPage() {
                 width: "100%", padding: "14px", borderRadius: "var(--r-full)", border: "none",
                 backgroundColor: canDraw ? "var(--accent)" : "var(--bg-alt)",
                 color: canDraw ? "#fff" : "var(--text-muted)",
-                fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
+                fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
                 cursor: canDraw ? "pointer" : "default",
                 boxShadow: canDraw ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
                 opacity: drawing ? 0.7 : 1,
@@ -290,7 +290,7 @@ export default function EksamenPage() {
                 style={{
                   width: "100%", padding: "14px", borderRadius: "var(--r-full)", border: "none",
                   backgroundColor: "var(--accent)", color: "#fff",
-                  fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
+                  fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
                   cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
                 }}
               >
@@ -302,7 +302,7 @@ export default function EksamenPage() {
                   width: "100%", padding: "14px", borderRadius: "var(--r-full)",
                   border: "1.5px solid var(--border)",
                   backgroundColor: "var(--surface)", color: "var(--text)",
-                  fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
+                  fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
                   cursor: "pointer",
                 }}
               >

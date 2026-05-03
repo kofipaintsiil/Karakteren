@@ -26,7 +26,7 @@ function CustomTooltip({ active, payload }: any) {
       padding: "10px 14px",
       fontSize: "13px",
       fontWeight: 700,
-      fontFamily: "Plus Jakarta Sans, system-ui, sans-serif",
+      fontFamily: "Inter, system-ui, sans-serif",
     }}>
       <p style={{ color: "var(--text-muted)", marginBottom: "2px" }}>{d.fag}</p>
       <p style={{ color: "var(--coral)", fontSize: "1.2rem" }}>Karakter {d.karakter}</p>
@@ -59,7 +59,7 @@ export default function GradeChart({ data }: GradeChartProps) {
         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
         <XAxis
           dataKey="nr"
-          tick={{ fontSize: 11, fontWeight: 700, fill: "var(--text-faint)", fontFamily: "Plus Jakarta Sans, system-ui" }}
+          tick={{ fontSize: 11, fontWeight: 700, fill: "var(--text-faint)", fontFamily: "Inter, system-ui" }}
           tickLine={false}
           axisLine={false}
           label={{ value: "Prøve", position: "insideBottom", offset: -2, fontSize: 11, fill: "var(--text-faint)" }}
@@ -67,7 +67,7 @@ export default function GradeChart({ data }: GradeChartProps) {
         <YAxis
           domain={[1, 6]}
           ticks={[1, 2, 3, 4, 5, 6]}
-          tick={{ fontSize: 11, fontWeight: 700, fill: "var(--text-faint)", fontFamily: "Plus Jakarta Sans, system-ui" }}
+          tick={{ fontSize: 11, fontWeight: 700, fill: "var(--text-faint)", fontFamily: "Inter, system-ui" }}
           tickLine={false}
           axisLine={false}
         />

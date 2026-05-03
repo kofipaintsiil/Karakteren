@@ -111,9 +111,9 @@ export default function InstillingerPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: "640px", margin: "0 auto", paddingTop: "20px", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" }}>
+      <div style={{ maxWidth: "640px", margin: "0 auto", paddingTop: "20px", fontFamily: "Inter, system-ui, sans-serif" }}>
 
-        <h1 style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "4px" }}>
+        <h1 style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "4px" }}>
           Innstillinger
         </h1>
         <p style={{ fontSize: "13px", color: "var(--ink-light)", marginBottom: "4px" }}>App-preferanser og kontoinnstillinger</p>
@@ -139,7 +139,7 @@ export default function InstillingerPage() {
                   padding: "5px 10px", borderRadius: "8px", border: "none",
                   backgroundColor: language === code ? "var(--text)" : "var(--bg-alt)",
                   color: language === code ? "var(--bg)" : "var(--text-muted)",
-                  fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontSize: "12px", fontWeight: 500,
+                  fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px", fontWeight: 500,
                   cursor: "pointer", transition: "all 0.15s",
                 }}>{lbl}</button>
               ))}

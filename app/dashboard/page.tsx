@@ -63,7 +63,7 @@ export default async function DashboardPage() {
         <div style={{ padding: "20px 0 16px" }}>
           <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "4px" }}>God dag,</p>
           <h1 style={{
-            fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "26px",
+            fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "26px",
             letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "16px",
           }}>
             {displayName} 👋
@@ -84,7 +84,7 @@ export default async function DashboardPage() {
                 textAlign: "center",
                 boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
               }}>
-                <div style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", color: "var(--text)" }}>{s.val}</div>
+                <div style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", color: "var(--text)" }}>{s.val}</div>
                 <div style={{ fontSize: "11px", color: "var(--ink-light)", marginTop: "2px" }}>{s.label}</div>
               </div>
             ))}
@@ -131,7 +131,7 @@ export default async function DashboardPage() {
                         display: "flex", alignItems: "center", justifyContent: "center",
                         flexShrink: 0,
                       }}>
-                        <span style={{ fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 800, fontSize: "16px", color }}>{s.subject[0]}</span>
+                        <span style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 800, fontSize: "16px", color }}>{s.subject[0]}</span>
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <p style={{ fontWeight: 600, fontSize: "14px", color: "var(--text)", marginBottom: "2px" }}>{s.subject}</p>
@@ -139,7 +139,7 @@ export default async function DashboardPage() {
                       </div>
                       {s.grade && (
                         <span style={{
-                          fontFamily: "Plus Jakarta Sans, system-ui, sans-serif", fontWeight: 900, fontSize: "22px",
+                          fontFamily: "Inter, system-ui, sans-serif", fontWeight: 900, fontSize: "22px",
                           color: gradeColor(s.grade), flexShrink: 0,
                         }}>{s.grade}</span>
                       )}
