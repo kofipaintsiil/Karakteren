@@ -1,9 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 import Blobb from "@/components/Blobb";
+
+async function loadPreferences() {
+  try {
+    const res = await fetch("/api/preferences");
+    if (res.ok) return await res.json() as { exam_date?: string; exam_fag?: string; exam_variant?: string };
+  } catch { /* offline */ }
+  return null;
+}
+
+function savePreferences(patch: Record<string, string | null>) {
+  fetch("/api/preferences", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(patch),
+  }).catch(() => { /* offline */ });
+}
 
 const SUBJECTS = [
   { id: "norsk",       label: "Norsk",       emoji: "📝", variants: null },
@@ -64,18 +80,33 @@ export default function EksamenPage() {
   const [examDate, setExamDate] = useState("");
   const [drawing, setDrawing] = useState(false);
   const [drawnTopic, setDrawnTopic] = useState<string | null>(null);
+  const hydrated = useRef(false);
 
+  // Load from DB first, fall back to localStorage
   useEffect(() => {
-    const savedDate = localStorage.getItem("exam-date");
-    if (savedDate) setExamDate(savedDate);
-    const savedFag = localStorage.getItem("exam-fag");
-    if (savedFag) {
-      const fag = SUBJECTS.find(s => s.id === savedFag);
-      setSelectedFag(savedFag);
-      if (!fag?.variants) setSelectedVariant(null);
-    }
-    const savedVariant = localStorage.getItem("exam-variant");
-    if (savedVariant) setSelectedVariant(savedVariant);
+    const applyPrefs = (date?: string | null, fag?: string | null, variant?: string | null) => {
+      if (date) { setExamDate(date); localStorage.setItem("exam-date", date); }
+      if (fag) {
+        setSelectedFag(fag);
+        localStorage.setItem("exam-fag", fag);
+        const fagObj = SUBJECTS.find(s => s.id === fag);
+        if (!fagObj?.variants) { setSelectedVariant(null); localStorage.removeItem("exam-variant"); }
+      }
+      if (variant) { setSelectedVariant(variant); localStorage.setItem("exam-variant", variant); }
+    };
+
+    // Apply localStorage immediately so UI isn't blank while fetching
+    const lsDate = localStorage.getItem("exam-date");
+    const lsFag = localStorage.getItem("exam-fag");
+    const lsVariant = localStorage.getItem("exam-variant");
+    applyPrefs(lsDate, lsFag, lsVariant);
+
+    // Then fetch from DB and override (DB is source of truth)
+    loadPreferences().then((prefs) => {
+      if (!prefs) return;
+      applyPrefs(prefs.exam_date, prefs.exam_fag, prefs.exam_variant);
+      hydrated.current = true;
+    });
   }, []);
 
   const activeFag = SUBJECTS.find(s => s.id === selectedFag)!;
@@ -96,6 +127,9 @@ export default function EksamenPage() {
     if (!fag?.variants) {
       setSelectedVariant(null);
       localStorage.removeItem("exam-variant");
+      savePreferences({ exam_fag: id, exam_variant: null });
+    } else {
+      savePreferences({ exam_fag: id });
     }
   }
 
@@ -103,11 +137,13 @@ export default function EksamenPage() {
     setSelectedVariant(id);
     setDrawnTopic(null);
     localStorage.setItem("exam-variant", id);
+    savePreferences({ exam_variant: id });
   }
 
   function handleDateChange(v: string) {
     setExamDate(v);
     localStorage.setItem("exam-date", v);
+    savePreferences({ exam_date: v || null });
   }
 
   function drawTopic() {

@@ -25,6 +25,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["sessions"]["Insert"]>;
+        Relationships: [];
       };
       session_messages: {
         Row: {
@@ -42,6 +43,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["session_messages"]["Insert"]>;
+        Relationships: [];
       };
       subscriptions: {
         Row: {
@@ -59,23 +61,31 @@ export interface Database {
           current_period_end?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["subscriptions"]["Insert"]>;
+        Relationships: [];
       };
       profiles: {
         Row: {
-          user_id: string;
+          id: string;
           display_name: string | null;
           avatar_url: string | null;
           show_on_leaderboard: boolean | null;
+          exam_date: string | null;
+          exam_fag: string | null;
+          exam_variant: string | null;
           created_at: string;
         };
         Insert: {
-          user_id: string;
+          id: string;
           display_name?: string | null;
           avatar_url?: string | null;
           show_on_leaderboard?: boolean | null;
+          exam_date?: string | null;
+          exam_fag?: string | null;
+          exam_variant?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
+        Relationships: [];
       };
     };
   };
