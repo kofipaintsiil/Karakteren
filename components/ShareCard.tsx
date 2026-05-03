@@ -19,9 +19,10 @@ export default function ShareCard({ grade, subject, topic, label, blobbState, gr
   const [open, setOpen] = useState(false);
 
   function handleShare() {
-    const text = `Jeg fikk karakter ${grade} (${label}) i ${subject} på Karakteren! 📚\nTema: ${topic}\nØv til eksamen på karakteren.no`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
+    const text = `Jeg fikk karakter ${grade} (${label}) i ${subject} på Karakteren! 📚\nTema: ${topic}\nØv til eksamen: ${appUrl}`;
     if (navigator.share) {
-      navigator.share({ title: "Karakteren-resultat", text }).catch(() => {});
+      navigator.share({ title: "Karakteren-resultat", text, url: appUrl }).catch(() => {});
     } else {
       navigator.clipboard.writeText(text).then(() => {
         setCopied(true);
@@ -85,7 +86,7 @@ export default function ShareCard({ grade, subject, topic, label, blobbState, gr
           marginTop: "16px", fontSize: "12px", fontWeight: 700,
           color: "var(--text-faint)", letterSpacing: "0.04em",
         }}>
-          karakteren.no
+          karakteren.vercel.app
         </p>
       </div>
 
