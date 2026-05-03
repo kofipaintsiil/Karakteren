@@ -3,8 +3,8 @@ import { requireAuth } from "@/lib/auth-guard";
 import { rateLimit } from "@/lib/rate-limit";
 
 const VOICES = {
-  female: process.env.ELEVENLABS_VOICE_ID ?? "1qEiC6qsybMkmnNdVMbK", // Monika Sogam — Norwegian female
-  male:   process.env.ELEVENLABS_VOICE_ID_MALE ?? "2dhHLsmg0MVma2t041qT", // Johannes — Norwegian male
+  female: process.env.ELEVENLABS_VOICE_ID ?? "k5IgYJw2jfo6mO5HhagG",
+  male:   process.env.ELEVENLABS_VOICE_ID_MALE ?? "ikwOHnCcqQJgOoz5Wxex",
 };
 const FALLBACK_VOICE_ID = "XB0fDUnXU5powFXDhCwa"; // Charlotte — public fallback
 const MAX_TEXT_LENGTH = 1000;
