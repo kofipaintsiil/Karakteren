@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import DarkModeProvider from "@/components/DarkModeProvider";
+import { LangProvider } from "@/components/LangProvider";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://karakteren.no";
 
@@ -49,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="nb" className="h-full">
       <body className="min-h-full flex flex-col">
-        <DarkModeProvider>{children}</DarkModeProvider>
+        <DarkModeProvider><LangProvider>{children}</LangProvider></DarkModeProvider>
       </body>
     </html>
   );

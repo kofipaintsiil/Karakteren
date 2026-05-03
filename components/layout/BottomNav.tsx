@@ -3,14 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Blobb from "@/components/Blobb";
-
-const tabs = [
-  { href: "/dashboard",  label: "Hjem",      icon: HomeIcon },
-  { href: "/oving",      label: "Velg tema", icon: BookIcon },
-  { href: "/eksamen",    label: "Eksamen",   icon: BlobbTabIcon },
-  { href: "/toppliste",  label: "Sosial",    icon: UsersIcon },
-  { href: "/profil",     label: "Profil",    icon: ProfileIcon },
-];
+import { useLang } from "@/components/LangProvider";
 
 function HomeIcon({ active }: { active: boolean }) {
   return (
@@ -64,6 +57,16 @@ function ProfileIcon({ active }: { active: boolean }) {
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { t } = useLang();
+
+  const tabs = [
+    { href: "/dashboard", label: t("nav_home"),    icon: HomeIcon },
+    { href: "/oving",     label: t("nav_topics"),  icon: BookIcon },
+    { href: "/eksamen",   label: t("nav_exam"),    icon: BlobbTabIcon },
+    { href: "/toppliste", label: t("nav_social"),  icon: UsersIcon },
+    { href: "/profil",    label: t("nav_profile"), icon: ProfileIcon },
+  ];
+
   const activeIdx = tabs.findIndex(t => pathname.startsWith(t.href));
 
   return (

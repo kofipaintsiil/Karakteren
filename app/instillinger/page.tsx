@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import LogoutButton from "@/components/LogoutButton";
+import { useLang } from "@/components/LangProvider";
+import type { Lang } from "@/lib/i18n";
 
 function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -72,15 +74,13 @@ function Card({ children }: { children: React.ReactNode }) {
 }
 
 export default function InstillingerPage() {
+  const { lang, setLang, t } = useLang();
   const [dark, setDark] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [streakAlert, setStreakAlert] = useState(true);
-  const [language, setLanguage] = useState("nb");
 
   useEffect(() => {
     setDark(localStorage.getItem("dark-mode") === "true");
-    const saved = localStorage.getItem("language");
-    if (saved) setLanguage(saved);
     const savedNotif = localStorage.getItem("notifications");
     if (savedNotif !== null) setNotifications(savedNotif === "true");
     const savedStreak = localStorage.getItem("streak-alert");
@@ -104,41 +104,36 @@ export default function InstillingerPage() {
     localStorage.setItem("streak-alert", String(v));
   }
 
-  function setLang(l: string) {
-    setLanguage(l);
-    localStorage.setItem("language", l);
-  }
-
   return (
     <AppShell>
       <div style={{ maxWidth: "640px", margin: "0 auto", paddingTop: "20px", fontFamily: "Inter, system-ui, sans-serif" }}>
 
-        <h1 style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "4px" }}>
-          Innstillinger
+        <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "4px" }}>
+          {t("set_title")}
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--ink-light)", marginBottom: "4px" }}>App-preferanser og kontoinnstillinger</p>
+        <p style={{ fontSize: "13px", color: "var(--ink-light)", marginBottom: "4px" }}>{t("set_subtitle")}</p>
 
         {/* Utseende */}
-        <SectionLabel>Utseende</SectionLabel>
+        <SectionLabel>{t("set_appearance")}</SectionLabel>
         <Card>
-          <Row label="Mørk modus" sublabel="Skånsomt for øynene om natten">
+          <Row label={t("set_dark")} sublabel={t("set_dark_sub")}>
             <Toggle value={dark} onChange={toggleDark} />
           </Row>
         </Card>
 
         {/* Språk */}
-        <SectionLabel>Språk</SectionLabel>
+        <SectionLabel>{t("set_language")}</SectionLabel>
         <Card>
           <div style={{ padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>Appspråk</p>
+              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>{t("set_app_lang")}</p>
             </div>
             <div style={{ display: "flex", gap: "6px" }}>
-              {[["nb", "Bokmål"], ["nn", "Nynorsk"], ["en", "English"]].map(([code, lbl]) => (
+              {([["nb", "Bokmål"], ["nn", "Nynorsk"], ["en", "English"]] as [Lang, string][]).map(([code, lbl]) => (
                 <button key={code} onClick={() => setLang(code)} style={{
                   padding: "5px 10px", borderRadius: "8px", border: "none",
-                  backgroundColor: language === code ? "var(--text)" : "var(--bg-alt)",
-                  color: language === code ? "var(--bg)" : "var(--text-muted)",
+                  backgroundColor: lang === code ? "var(--text)" : "var(--bg-alt)",
+                  color: lang === code ? "var(--bg)" : "var(--text-muted)",
                   fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px", fontWeight: 500,
                   cursor: "pointer", transition: "all 0.15s",
                 }}>{lbl}</button>
@@ -148,56 +143,56 @@ export default function InstillingerPage() {
         </Card>
 
         {/* Varsler */}
-        <SectionLabel>Varsler</SectionLabel>
+        <SectionLabel>{t("set_notifs")}</SectionLabel>
         <Card>
-          <Row label="Daglige påminnelser" sublabel="Blobb minner deg på å øve">
+          <Row label={t("set_daily")} sublabel={t("set_daily_sub")}>
             <Toggle value={notifications} onChange={toggleNotifications} />
           </Row>
-          <Row label="Streak-varsler" sublabel="Ikke bryt rekken din">
+          <Row label={t("set_streak")} sublabel={t("set_streak_sub")}>
             <Toggle value={streakAlert} onChange={toggleStreakAlert} />
           </Row>
         </Card>
 
         {/* Konto */}
-        <SectionLabel>Konto</SectionLabel>
+        <SectionLabel>{t("set_account")}</SectionLabel>
         <Card>
           <Link href="/profil" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--border)", textDecoration: "none" }}>
             <div>
-              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>Rediger profil</p>
-              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>Navn og profilbilde</p>
+              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>{t("set_edit")}</p>
+              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>{t("set_edit_sub")}</p>
             </div>
             <ChevronRight />
           </Link>
           <Link href="/pricing" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--border)", textDecoration: "none" }}>
             <div>
-              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>Abonnement</p>
-              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>Gratis plan</p>
+              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>{t("set_sub")}</p>
+              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>{t("set_sub_sub")}</p>
             </div>
             <ChevronRight />
           </Link>
           <Link href="/profil/personvern" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--border)", textDecoration: "none" }}>
             <div>
-              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>Personvern</p>
-              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>Datapolitikk og cookies</p>
+              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>{t("set_privacy")}</p>
+              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>{t("set_privacy_sub")}</p>
             </div>
             <ChevronRight />
           </Link>
           <Link href="/profil/hjelp" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", textDecoration: "none" }}>
             <div>
-              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>Hjelp og støtte</p>
-              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>Kontakt oss</p>
+              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>{t("set_help")}</p>
+              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>{t("set_help_sub")}</p>
             </div>
             <ChevronRight />
           </Link>
         </Card>
 
         {/* Danger zone */}
-        <SectionLabel>Faresone</SectionLabel>
+        <SectionLabel>{t("set_danger")}</SectionLabel>
         <Card>
           <Link href="/instillinger/slett" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", textDecoration: "none" }}>
             <div>
-              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--error)" }}>Slett konto</p>
-              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>Permanent sletting av alle data</p>
+              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--error)" }}>{t("set_delete")}</p>
+              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>{t("set_delete_sub")}</p>
             </div>
             <ChevronRight />
           </Link>
