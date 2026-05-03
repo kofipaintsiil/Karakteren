@@ -63,10 +63,13 @@ export async function speak(text: string, lang = "nb-NO"): Promise<void> {
 
   const doSpeak = async (): Promise<void> => {
     try {
+      const voicePref = typeof window !== "undefined"
+        ? (localStorage.getItem("examiner-voice") as "male" | "female" | null) ?? "female"
+        : "female";
       const res = await fetch("/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, voice: voicePref }),
       });
       if (res.ok && res.headers.get("content-type")?.includes("audio")) {
         const blob = await res.blob();

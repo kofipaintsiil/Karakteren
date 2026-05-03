@@ -78,6 +78,7 @@ export default function InstillingerPage() {
   const [dark, setDark] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [streakAlert, setStreakAlert] = useState(true);
+  const [voice, setVoice] = useState<"female" | "male">("female");
 
   useEffect(() => {
     setDark(localStorage.getItem("dark-mode") === "true");
@@ -85,7 +86,27 @@ export default function InstillingerPage() {
     if (savedNotif !== null) setNotifications(savedNotif === "true");
     const savedStreak = localStorage.getItem("streak-alert");
     if (savedStreak !== null) setStreakAlert(savedStreak === "true");
+    const savedVoice = localStorage.getItem("examiner-voice") as "female" | "male" | null;
+    if (savedVoice) setVoice(savedVoice);
+
+    // Sync voice from DB
+    fetch("/api/preferences").then(r => r.ok ? r.json() : null).then(prefs => {
+      if (prefs?.examiner_voice) {
+        setVoice(prefs.examiner_voice);
+        localStorage.setItem("examiner-voice", prefs.examiner_voice);
+      }
+    }).catch(() => {});
   }, []);
+
+  function handleVoiceChange(v: "female" | "male") {
+    setVoice(v);
+    localStorage.setItem("examiner-voice", v);
+    fetch("/api/preferences", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ examiner_voice: v }),
+    }).catch(() => {});
+  }
 
   function toggleDark(v: boolean) {
     setDark(v);
@@ -137,6 +158,37 @@ export default function InstillingerPage() {
                   fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px", fontWeight: 500,
                   cursor: "pointer", transition: "all 0.15s",
                 }}>{lbl}</button>
+              ))}
+            </div>
+          </div>
+        </Card>
+
+        {/* Eksaminatorstemme */}
+        <SectionLabel>Eksaminatorstemme</SectionLabel>
+        <Card>
+          <div style={{ padding: "14px 16px" }}>
+            <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)", marginBottom: "4px" }}>Velg stemme</p>
+            <p style={{ fontSize: "12px", color: "var(--ink-light)", marginBottom: "12px" }}>Hvilken stemme skal eksaminator bruke?</p>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {([
+                { value: "female", label: "Kvinne", emoji: "👩" },
+                { value: "male",   label: "Mann",   emoji: "👨" },
+              ] as const).map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleVoiceChange(opt.value)}
+                  style={{
+                    flex: 1, padding: "12px 8px", borderRadius: "var(--r-md)", border: "none",
+                    backgroundColor: voice === opt.value ? "var(--text)" : "var(--bg-alt)",
+                    color: voice === opt.value ? "var(--bg)" : "var(--text-muted)",
+                    fontFamily: "Inter, system-ui, sans-serif", fontSize: "14px", fontWeight: 600,
+                    cursor: "pointer", transition: "all 0.15s",
+                    WebkitTapHighlightColor: "transparent",
+                  }}
+                >
+                  <span style={{ display: "block", fontSize: "20px", marginBottom: "4px" }}>{opt.emoji}</span>
+                  {opt.label}
+                </button>
               ))}
             </div>
           </div>

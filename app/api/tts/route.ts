@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth-guard";
 import { rateLimit } from "@/lib/rate-limit";
 
-// Override via ELEVENLABS_VOICE_ID env var in Vercel if you change voices
-const VOICE_ID = process.env.ELEVENLABS_VOICE_ID ?? "1qEiC6qsybMkmnNdVMbK";
-// Well-known public fallback (ElevenLabs "Charlotte" — multilingual)
-const FALLBACK_VOICE_ID = "XB0fDUnXU5powFXDhCwa";
+const VOICES = {
+  female: process.env.ELEVENLABS_VOICE_ID ?? "1qEiC6qsybMkmnNdVMbK", // Monika Sogam — Norwegian female
+  male:   process.env.ELEVENLABS_VOICE_ID_MALE ?? "2dhHLsmg0MVma2t041qT", // Johannes — Norwegian male
+};
+const FALLBACK_VOICE_ID = "XB0fDUnXU5powFXDhCwa"; // Charlotte — public fallback
 const MAX_TEXT_LENGTH = 1000;
 
 async function elevenLabsTTS(text: string, voiceId: string): Promise<ArrayBuffer | null> {
@@ -21,7 +22,8 @@ async function elevenLabsTTS(text: string, voiceId: string): Promise<ArrayBuffer
       body: JSON.stringify({
         text,
         model_id: "eleven_turbo_v2_5",
-        voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.2 },
+        // Calm, professional examiner — high stability, minimal style flair
+        voice_settings: { stability: 0.70, similarity_boost: 0.75, style: 0.05 },
       }),
       signal: AbortSignal.timeout(15_000),
     }
@@ -41,24 +43,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "For mange forespørsler" }, { status: 429 });
   }
 
-  const { text } = await req.json();
+  const { text, voice } = await req.json() as { text: string; voice?: "male" | "female" };
   if (!text) return NextResponse.json({ error: "Mangler tekst" }, { status: 400 });
   if (text.length > MAX_TEXT_LENGTH) {
     return NextResponse.json({ error: "Tekst for lang" }, { status: 400 });
   }
 
   if (process.env.ELEVENLABS_API_KEY) {
-    // Try configured voice first, then fall back to public voice
-    let audio = await elevenLabsTTS(text, VOICE_ID).catch((e) => {
+    const voiceId = VOICES[voice ?? "female"];
+    let audio = await elevenLabsTTS(text, voiceId).catch((e) => {
       console.error("[TTS] ElevenLabs primary error:", e);
       return null;
     });
-    if (!audio && VOICE_ID !== FALLBACK_VOICE_ID) {
+    if (!audio && voiceId !== FALLBACK_VOICE_ID) {
       console.warn("[TTS] Primary voice failed, trying fallback voice");
-      audio = await elevenLabsTTS(text, FALLBACK_VOICE_ID).catch((e) => {
-        console.error("[TTS] ElevenLabs fallback error:", e);
-        return null;
-      });
+      audio = await elevenLabsTTS(text, FALLBACK_VOICE_ID).catch(() => null);
     }
     if (audio) {
       return new NextResponse(audio, {

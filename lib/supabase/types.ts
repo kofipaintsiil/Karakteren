@@ -72,6 +72,7 @@ export interface Database {
           exam_date: string | null;
           exam_fag: string | null;
           exam_variant: string | null;
+          examiner_voice: string | null;
           created_at: string;
         };
         Insert: {
@@ -82,6 +83,7 @@ export interface Database {
           exam_date?: string | null;
           exam_fag?: string | null;
           exam_variant?: string | null;
+          examiner_voice?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;

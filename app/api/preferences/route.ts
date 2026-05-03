@@ -11,7 +11,7 @@ export async function GET() {
 
   const { data } = await supabase
     .from("profiles")
-    .select("exam_date, exam_fag, exam_variant")
+    .select("exam_date, exam_fag, exam_variant, examiner_voice")
     .eq("id", user.id)
     .single();
 
@@ -27,12 +27,14 @@ export async function PATCH(req: NextRequest) {
     exam_date?: string | null;
     exam_fag?: string | null;
     exam_variant?: string | null;
+    examiner_voice?: string | null;
   };
 
   const record: ProfileInsert = { id: user.id };
   if ("exam_date" in body) record.exam_date = body.exam_date ?? null;
   if ("exam_fag" in body) record.exam_fag = body.exam_fag ?? null;
   if ("exam_variant" in body) record.exam_variant = body.exam_variant ?? null;
+  if ("examiner_voice" in body) record.examiner_voice = body.examiner_voice ?? null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("profiles") as any).upsert(record, { onConflict: "id" });
