@@ -101,12 +101,20 @@ export default function EksamenPage() {
     const lsVariant = localStorage.getItem("exam-variant");
     applyPrefs(lsDate, lsFag, lsVariant);
 
-    // Then fetch from DB and override (DB is source of truth)
-    loadPreferences().then((prefs) => {
-      if (!prefs) return;
-      applyPrefs(prefs.exam_date, prefs.exam_fag, prefs.exam_variant);
-      hydrated.current = true;
-    });
+    const syncFromDB = () =>
+      loadPreferences().then((prefs) => {
+        if (!prefs) return;
+        applyPrefs(prefs.exam_date, prefs.exam_fag, prefs.exam_variant);
+        hydrated.current = true;
+      });
+
+    // Initial load
+    syncFromDB();
+
+    // Refetch when user switches back to the app (e.g. from phone to this tab)
+    const onVisible = () => { if (document.visibilityState === "visible") syncFromDB(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, []);
 
   const activeFag = SUBJECTS.find(s => s.id === selectedFag)!;
