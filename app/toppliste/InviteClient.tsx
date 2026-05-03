@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://karakteren.vercel.app";
+
 export default function InviteClient() {
   const [copied, setCopied] = useState(false);
 
   function copy() {
-    navigator.clipboard.writeText("https://karakteren.no").then(() => {
+    navigator.clipboard.writeText(APP_URL).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
@@ -16,7 +18,7 @@ export default function InviteClient() {
       navigator.share({
         title: "Karakteren",
         text: "Øv til muntlig eksamen med AI-sensor! Gratis for VGS-elever 🎓",
-        url: "https://karakteren.no",
+        url: APP_URL,
       });
     } else {
       copy();

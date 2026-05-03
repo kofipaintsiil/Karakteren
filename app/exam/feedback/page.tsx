@@ -6,6 +6,8 @@ import Blobb, { BlobbState } from "@/components/Blobb";
 import AppShell from "@/components/layout/AppShell";
 import ShareCard from "@/components/ShareCard";
 import AdBanner from "@/components/AdBanner";
+import { isPremium } from "@/lib/limits";
+import Link from "next/link";
 
 interface SessionResult {
   grade: number;
@@ -17,18 +19,19 @@ interface SessionResult {
 }
 
 const gradeConfig: Record<number, { color: string; label: string; blobbState: BlobbState; quote: string }> = {
-  6: { color: "var(--green)",                  label: "Fremragende",    blobbState: "happy",       quote: "DET var faktisk bra! Ikke fortell noen at jeg sa det." },
-  5: { color: "var(--green)",                  label: "Meget godt",     blobbState: "happy",       quote: "Okay, det var faktisk ganske bra." },
-  4: { color: "var(--accent)",                 label: "Godt",           blobbState: "idle",        quote: "Ikke verst. Kan bli bedre." },
-  3: { color: "oklch(65% 0.14 70)",            label: "Nokså godt",     blobbState: "idle",        quote: "Middels, men vi har noe å jobbe med." },
-  2: { color: "oklch(58% 0.18 22)",            label: "Lav kompetanse", blobbState: "grumpy",      quote: "Interessant svar. Feil, men interessant." },
-  1: { color: "oklch(58% 0.18 22)",            label: "Svært lav",      blobbState: "grumpy",      quote: "Vi øver mer. Ingen skam i det." },
+  6: { color: "var(--green)",               label: "Fremragende",    blobbState: "happy",  quote: "DET var faktisk bra! Ikke fortell noen at jeg sa det." },
+  5: { color: "var(--green)",               label: "Meget godt",     blobbState: "happy",  quote: "Okay, det var faktisk ganske bra." },
+  4: { color: "var(--accent)",              label: "Godt",           blobbState: "idle",   quote: "Ikke verst. Kan bli bedre." },
+  3: { color: "oklch(65% 0.14 70)",         label: "Nokså godt",     blobbState: "idle",   quote: "Middels, men vi har noe å jobbe med." },
+  2: { color: "oklch(58% 0.18 22)",         label: "Lav kompetanse", blobbState: "grumpy", quote: "Interessant svar. Feil, men interessant." },
+  1: { color: "oklch(58% 0.18 22)",         label: "Svært lav",      blobbState: "grumpy", quote: "Vi øver mer. Ingen skam i det." },
 };
 
 export default function FeedbackPage() {
   const router = useRouter();
   const [result, setResult] = useState<SessionResult | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [premium, setPremium] = useState(false);
 
   useEffect(() => {
     const stored = sessionStorage.getItem("examResult");
@@ -36,6 +39,7 @@ export default function FeedbackPage() {
       try { setResult(JSON.parse(stored)); } catch {}
     }
     const t = setTimeout(() => setRevealed(true), 500);
+    isPremium().then(setPremium);
     return () => clearTimeout(t);
   }, []);
 
@@ -60,21 +64,16 @@ export default function FeedbackPage() {
           marginBottom: "20px",
         }}>
           <Blobb state={cfg.blobbState} size={80} animate />
-          <div style={{
-            marginTop: "12px", marginBottom: "20px",
-            fontSize: "13px", color: "var(--text-muted)", fontStyle: "italic",
-          }}>
+          <div style={{ marginTop: "12px", marginBottom: "20px", fontSize: "13px", color: "var(--text-muted)", fontStyle: "italic" }}>
             &ldquo;{cfg.quote}&rdquo;
           </div>
 
-          {/* Animated grade circle */}
           <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
             <svg width="130" height="130" viewBox="0 0 120 120">
               <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" strokeWidth="6" />
               <circle
                 cx="60" cy="60" r="52" fill="none"
-                stroke={cfg.color}
-                strokeWidth="6"
+                stroke={cfg.color} strokeWidth="6"
                 strokeDasharray={`${dashArray} ${circumference}`}
                 strokeLinecap="round"
                 strokeDashoffset={circumference * 0.25}
@@ -99,67 +98,93 @@ export default function FeedbackPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
-          {/* Feedback text */}
+          {/* General feedback — everyone */}
           {result?.feedback && (
             <div style={{
-              backgroundColor: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--r-lg)",
-              padding: "18px",
+              backgroundColor: "var(--surface)", border: "1px solid var(--border)",
+              borderRadius: "var(--r-lg)", padding: "18px",
               boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
             }}>
               <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px" }}>
-                Blobb sier
+                Tilbakemelding
               </p>
               <p style={{ fontSize: "14px", color: "var(--text)", lineHeight: 1.7 }}>{result.feedback}</p>
             </div>
           )}
 
-          {/* Strengths */}
-          {strengths.length > 0 && (
-            <div style={{
-              backgroundColor: "oklch(96% 0.04 150)",
-              border: "1px solid oklch(62% 0.14 150)",
-              borderRadius: "var(--r-lg)",
-              padding: "18px",
-            }}>
-              <p style={{ fontSize: "11px", fontWeight: 600, color: "oklch(42% 0.14 150)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "12px" }}>
-                Styrker
-              </p>
-              <ul style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {strengths.map((s) => (
-                  <li key={s} style={{ fontSize: "14px", color: "oklch(35% 0.14 150)", fontWeight: 500, display: "flex", gap: "10px", alignItems: "flex-start", listStyle: "none" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: "2px" }}>
-                      <path d="M20 6L9 17L4 12" stroke="oklch(52% 0.14 150)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* Detailed breakdown — premium only */}
+          {premium ? (
+            <>
+              {strengths.length > 0 && (
+                <div style={{
+                  backgroundColor: "oklch(96% 0.04 150)",
+                  border: "1px solid oklch(62% 0.14 150)",
+                  borderRadius: "var(--r-lg)", padding: "18px",
+                }}>
+                  <p style={{ fontSize: "11px", fontWeight: 600, color: "oklch(42% 0.14 150)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "12px" }}>
+                    Styrker
+                  </p>
+                  <ul style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {strengths.map((s) => (
+                      <li key={s} style={{ fontSize: "14px", color: "oklch(35% 0.14 150)", fontWeight: 500, display: "flex", gap: "10px", alignItems: "flex-start", listStyle: "none" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: "2px" }}>
+                          <path d="M20 6L9 17L4 12" stroke="oklch(52% 0.14 150)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-          {/* Improvements */}
-          {improvements.length > 0 && (
+              {improvements.length > 0 && (
+                <div style={{
+                  backgroundColor: "oklch(96% 0.04 70)",
+                  border: "1px solid var(--accent)",
+                  borderRadius: "var(--r-lg)", padding: "18px",
+                }}>
+                  <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--accent-dark)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "12px" }}>
+                    Kan forbedres
+                  </p>
+                  <ul style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {improvements.map((s) => (
+                      <li key={s} style={{ fontSize: "14px", color: "var(--accent-dark)", fontWeight: 500, display: "flex", gap: "10px", alignItems: "flex-start", listStyle: "none" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: "2px" }}>
+                          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
+          ) : (
+            /* Upsell for free users */
             <div style={{
-              backgroundColor: "oklch(96% 0.04 70)",
-              border: "1px solid var(--accent)",
-              borderRadius: "var(--r-lg)",
-              padding: "18px",
+              backgroundColor: "var(--surface)",
+              border: "1.5px solid var(--accent)",
+              borderRadius: "var(--r-lg)", padding: "20px",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
             }}>
-              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--accent-dark)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "12px" }}>
-                Kan forbedres
+              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--accent)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px" }}>
+                Premium-analyse
               </p>
-              <ul style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {improvements.map((s) => (
-                  <li key={s} style={{ fontSize: "14px", color: "var(--accent-dark)", fontWeight: 500, display: "flex", gap: "10px", alignItems: "flex-start", listStyle: "none" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: "2px" }}>
-                      <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    {s}
-                  </li>
-                ))}
-              </ul>
+              <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--text)", marginBottom: "6px" }}>
+                Hva trakk karakteren opp — og ned?
+              </p>
+              <p style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: "16px" }}>
+                Med Premium får du en detaljert gjennomgang av dine styrker, konkrete svakheter og nøyaktig hva du bør øve mer på før eksamen.
+              </p>
+              <Link href="/pricing" style={{
+                display: "block", textAlign: "center",
+                padding: "12px", borderRadius: "var(--r-full)", border: "none",
+                backgroundColor: "var(--accent)", color: "#fff",
+                fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "14px",
+                textDecoration: "none",
+              }}>
+                Oppgrader til Premium →
+              </Link>
             </div>
           )}
 
@@ -178,7 +203,6 @@ export default function FeedbackPage() {
           {/* Ad — only shown to free users */}
           <AdBanner />
 
-          {/* Actions */}
           <button
             onClick={() => router.push("/eksamen")}
             style={{
