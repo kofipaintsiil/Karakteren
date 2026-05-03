@@ -1347,6 +1347,193 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
   },
 };
 
+// ─── FRANSK (FSP01-04 Niveau I — Fransk 1) ──────────────────────────────────
+// Kompetansemål: LK20 Fremmedspråk nivå I
+// Eksamen foregår på fransk.
+const FRANSK_1_DATA: SubjectData = {
+  topics: [
+    {
+      name: "Présentation personnelle et famille",
+      opening: "Tu as tiré le thème : Présentation personnelle et famille. Présente-toi — ton âge, ta famille, ta ville — et décris ta relation avec ta famille.",
+      followUps: [
+        "Comment est ta relation avec tes parents et tes frères et sœurs ? Vous faites quoi ensemble ?",
+        "Décris ta maison ou ton appartement. C'est comment ?",
+        "Qu'est-ce que tu aimes faire avec ta famille pendant les vacances ?",
+        "Comment est différente la famille française de la famille norvégienne, selon toi ?",
+      ],
+      tooShort: "Peux-tu développer davantage ? Utilise des phrases complètes et donne des détails.",
+      closing: "Merci. J'ai maintenant une bonne base pour évaluer ta compétence.",
+    },
+    {
+      name: "La vie quotidienne et l'école",
+      opening: "Tu as tiré le thème : La vie quotidienne et l'école. Décris ta journée typique — le matin, à l'école et le soir.",
+      followUps: [
+        "Quelles sont tes matières préférées à l'école, et pourquoi ?",
+        "Comment est le système scolaire en France ? Qu'est-ce qui est différent du système norvégien ?",
+        "Qu'est-ce que tu fais après l'école ? Quels sont tes loisirs ?",
+        "Comment organises-tu ton temps libre entre le travail scolaire et les activités ?",
+      ],
+      tooShort: "Essaie de développer ta réponse avec plus de détails et de vocabulaire.",
+      closing: "Très bien. Je vais maintenant évaluer ta compétence linguistique.",
+    },
+    {
+      name: "La gastronomie française",
+      opening: "Tu as tiré le thème : La gastronomie française. Qu'est-ce que tu sais sur la cuisine française ? Cite des plats ou des spécialités typiques.",
+      followUps: [
+        "Décris un repas typiquement français — les entrées, le plat principal, le dessert.",
+        "Pourquoi la gastronomie est-elle importante dans la culture française ?",
+        "Compare la cuisine française avec la cuisine norvégienne — qu'est-ce qui est similaire et différent ?",
+        "As-tu déjà mangé un plat français ? Décris ton expérience.",
+      ],
+      tooShort: "Peux-tu développer et donner des exemples concrets ?",
+      closing: "Merci. J'ai les informations nécessaires pour t'évaluer.",
+    },
+    {
+      name: "Paris et les régions françaises",
+      opening: "Tu as tiré le thème : Paris et les régions françaises. Décris Paris — ce que tu sais sur la ville, ses monuments et son importance.",
+      followUps: [
+        "Quels sont les monuments les plus célèbres de Paris ? Décris-en un.",
+        "La France a beaucoup de régions différentes. Peux-tu en décrire quelques-unes ?",
+        "Quelle région de France aimerais-tu visiter, et pourquoi ?",
+        "Quelle est la différence entre la vie à Paris et la vie en province ?",
+      ],
+      tooShort: "Développe davantage — donne des noms de lieux et des descriptions.",
+      closing: "Bien. Je peux maintenant évaluer tes connaissances.",
+    },
+    {
+      name: "Les loisirs et les vacances",
+      opening: "Tu as tiré le thème : Les loisirs et les vacances. Décris ce que tu aimes faire pendant ton temps libre et comment les Français passent leurs vacances.",
+      followUps: [
+        "Qu'est-ce que tu fais le week-end ? Tes loisirs préférés ?",
+        "Où les Français vont-ils souvent en vacances ? Pourquoi ?",
+        "Compare les habitudes de vacances en France et en Norvège.",
+        "Si tu pouvais partir en vacances en France, où irais-tu ? Pourquoi ?",
+      ],
+      tooShort: "Peux-tu donner plus de détails sur tes activités ?",
+      closing: "Merci. J'ai suffisamment d'informations pour t'évaluer.",
+    },
+    {
+      name: "La mode et le style de vie",
+      opening: "Tu as tiré le thème : La mode et le style de vie. La France est connue pour la mode. Qu'est-ce que tu sais sur la mode française ?",
+      followUps: [
+        "Quelles marques ou créateurs français connais-tu ? Décris leur style.",
+        "Comment la mode reflète-t-elle la culture et l'identité d'un pays ?",
+        "Comment est le style vestimentaire des jeunes en France comparé à la Norvège ?",
+        "Penses-tu que la mode est importante ? Pourquoi ou pourquoi pas ?",
+      ],
+      tooShort: "Développe ton opinion avec des arguments et des exemples.",
+      closing: "Très bien. Je vais maintenant noter ta performance.",
+    },
+  ],
+};
+
+// ─── FRANSK (FSP01-04 Niveau II — Fransk 2) ─────────────────────────────────
+// Kompetansemål: LK20 Fremmedspråk nivå II (FSP03-01)
+// Eksamen foregår på fransk.
+const FRANSK_2_DATA: SubjectData = {
+  topics: [
+    {
+      name: "Culture et identité française",
+      opening: "Tu as tiré le thème : Culture et identité française. Comment définirais-tu l'identité française ? Quelles sont les valeurs et les traditions qui caractérisent la France ?",
+      followUps: [
+        "La devise française est « Liberté, Égalité, Fraternité ». Comment ces valeurs se manifestent-elles dans la société française contemporaine ?",
+        "En quoi la culture française — la gastronomie, l'art, la littérature — a-t-elle influencé le reste du monde ?",
+        "Quelles tensions existe-t-il entre tradition et modernité dans la société française actuelle ?",
+        "Comment l'immigration a-t-elle transformé l'identité culturelle de la France au XXIe siècle ?",
+      ],
+      tooShort: "Développe ta réflexion avec des exemples concrets et des arguments.",
+      closing: "Merci. J'ai maintenant une base solide pour évaluer ta compétence.",
+    },
+    {
+      name: "La Francophonie",
+      opening: "Tu as tiré le thème : La Francophonie. Qu'est-ce que la Francophonie ? Décris l'étendue du français dans le monde et l'importance de cet espace culturel.",
+      followUps: [
+        "Sur quels continents parle-t-on français ? Donne des exemples de pays francophones et leur contexte historique.",
+        "Quelle est l'importance de la langue française comme langue internationale et diplomatique ?",
+        "En quoi les pays francophones d'Afrique diffèrent-ils culturellement de la France métropolitaine ?",
+        "Quels sont les défis auxquels la Francophonie fait face face à la domination de l'anglais ?",
+      ],
+      tooShort: "Approfondis ta réponse — cite des pays, des organisations et des enjeux précis.",
+      closing: "Très bien. J'évalue maintenant ta maîtrise de la langue et du contenu.",
+    },
+    {
+      name: "Littérature et cinéma français",
+      opening: "Tu as tiré le thème : Littérature et cinéma français. Présente un auteur, un roman ou un film français que tu as étudié, et explique pourquoi il est important.",
+      followUps: [
+        "Quels sont les thèmes principaux de l'œuvre que tu as choisie ? Qu'est-ce qu'elle dit de la société ?",
+        "Comment la Nouvelle Vague a-t-elle révolutionné le cinéma français et international ?",
+        "Cite quelques grands auteurs français — Molière, Camus, Sartre — et leurs contributions à la littérature.",
+        "En quoi la littérature et le cinéma reflètent-ils les valeurs et les préoccupations d'une société ?",
+      ],
+      tooShort: "Précise davantage — parle d'œuvres concrètes et d'auteurs ou de réalisateurs.",
+      closing: "Merci. Cela me donne suffisamment pour évaluer ta compétence culturelle et linguistique.",
+    },
+    {
+      name: "Société et politique en France",
+      opening: "Tu as tiré le thème : Société et politique en France. Décris le système politique français — comment fonctionne la Ve République ?",
+      followUps: [
+        "Quelles sont les institutions principales de la République française — le Président, l'Assemblée nationale, le Sénat ?",
+        "Quels sont les grands défis sociaux auxquels la France fait face aujourd'hui — chômage, inégalités, immigration ?",
+        "Comment fonctionne le système de protection sociale en France — la Sécurité sociale, les retraites ?",
+        "Comparez le système politique français et le système norvégien. Quelles sont les différences principales ?",
+      ],
+      tooShort: "Développe ta réponse avec des institutions, des chiffres ou des exemples précis.",
+      closing: "Très bien. J'ai les éléments nécessaires pour évaluer ta compétence.",
+    },
+    {
+      name: "Environnement et développement durable",
+      opening: "Tu as tiré le thème : Environnement et développement durable. Quels sont les principaux défis environnementaux auxquels la France et le monde font face ?",
+      followUps: [
+        "Quelle est la politique énergétique de la France ? Quelle est la place du nucléaire dans le mix énergétique ?",
+        "Comment la France contribue-t-elle aux accords internationaux sur le climat — l'Accord de Paris ?",
+        "Quelles actions individuelles et collectives peut-on prendre pour réduire notre impact environnemental ?",
+        "Compare les politiques environnementales de la France et de la Norvège. Laquelle te semble plus efficace ?",
+      ],
+      tooShort: "Approfondit ta réponse — cite des accords, des politiques et des exemples concrets.",
+      closing: "Merci. J'évalue maintenant tes connaissances et ta capacité à t'exprimer.",
+    },
+    {
+      name: "Jeunesse et mode de vie",
+      opening: "Tu as tiré le thème : Jeunesse et mode de vie. Comment décrirait-on la vie des jeunes en France aujourd'hui ? Quelles sont leurs valeurs, leurs préoccupations ?",
+      followUps: [
+        "Comment les réseaux sociaux influencent-ils l'identité et le mode de vie des jeunes en France ?",
+        "Quelles sont les différences et similarités entre la jeunesse norvégienne et française ?",
+        "Comment les jeunes Français voient-ils leur avenir professionnel — l'emploi, les études, les voyages ?",
+        "Quelles causes sociales ou politiques mobilisent les jeunes en France aujourd'hui ?",
+      ],
+      tooShort: "Développe ta réflexion — donne des exemples de tendances ou de phénomènes sociaux.",
+      closing: "Très bien. Cela me donne une bonne base pour t'évaluer.",
+    },
+    {
+      name: "Éducation et vie professionnelle",
+      opening: "Tu as tiré le thème : Éducation et vie professionnelle. Décris le système éducatif français — du primaire au supérieur — et compare-le au système norvégien.",
+      followUps: [
+        "Qu'est-ce que le baccalauréat français ? Comment fonctionne cet examen et quelle est son importance ?",
+        "Quelles sont les Grandes Écoles en France et pourquoi sont-elles prestigieuses ?",
+        "Comment le marché du travail en France se distingue-t-il du marché norvégien ?",
+        "Quels sont les droits des travailleurs en France — les syndicats, les 35 heures, les congés ?",
+      ],
+      tooShort: "Précise davantage avec des exemples d'institutions ou de politiques éducatives.",
+      closing: "Merci. J'ai suffisamment d'éléments pour évaluer ta compétence.",
+    },
+    {
+      name: "Technologie et société moderne",
+      opening: "Tu as tiré le thème : Technologie et société moderne. Comment la révolution numérique transforme-t-elle la société française et européenne ?",
+      followUps: [
+        "Quels sont les avantages et les risques de l'intelligence artificielle pour la société ?",
+        "Comment la France positionne-t-elle sa politique numérique par rapport aux États-Unis et à la Chine ?",
+        "En quoi les réseaux sociaux ont-ils changé la communication, la politique et les relations sociales ?",
+        "Quelles mesures la France et l'Union européenne prennent-elles pour réguler les grandes entreprises technologiques ?",
+      ],
+      tooShort: "Développe ta réponse — apporte des exemples et des arguments structurés.",
+      closing: "Très bien. Je vais maintenant noter ta performance globale.",
+    },
+  ],
+};
+
+EXAMINER_DATA["fransk-1"] = FRANSK_1_DATA;
+EXAMINER_DATA["fransk-2"] = FRANSK_2_DATA;
+
 const ALIASES: Record<string, string> = {
   "matematikk-1t": "matematikk",
   "kjemi-1": "kjemi",

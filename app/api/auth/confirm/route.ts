@@ -12,16 +12,12 @@ export async function POST(req: NextRequest) {
   const { email } = await req.json();
   if (!email) return NextResponse.json({ error: "Mangler e-post." }, { status: 400 });
 
-  // Use getUserByEmail instead of scanning all users
-  const { data, error } = await admin.auth.admin.getUserByEmail(email) as unknown as {
-    data: { user?: { id: string } } | null;
-    error: Error | null;
-  };
+  const { data, error } = await admin.auth.admin.listUsers({ perPage: 1000 });
+  if (error) return NextResponse.json({ error: "Feil ved oppslag." }, { status: 500 });
 
-  if (error || !data?.user) {
-    return NextResponse.json({ error: "Bruker ikke funnet." }, { status: 404 });
-  }
+  const user = data.users.find((u) => u.email === email);
+  if (!user) return NextResponse.json({ error: "Bruker ikke funnet." }, { status: 404 });
 
-  await admin.auth.admin.updateUserById(data.user.id, { email_confirm: true });
+  await admin.auth.admin.updateUserById(user.id, { email_confirm: true });
   return NextResponse.json({ ok: true });
 }

@@ -30,6 +30,10 @@ const SUBJECTS = [
   { id: "samfunnsfag", label: "Samfunnsfag", emoji: "🗺️", variants: null },
   { id: "engelsk",     label: "Engelsk",     emoji: "🌐", variants: null },
   { id: "geografi",    label: "Geografi",    emoji: "🗻", variants: null },
+  { id: "fransk",      label: "Fransk",      emoji: "🇫🇷", variants: [
+    { id: "fransk-1", label: "Fransk 1", desc: "Vg2 Niveau I" },
+    { id: "fransk-2", label: "Fransk 2", desc: "Vg3 Niveau II" },
+  ]},
 ];
 
 const TOPICS: Record<string, string[]> = {
@@ -49,6 +53,8 @@ const TOPICS: Record<string, string[]> = {
   samfunnsfag:      ["Demokrati og styresett", "Norsk økonomi", "FN og globalisering", "Menneskerettigheter", "Politiske systemer", "Media og ytringsfrihet", "Kriminalitet", "Velferdsstaten"],
   engelsk:          ["Literature analysis", "Grammar and writing", "Global issues", "British culture", "American culture", "Media and communication", "Science and technology", "Ethics"],
   geografi:         ["Klima og miljø", "Befolkningsvekst", "Ressurser og bærekraft", "Urbanisering", "Naturkatastrofer", "Geopolitikk", "Migrasjon", "Næringsgeografi"],
+  "fransk-1":       ["Présentation personnelle et famille", "La vie quotidienne et l'école", "La gastronomie française", "Paris et les régions françaises", "Les loisirs et le sport", "La mode et les tendances"],
+  "fransk-2":       ["Culture et identité française", "La Francophonie", "Littérature et cinéma français", "Société et politique en France", "L'environnement et le développement durable", "La jeunesse et les réseaux sociaux", "L'éducation en France", "La technologie et l'avenir"],
 };
 
 export default function EksamenPage() {

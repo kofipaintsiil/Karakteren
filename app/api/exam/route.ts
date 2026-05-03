@@ -25,15 +25,17 @@ const SUBJECT_LABELS: Record<string, string> = {
   norsk: "Norsk", matematikk: "Matematikk", naturfag: "Naturfag",
   fysikk: "Fysikk", kjemi: "Kjemi", biologi: "Biologi",
   historie: "Historie", samfunnsfag: "Samfunnsfag", engelsk: "Engelsk", geografi: "Geografi",
+  "fransk-1": "Français (Niveau I)", "fransk-2": "Français (Niveau II)",
 };
 
 function buildSystemPrompt(subject: string, topic: string): string {
   const subjectLabel = SUBJECT_LABELS[subject] ?? subject;
   const isEnglish = subject === "engelsk";
+  const isFrench = subject === "fransk-1" || subject === "fransk-2";
 
   return `Du er en muntlig eksamenssensor for norsk videregående skole (VGS). Du eksaminerer en elev i faget ${subjectLabel}, tema: "${topic}".
 
-${isEnglish ? "Conduct this exam in English since the subject is English." : "Eksamen foregår på norsk bokmål."}
+${isEnglish ? "Conduct this exam in English since the subject is English." : isFrench ? "Conduis cet examen entièrement en français. L'élève doit aussi répondre en français." : "Eksamen foregår på norsk bokmål."}
 
 SENSORENS VIKTIGSTE OPPGAVE:
 Muntlig eksamen handler om å gi eleven best mulig mulighet til å vise hva de KAN — ikke å avsløre hva de ikke kan. En rettferdig sensor:
@@ -145,10 +147,14 @@ export async function POST(req: NextRequest) {
 
   const anthropicMessages: Anthropic.MessageParam[] = [];
 
+  const isFrench = subject === "fransk-1" || subject === "fransk-2";
+
   if (phase === "opening") {
     anthropicMessages.push({
       role: "user",
-      content: `Start eksamenen. Si først "Du har trukket tema: ${topic}." og still deretter ett åpent spørsmål som gir eleven mulighet til å vise hva de kan om temaet. Ikke still ja/nei-spørsmål.`,
+      content: isFrench
+        ? `Commence l'examen. Dis d'abord "Tu as tiré le thème : ${topic}." puis pose une question ouverte qui donne à l'élève la possibilité de montrer ce qu'il sait sur ce thème. Ne pose pas de questions oui/non.`
+        : `Start eksamenen. Si først "Du har trukket tema: ${topic}." og still deretter ett åpent spørsmål som gir eleven mulighet til å vise hva de kan om temaet. Ikke still ja/nei-spørsmål.`,
     });
   } else {
     // Convert conversation history

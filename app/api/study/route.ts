@@ -28,11 +28,13 @@ const SUBJECT_LABELS: Record<string, string> = {
   "kjemi-1": "Kjemi 1", "kjemi-2": "Kjemi 2",
   "fysikk-1": "Fysikk 1", "fysikk-2": "Fysikk 2",
   "biologi-1": "Biologi 1", "biologi-2": "Biologi 2",
+  "fransk-1": "Français (Niveau I)", "fransk-2": "Français (Niveau II)",
 };
 
 function buildStudySystemPrompt(subject: string, topics: string[]): string {
   const subjectLabel = SUBJECT_LABELS[subject] ?? subject;
   const isEnglish = subject === "engelsk";
+  const isFrench = subject === "fransk-1" || subject === "fransk-2";
   const topicList = topics.map((t, i) => `${i + 1}. ${t}`).join("\n");
 
   return `Du er Blobb, en studieassistent som hjelper en elev å forberede seg til muntlig eksamen i ${subjectLabel} (LK20).
@@ -40,7 +42,7 @@ function buildStudySystemPrompt(subject: string, topics: string[]): string {
 Emner som skal gjennomgås i denne økten:
 ${topicList}
 
-${isEnglish ? "Conduct this study session entirely in English since the subject is English." : "Studiesesjonen foregår på norsk bokmål."}
+${isEnglish ? "Conduct this study session entirely in English since the subject is English." : isFrench ? "Conduis cette session d'étude entièrement en français. L'élève doit répondre en français." : "Studiesesjonen foregår på norsk bokmål."}
 
 Din rolle:
 - Still spørsmål for å sjekke elevens forståelse, akkurat som en sensor ville gjort
