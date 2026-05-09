@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 export async function POST(request: Request) {
   if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json(
-      { error: "Stripe ikke konfigurert ennå. Legg til STRIPE_SECRET_KEY i .env.local" },
+      { error: "Stripe ikke konfigurert. Legg til STRIPE_SECRET_KEY i Vercel." },
       { status: 503 }
     );
   }
@@ -18,21 +18,27 @@ export async function POST(request: Request) {
 
   const priceId =
     plan === "annual"
-      ? (process.env.STRIPE_ANNUAL_PRICE_ID ?? "price_placeholder_annual")
-      : (process.env.STRIPE_PRICE_ID ?? "price_placeholder");
+      ? (process.env.STRIPE_ANNUAL_PRICE_ID ?? "")
+      : (process.env.STRIPE_PRICE_ID ?? "");
 
-  const Stripe = (await import("stripe")).default;
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  try {
+    const Stripe = (await import("stripe")).default;
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    payment_method_types: ["card"],
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/dashboard?upgraded=1`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/pricing`,
-    customer_email: user.email,
-    metadata: { user_id: user.id, plan },
-  });
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://karakteren.vercel.app"}/dashboard?upgraded=1`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://karakteren.vercel.app"}/pricing`,
+      customer_email: user.email,
+      metadata: { user_id: user.id, plan },
+    });
 
-  return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Ukjent Stripe-feil";
+    console.error("Stripe checkout error:", message);
+    return NextResponse.json({ error: `Betalingsfeil: ${message}` }, { status: 500 });
+  }
 }
