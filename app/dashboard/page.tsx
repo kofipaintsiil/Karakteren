@@ -3,6 +3,7 @@ import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import GradeChart from "@/components/GradeChart";
 import WeakAreas from "@/components/WeakAreas";
+import { SubjectIcon, subjectColor } from "@/components/SubjectIcon";
 import { createClient } from "@/lib/supabase/server";
 import { fetchStats, fetchSessions, fetchProfile } from "@/lib/sessions-server";
 
@@ -24,22 +25,6 @@ function formatDate(iso: string) {
   return `${diff} dager siden`;
 }
 
-const SUBJECT_COLORS: Record<string, string> = {
-  norsk:       "oklch(72% 0.12 45)",
-  matematikk:  "oklch(72% 0.12 200)",
-  fysikk:      "oklch(72% 0.12 260)",
-  kjemi:       "oklch(72% 0.12 150)",
-  biologi:     "oklch(72% 0.12 130)",
-  historie:    "oklch(72% 0.12 60)",
-  naturfag:    "oklch(72% 0.12 180)",
-  samfunnsfag: "oklch(72% 0.12 90)",
-  engelsk:     "oklch(72% 0.12 220)",
-  geografi:    "oklch(72% 0.12 160)",
-};
-function subjectColor(subject: string) {
-  const key = subject.toLowerCase().split(" ")[0];
-  return SUBJECT_COLORS[key] ?? "var(--accent)";
-}
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -133,12 +118,12 @@ export default async function DashboardPage() {
                     }}>
                       <div style={{
                         width: "40px", height: "40px",
-                        borderRadius: "10px",
-                        backgroundColor: color + "30",
+                        borderRadius: "var(--r-md)",
+                        backgroundColor: color + "18",
                         display: "flex", alignItems: "center", justifyContent: "center",
                         flexShrink: 0,
                       }}>
-                        <span style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 800, fontSize: "16px", color }}>{s.subject[0]}</span>
+                        <SubjectIcon id={s.subject.toLowerCase().split(" ")[0]} size={20} color={color} />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <p style={{ fontWeight: 600, fontSize: "14px", color: "var(--text)", marginBottom: "2px" }}>{s.subject}</p>
