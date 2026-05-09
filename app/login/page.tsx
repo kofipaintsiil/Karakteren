@@ -42,29 +42,54 @@ function LoginForm() {
 
   async function handleGoogle() {
     setLoading(true);
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=${next}` },
-    });
+    setMessage(null);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth/callback?next=${next}` },
+      });
+      if (error) {
+        setMessage({ type: "error", text: error.message });
+        setLoading(false);
+      }
+    } catch {
+      setMessage({ type: "error", text: "Kunne ikke koble til innloggingstjenesten. Prøv igjen." });
+      setLoading(false);
+    }
   }
 
   async function handleApple() {
     setLoading(true);
-    await supabase.auth.signInWithOAuth({
-      provider: "apple",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=${next}` },
-    });
+    setMessage(null);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "apple",
+        options: { redirectTo: `${window.location.origin}/auth/callback?next=${next}` },
+      });
+      if (error) {
+        setMessage({ type: "error", text: error.message });
+        setLoading(false);
+      }
+    } catch {
+      setMessage({ type: "error", text: "Kunne ikke koble til innloggingstjenesten. Prøv igjen." });
+      setLoading(false);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
+    const timeout = setTimeout(() => {
+      setLoading(false);
+      setMessage({ type: "error", text: "Tilkoblingen tok for lang tid. Sjekk internett og prøv igjen." });
+    }, 10000);
 
     if (mode === "forgot") {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/callback`,
       });
+      clearTimeout(timeout);
       setLoading(false);
       if (error) setMessage({ type: "error", text: ERROR_MESSAGES[error.message] ?? error.message });
       else setMessage({ type: "success", text: "Tilbakestillingslenke sendt. Sjekk e-posten din." });
@@ -72,8 +97,6 @@ function LoginForm() {
     }
 
     if (mode === "signup") {
-      // Use server-side admin route so the account is confirmed immediately
-      // (Supabase free tier doesn't reliably deliver confirmation emails)
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -81,13 +104,14 @@ function LoginForm() {
       });
       const json = await res.json();
       if (!res.ok) {
+        clearTimeout(timeout);
         setLoading(false);
         const msg = json.error ?? "";
         setMessage({ type: "error", text: ERROR_MESSAGES[msg] ?? (msg.includes("already") ? "Denne e-posten er allerede registrert. Logg inn i stedet." : msg || "Noe gikk galt.") });
         return;
       }
-      // Account created & confirmed — sign in straight away
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      clearTimeout(timeout);
       setLoading(false);
       if (signInError) {
         setMessage({ type: "error", text: ERROR_MESSAGES[signInError.message] ?? signInError.message });
@@ -99,7 +123,6 @@ function LoginForm() {
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-    // If email not yet confirmed, auto-confirm via admin and retry
     if (error?.message === "Email not confirmed") {
       const res = await fetch("/api/auth/confirm", {
         method: "POST",
@@ -108,6 +131,7 @@ function LoginForm() {
       });
       if (res.ok) {
         const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
+        clearTimeout(timeout);
         setLoading(false);
         if (retryError) {
           setMessage({ type: "error", text: ERROR_MESSAGES[retryError.message] ?? retryError.message });
@@ -118,6 +142,7 @@ function LoginForm() {
       }
     }
 
+    clearTimeout(timeout);
     setLoading(false);
     if (error) {
       setMessage({ type: "error", text: ERROR_MESSAGES[error.message] ?? error.message });
