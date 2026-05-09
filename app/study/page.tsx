@@ -16,16 +16,7 @@ interface Message {
   text: string;
 }
 
-const SUBJECT_LABELS: Record<string, string> = {
-  norsk: "Norsk", matematikk: "Matematikk", naturfag: "Naturfag",
-  fysikk: "Fysikk", kjemi: "Kjemi", biologi: "Biologi",
-  historie: "Historie", samfunnsfag: "Samfunnsfag", engelsk: "Engelsk", geografi: "Geografi",
-  "matematikk-1t": "Matematikk 1T", "matematikk-r1": "Matematikk R1",
-  "matematikk-r2": "Matematikk R2", "matematikk-2p": "Matematikk 2P",
-  "kjemi-1": "Kjemi 1", "kjemi-2": "Kjemi 2",
-  "fysikk-1": "Fysikk 1", "fysikk-2": "Fysikk 2",
-  "biologi-1": "Biologi 1", "biologi-2": "Biologi 2",
-};
+import { SUBJECT_LABELS } from "@/lib/subjects";
 
 const BLUE_PRESS = "oklch(0.48 0.19 240)";
 
