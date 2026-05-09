@@ -66,15 +66,15 @@ export default async function DashboardPage() {
             fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "26px",
             letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "16px",
           }}>
-            {displayName} 👋
+            {displayName}
           </h1>
 
           {/* Stats row */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
             {[
-              { val: stats?.total ?? 0, label: "Prøver" },
-              { val: stats?.avg?.toFixed(1) ?? "—", label: "Snitt" },
-              { val: `${streak}${streak > 0 ? "🔥" : ""}`, label: "Dager på rad" },
+              { val: stats?.total ?? 0, label: "Prøver", streak: false },
+              { val: stats?.avg?.toFixed(1) ?? "—", label: "Snitt", streak: false },
+              { val: streak, label: "Dager på rad", streak: streak > 0 },
             ].map(s => (
               <div key={s.label} style={{
                 backgroundColor: "var(--surface)",
@@ -84,7 +84,14 @@ export default async function DashboardPage() {
                 textAlign: "center",
                 boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
               }}>
-                <div style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", color: "var(--text)" }}>{s.val}</div>
+                <div style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", color: s.streak ? "oklch(0.7 0.18 45)" : "var(--text)", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+                  {s.streak && (
+                    <svg width="14" height="16" viewBox="0 0 14 18" fill="none" style={{ flexShrink: 0, marginBottom: "-1px" }}>
+                      <path d="M8 1C8 1 10 4 10 6.5C10 8 9 9 8 9C8 9 9 7 7.5 5.5C7.5 5.5 7 8 5 9.5C4 10.2 3 11 3 12.5C3 15 5 17 7 17C9 17 11 15.5 11 13C11 11 9.5 9.5 9 8.5C10.5 10 13 11 13 13.5C13 16.5 10.5 18 7 18C3.5 18 1 15.5 1 12.5C1 10 2.5 8 4 6.5C5 5.5 6 4 6 2.5C6.5 3 8 1 8 1Z" fill="oklch(0.7 0.18 45)"/>
+                    </svg>
+                  )}
+                  {s.val}
+                </div>
                 <div style={{ fontSize: "11px", color: "var(--ink-light)", marginTop: "2px" }}>{s.label}</div>
               </div>
             ))}

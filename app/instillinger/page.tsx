@@ -171,8 +171,8 @@ export default function InstillingerPage() {
             <p style={{ fontSize: "12px", color: "var(--ink-light)", marginBottom: "12px" }}>Hvilken stemme skal eksaminator bruke?</p>
             <div style={{ display: "flex", gap: "8px" }}>
               {([
-                { value: "female", label: "Kvinne", emoji: "👩" },
-                { value: "male",   label: "Mann",   emoji: "👨" },
+                { value: "female", label: "Kvinne" },
+                { value: "male",   label: "Mann" },
               ] as const).map(opt => (
                 <button
                   key={opt.value}
@@ -186,7 +186,10 @@ export default function InstillingerPage() {
                     WebkitTapHighlightColor: "transparent",
                   }}
                 >
-                  <span style={{ display: "block", fontSize: "20px", marginBottom: "4px" }}>{opt.emoji}</span>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block", margin: "0 auto 4px" }}>
+                    <circle cx="12" cy="7" r="4"/>
+                    <path d="M6 21v-2a6 6 0 0 1 12 0v2"/>
+                  </svg>
                   {opt.label}
                 </button>
               ))}

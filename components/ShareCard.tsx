@@ -20,7 +20,7 @@ export default function ShareCard({ grade, subject, topic, label, blobbState, gr
 
   function handleShare() {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
-    const text = `Jeg fikk karakter ${grade} (${label}) i ${subject} på Karakteren! 📚\nTema: ${topic}\nØv til eksamen: ${appUrl}`;
+    const text = `Jeg fikk karakter ${grade} (${label}) i ${subject} på Karakteren!\nTema: ${topic}\nØv til eksamen: ${appUrl}`;
     if (navigator.share) {
       navigator.share({ title: "Karakteren-resultat", text, url: appUrl }).catch(() => {});
     } else {

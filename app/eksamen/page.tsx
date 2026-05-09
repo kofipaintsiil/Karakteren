@@ -22,31 +22,31 @@ function savePreferences(patch: Record<string, string | null>) {
 }
 
 const SUBJECTS = [
-  { id: "norsk",       label: "Norsk",       emoji: "📝", variants: null },
-  { id: "matematikk",  label: "Matematikk",  emoji: "➗", variants: [
+  { id: "norsk",       label: "Norsk",       variants: null },
+  { id: "matematikk",  label: "Matematikk",  variants: [
     { id: "matematikk-1t", label: "1T",  desc: "Vg1 teoretisk" },
     { id: "matematikk-r1", label: "R1",  desc: "Vg2 realfag" },
     { id: "matematikk-r2", label: "R2",  desc: "Vg3 realfag" },
     { id: "matematikk-2p", label: "2P",  desc: "Vg2 praktisk" },
   ]},
-  { id: "fysikk",      label: "Fysikk",      emoji: "⚛️", variants: [
+  { id: "fysikk",      label: "Fysikk",      variants: [
     { id: "fysikk-1", label: "Fysikk 1", desc: "Vg2" },
     { id: "fysikk-2", label: "Fysikk 2", desc: "Vg3" },
   ]},
-  { id: "kjemi",       label: "Kjemi",       emoji: "🧪", variants: [
+  { id: "kjemi",       label: "Kjemi",       variants: [
     { id: "kjemi-1", label: "Kjemi 1", desc: "Vg2" },
     { id: "kjemi-2", label: "Kjemi 2", desc: "Vg3" },
   ]},
-  { id: "biologi",     label: "Biologi",     emoji: "🌱", variants: [
+  { id: "biologi",     label: "Biologi",     variants: [
     { id: "biologi-1", label: "Biologi 1", desc: "Vg2" },
     { id: "biologi-2", label: "Biologi 2", desc: "Vg3" },
   ]},
-  { id: "historie",    label: "Historie",    emoji: "🏛️", variants: null },
-  { id: "naturfag",    label: "Naturfag",    emoji: "🌍", variants: null },
-  { id: "samfunnsfag", label: "Samfunnskunnskap", emoji: "🗺️", variants: null },
-  { id: "engelsk",     label: "Engelsk",     emoji: "🌐", variants: null },
-  { id: "geografi",    label: "Geografi",    emoji: "🗻", variants: null },
-  { id: "fransk",      label: "Fransk",      emoji: "🇫🇷", variants: [
+  { id: "historie",    label: "Historie",    variants: null },
+  { id: "naturfag",    label: "Naturfag",    variants: null },
+  { id: "samfunnsfag", label: "Samfunnskunnskap", variants: null },
+  { id: "engelsk",     label: "Engelsk",     variants: null },
+  { id: "geografi",    label: "Geografi",    variants: null },
+  { id: "fransk",      label: "Fransk",      variants: [
     { id: "fransk-1", label: "Fransk 1", desc: "Vg2 Niveau I" },
     { id: "fransk-2", label: "Fransk 2", desc: "Vg3 Niveau II" },
   ]},
@@ -240,7 +240,7 @@ export default function EksamenPage() {
                     WebkitTapHighlightColor: "transparent",
                   }}
                 >
-                  {s.emoji} {s.label}
+                  {s.label}
                 </button>
               ))}
             </div>
@@ -303,11 +303,16 @@ export default function EksamenPage() {
               <>
                 <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.8px", textTransform: "uppercase" }}>Trukket tema</p>
                 <p style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", color: "#fff", letterSpacing: "-0.3px" }}>{drawnTopic}</p>
-                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>{activeFag.emoji} {activeLabel}</p>
+                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>{activeLabel}</p>
               </>
             ) : (
               <>
-                <div style={{ fontSize: "32px" }}>🎲</div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "44px", height: "44px", borderRadius: "var(--r-md)", backgroundColor: "var(--bg-alt)" }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+                    <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+                  </svg>
+                </div>
                 <p style={{ fontSize: "14px", color: canDraw ? "var(--text-muted)" : "var(--text-faint)" }}>
                   {canDraw ? "Klar for et tilfeldig tema?" : `Velg hvilken ${activeFag.label} du har eksamen i`}
                 </p>
@@ -364,8 +369,12 @@ export default function EksamenPage() {
           <div style={{
             backgroundColor: "var(--accent-bg)", borderRadius: "var(--r-md)",
             padding: "12px 14px", fontSize: "12px", color: "var(--accent-dark)", lineHeight: 1.5,
+            display: "flex", gap: "10px", alignItems: "flex-start",
           }}>
-            💡 På eksamensdagen velger sensor temaet for deg. Her trener du på å håndtere det ukjente.
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}>
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            På eksamensdagen velger sensor temaet for deg. Her trener du på å håndtere det ukjente.
           </div>
 
         </div>

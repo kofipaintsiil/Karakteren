@@ -4,31 +4,44 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 
+const SUBJECT_COLORS: Record<string, string> = {
+  norsk:       "oklch(0.60 0.15 260)",
+  matematikk:  "oklch(0.58 0.18 22)",
+  fysikk:      "oklch(0.55 0.16 210)",
+  kjemi:       "oklch(0.60 0.16 140)",
+  biologi:     "oklch(0.58 0.15 150)",
+  historie:    "oklch(0.58 0.14 50)",
+  naturfag:    "oklch(0.58 0.15 160)",
+  samfunnsfag: "oklch(0.58 0.14 280)",
+  engelsk:     "oklch(0.55 0.15 230)",
+  geografi:    "oklch(0.58 0.14 80)",
+};
+
 const SUBJECTS = [
-  { id: "norsk",       label: "Norsk",       emoji: "📝", variants: null },
-  { id: "matematikk",  label: "Matematikk",  emoji: "➗", variants: [
+  { id: "norsk",       label: "Norsk",       variants: null },
+  { id: "matematikk",  label: "Matematikk",  variants: [
     { id: "matematikk-1t", label: "1T",  desc: "Vg1 teoretisk" },
     { id: "matematikk-r1", label: "R1",  desc: "Vg2 realfag" },
     { id: "matematikk-r2", label: "R2",  desc: "Vg3 realfag" },
     { id: "matematikk-2p", label: "2P",  desc: "Vg2 praktisk" },
   ]},
-  { id: "fysikk",      label: "Fysikk",      emoji: "⚛️", variants: [
+  { id: "fysikk",      label: "Fysikk",      variants: [
     { id: "fysikk-1", label: "Fysikk 1", desc: "Vg2" },
     { id: "fysikk-2", label: "Fysikk 2", desc: "Vg3" },
   ]},
-  { id: "kjemi",       label: "Kjemi",       emoji: "🧪", variants: [
+  { id: "kjemi",       label: "Kjemi",       variants: [
     { id: "kjemi-1", label: "Kjemi 1", desc: "Vg2" },
     { id: "kjemi-2", label: "Kjemi 2", desc: "Vg3" },
   ]},
-  { id: "biologi",     label: "Biologi",     emoji: "🌱", variants: [
+  { id: "biologi",     label: "Biologi",     variants: [
     { id: "biologi-1", label: "Biologi 1", desc: "Vg2" },
     { id: "biologi-2", label: "Biologi 2", desc: "Vg3" },
   ]},
-  { id: "historie",    label: "Historie",    emoji: "🏛️", variants: null },
-  { id: "naturfag",    label: "Naturfag",    emoji: "🌍", variants: null },
-  { id: "samfunnsfag", label: "Samfunnsfag", emoji: "🗺️", variants: null },
-  { id: "engelsk",     label: "Engelsk",     emoji: "🌐", variants: null },
-  { id: "geografi",    label: "Geografi",    emoji: "🗻", variants: null },
+  { id: "historie",    label: "Historie",    variants: null },
+  { id: "naturfag",    label: "Naturfag",    variants: null },
+  { id: "samfunnsfag", label: "Samfunnsfag", variants: null },
+  { id: "engelsk",     label: "Engelsk",     variants: null },
+  { id: "geografi",    label: "Geografi",    variants: null },
 ];
 
 const CHAPTERS: Record<string, { id: string; title: string; topics: string[] }[]> = {
@@ -267,7 +280,8 @@ export default function OvingPage() {
                       WebkitTapHighlightColor: "transparent",
                     }}
                   >
-                    <span>{s.emoji}</span> {s.label}
+                    <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: SUBJECT_COLORS[s.id] ?? "var(--accent)", flexShrink: 0, display: "inline-block" }} />
+                    {s.label}
                     {s.variants && (
                       <span style={{ fontSize: "11px", color: "var(--ink-light)", fontWeight: 400 }}>
                         {s.variants.length} nivåer
@@ -298,7 +312,9 @@ export default function OvingPage() {
                     position: "relative",
                   }}
                 >
-                  <span style={{ fontSize: "22px" }}>{s.emoji}</span>
+                  <div style={{ width: "36px", height: "36px", borderRadius: "var(--r-md)", backgroundColor: SUBJECT_COLORS[s.id] ?? "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <span style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 800, fontSize: "14px", color: "#fff" }}>{s.label.charAt(0)}</span>
+                  </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ lineHeight: 1.2 }}>{s.label}</div>
                     {s.variants && (
@@ -336,7 +352,7 @@ export default function OvingPage() {
               <ChevronLeft size={14} /> Tilbake
             </button>
             <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", letterSpacing: "-0.3px", color: "var(--text)", marginBottom: "2px" }}>
-              {baseFag.emoji} {baseFag.label} — Velg nivå
+              {baseFag.label} — Velg nivå
             </h1>
             <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>
               Velg hvilket kurs du øver til
@@ -371,8 +387,8 @@ export default function OvingPage() {
 
   // ── STEP 2: Chapter picker ──────────────────────────────────────────
   const headingLabel = variantObj
-    ? `${baseFag?.emoji} ${baseFag?.label} ${variantObj.label}`
-    : `${baseFag?.emoji} ${baseFag?.label}`;
+    ? `${baseFag?.label} ${variantObj.label}`
+    : `${baseFag?.label}`;
 
   return (
     <AppShell>

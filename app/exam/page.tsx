@@ -628,7 +628,17 @@ function ExamPageInner() {
                   WebkitTapHighlightColor: "transparent",
                 }}
               >
-                {m === "voice" ? "🎤 Tale" : "⌨️ Tekst"}
+                {m === "voice" ? (
+                  <span style={{ display: "flex", alignItems: "center", gap: "5px", justifyContent: "center" }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 0 1-14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+                    Tale
+                  </span>
+                ) : (
+                  <span style={{ display: "flex", alignItems: "center", gap: "5px", justifyContent: "center" }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="6" y1="10" x2="6" y2="10"/><line x1="10" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="14" y2="10"/><line x1="18" y1="10" x2="18" y2="10"/><line x1="6" y1="14" x2="18" y2="14"/></svg>
+                    Tekst
+                  </span>
+                )}
               </button>
             ))}
           </div>

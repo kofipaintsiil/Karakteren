@@ -72,15 +72,20 @@ export default function LeaderboardClient({ entries, subjects, medals, currentUs
               }}
             >
               <span style={{
-                fontSize: rank <= 3 ? "22px" : "15px",
+                fontSize: "12px",
                 fontWeight: 800,
                 width: "28px",
-                textAlign: "center",
-                color: rank <= 3 ? "inherit" : "var(--ink-light)",
+                height: "28px",
+                borderRadius: "var(--r-full)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 flexShrink: 0,
                 fontFamily: "Inter, system-ui, sans-serif",
+                backgroundColor: rank === 1 ? "oklch(0.85 0.12 80)" : rank === 2 ? "oklch(0.82 0.04 250)" : rank === 3 ? "oklch(0.78 0.09 55)" : "var(--bg-alt)",
+                color: rank <= 3 ? "oklch(0.3 0.05 60)" : "var(--ink-light)",
               }}>
-                {medals[rank - 1] ?? `#${rank}`}
+                {rank <= 3 ? (medals[rank - 1] ?? `#${rank}`) : `#${rank}`}
               </span>
               {/* Avatar */}
               <div style={{

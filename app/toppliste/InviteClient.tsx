@@ -17,7 +17,7 @@ export default function InviteClient() {
     if (navigator.share) {
       navigator.share({
         title: "Karakteren",
-        text: "Øv til muntlig eksamen med AI-sensor! Gratis for VGS-elever 🎓",
+        text: "Øv til muntlig eksamen med AI-sensor! Gratis for VGS-elever.",
         url: APP_URL,
       });
     } else {
@@ -35,7 +35,13 @@ export default function InviteClient() {
       boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
-        <span style={{ fontSize: "24px" }}>👋</span>
+        <div style={{ width: "36px", height: "36px", borderRadius: "var(--r-md)", backgroundColor: "var(--accent-bg)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+            <polyline points="16 6 12 2 8 6"/>
+            <line x1="12" y1="2" x2="12" y2="15"/>
+          </svg>
+        </div>
         <div>
           <p style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 700, fontSize: "15px", color: "var(--text)" }}>
             Inviter venner
@@ -67,7 +73,7 @@ export default function InviteClient() {
             cursor: "pointer", minWidth: "100px",
           }}
         >
-          {copied ? "Kopiert ✓" : "Kopier lenke"}
+          {copied ? "Kopiert" : "Kopier lenke"}
         </button>
       </div>
     </div>

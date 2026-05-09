@@ -23,7 +23,7 @@ export default function EditProfileClient({ initialName, initialAvatar }: Props)
     });
     setSaving(false);
     if (res.ok) {
-      setMsg("Navn lagret ✓");
+      setMsg("Navn lagret");
     } else {
       const body = await res.json().catch(() => ({}));
       setMsg(`Feil: ${body.error ?? res.status}`);

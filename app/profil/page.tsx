@@ -77,7 +77,7 @@ export default async function ProfilPage() {
           {[
             { value: stats?.total ?? 0, label: "Prøver totalt" },
             { value: stats?.avg?.toFixed(1) ?? "—", label: "Snittkarakter" },
-            { value: `${stats?.streak ?? 0}🔥`, label: "Dager på rad" },
+            { value: stats?.streak ?? 0, label: "Dager på rad" },
           ].map((s) => (
             <div key={s.label}>
               <p style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 800, fontSize: "1.375rem", color: "var(--text)" }}>{s.value}</p>
@@ -127,7 +127,7 @@ export default async function ProfilPage() {
                 Ubegrensede prøver til {new Date(sub!.current_period_end!).toLocaleDateString("nb-NO", { day: "numeric", month: "long" })}
               </p>
             </div>
-            <span style={{ fontSize: "20px" }}>✓</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green, #22c55e)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
         ) : (
           <div style={{
