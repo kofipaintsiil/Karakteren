@@ -17,6 +17,56 @@ const SUBJECT_COLORS: Record<string, string> = {
   geografi:    "oklch(0.58 0.14 80)",
 };
 
+function SubjectIcon({ id, size = 18 }: { id: string; size?: number }) {
+  const icons: Record<string, JSX.Element> = {
+    norsk: (
+      /* pen writing */
+      <><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></>
+    ),
+    matematikk: (
+      /* sigma / summation */
+      <path d="M18 4H7l7 8-7 8h11"/>
+    ),
+    fysikk: (
+      /* lightning bolt */
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    ),
+    kjemi: (
+      /* flask */
+      <><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></>
+    ),
+    biologi: (
+      /* leaf */
+      <><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></>
+    ),
+    historie: (
+      /* open book */
+      <><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></>
+    ),
+    naturfag: (
+      /* globe */
+      <><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></>
+    ),
+    samfunnsfag: (
+      /* people / community */
+      <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>
+    ),
+    engelsk: (
+      /* speech bubble */
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    ),
+    geografi: (
+      /* map pin */
+      <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></>
+    ),
+  };
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {icons[id] ?? <circle cx="12" cy="12" r="8"/>}
+    </svg>
+  );
+}
+
 const SUBJECTS = [
   { id: "norsk",       label: "Norsk",       variants: null },
   { id: "matematikk",  label: "Matematikk",  variants: [
@@ -280,7 +330,9 @@ export default function OvingPage() {
                       WebkitTapHighlightColor: "transparent",
                     }}
                   >
-                    <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: SUBJECT_COLORS[s.id] ?? "var(--accent)", flexShrink: 0, display: "inline-block" }} />
+                    <span style={{ width: "24px", height: "24px", borderRadius: "6px", backgroundColor: SUBJECT_COLORS[s.id] ?? "var(--accent)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <SubjectIcon id={s.id} size={13} />
+                    </span>
                     {s.label}
                     {s.variants && (
                       <span style={{ fontSize: "11px", color: "var(--ink-light)", fontWeight: 400 }}>
@@ -312,8 +364,8 @@ export default function OvingPage() {
                     position: "relative",
                   }}
                 >
-                  <div style={{ width: "36px", height: "36px", borderRadius: "var(--r-md)", backgroundColor: SUBJECT_COLORS[s.id] ?? "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <span style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 800, fontSize: "14px", color: "#fff" }}>{s.label.charAt(0)}</span>
+                  <div style={{ width: "38px", height: "38px", borderRadius: "var(--r-md)", backgroundColor: SUBJECT_COLORS[s.id] ?? "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <SubjectIcon id={s.id} size={18} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ lineHeight: 1.2 }}>{s.label}</div>
