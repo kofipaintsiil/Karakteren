@@ -28,11 +28,19 @@ export default async function ProfilPage() {
 
   const start = new Date();
   start.setDate(1); start.setHours(0, 0, 0, 0);
-  const { count: usedThisMonth } = await (await createClient())
-    .from("sessions")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .gte("created_at", start.toISOString());
+
+  const supabase2 = await createClient();
+  const [{ count: usedThisMonth }, subResult] = await Promise.all([
+    supabase2.from("sessions").select("id", { count: "exact", head: true })
+      .eq("user_id", user.id).gte("created_at", start.toISOString()),
+    supabase2.from("subscriptions").select("status, current_period_end").eq("user_id", user.id).maybeSingle(),
+  ]);
+  const sub = subResult.data as { status: string; current_period_end: string | null } | null;
+
+  const userIsPremium =
+    sub?.status === "active" &&
+    sub?.current_period_end != null &&
+    new Date(sub.current_period_end) > new Date();
 
   const remaining = Math.max(0, 3 - (usedThisMonth ?? 0));
   const resetDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
@@ -104,27 +112,45 @@ export default async function ProfilPage() {
           </div>
         )}
 
-        {/* Free sessions remaining */}
-        <div style={{
-          backgroundColor: "var(--accent-bg)", border: "1px solid var(--accent)",
-          borderRadius: "var(--r-lg)", padding: "14px 16px", marginBottom: "24px",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-        }}>
-          <div>
-            <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--accent-dark)" }}>
-              {remaining} gratis {remaining === 1 ? "prøve" : "prøver"} igjen denne måneden
-            </p>
-            <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>Nullstilles {resetDate}</p>
-          </div>
-          <Link href="/pricing" style={{
-            padding: "8px 16px", borderRadius: "var(--r-full)",
-            backgroundColor: "var(--accent)", color: "#fff",
-            fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "13px",
-            textDecoration: "none",
+        {/* Subscription status */}
+        {userIsPremium ? (
+          <div style={{
+            backgroundColor: "var(--green-soft, #f0fdf4)", border: "1px solid var(--green, #22c55e)",
+            borderRadius: "var(--r-lg)", padding: "14px 16px", marginBottom: "24px",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
           }}>
-            Oppgrader
-          </Link>
-        </div>
+            <div>
+              <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--green-press, #15803d)" }}>
+                Premium aktiv
+              </p>
+              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>
+                Ubegrensede prøver til {new Date(sub!.current_period_end!).toLocaleDateString("nb-NO", { day: "numeric", month: "long" })}
+              </p>
+            </div>
+            <span style={{ fontSize: "20px" }}>✓</span>
+          </div>
+        ) : (
+          <div style={{
+            backgroundColor: "var(--accent-bg)", border: "1px solid var(--accent)",
+            borderRadius: "var(--r-lg)", padding: "14px 16px", marginBottom: "24px",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+          }}>
+            <div>
+              <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--accent-dark)" }}>
+                {remaining} gratis {remaining === 1 ? "prøve" : "prøver"} igjen denne måneden
+              </p>
+              <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>Nullstilles {resetDate}</p>
+            </div>
+            <Link href="/pricing" style={{
+              padding: "8px 16px", borderRadius: "var(--r-full)",
+              backgroundColor: "var(--accent)", color: "#fff",
+              fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "13px",
+              textDecoration: "none",
+            }}>
+              Oppgrader
+            </Link>
+          </div>
+        )}
 
         <div style={{ marginTop: "8px" }}>
           <LogoutButton />
