@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 
@@ -19,7 +19,7 @@ const SUBJECT_COLORS: Record<string, string> = {
 
 function SubjectIcon({ id, size = 18, color }: { id: string; size?: number; color?: string }) {
   const stroke = color ?? SUBJECT_COLORS[id] ?? "var(--accent)";
-  const icons: Record<string, JSX.Element> = {
+  const icons: Record<string, ReactElement> = {
     norsk: (
       /* pen writing */
       <><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></>
