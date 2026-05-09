@@ -1,28 +1,25 @@
-// Simple in-memory rate limiter — per serverless instance.
-// Good enough to stop abuse bursts; for distributed rate-limiting add Upstash Redis.
+import { createClient } from "@supabase/supabase-js";
 
-interface Window { count: number; reset: number }
-const store = new Map<string, Window>();
-
-export function rateLimit(key: string, limit: number, windowMs: number): boolean {
-  const now = Date.now();
-  const entry = store.get(key);
-
-  if (!entry || now > entry.reset) {
-    store.set(key, { count: 1, reset: now + windowMs });
-    return true; // allowed
-  }
-
-  if (entry.count >= limit) return false; // blocked
-
-  entry.count++;
-  return true; // allowed
+function adminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  );
 }
 
-// Prune stale entries every 5 minutes to avoid memory leak
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, val] of store) {
-    if (now > val.reset) store.delete(key);
+export async function rateLimit(key: string, limit: number, windowMs: number): Promise<boolean> {
+  try {
+    const { data, error } = await adminClient().rpc("check_rate_limit", {
+      p_key: key,
+      p_limit: limit,
+      p_window_ms: windowMs,
+    });
+    if (error) throw error;
+    return data as boolean;
+  } catch (err) {
+    // If DB is unreachable, fail open so users aren't blocked by infrastructure issues
+    console.error("rate-limit DB error:", err);
+    return true;
   }
-}, 5 * 60 * 1000);
+}

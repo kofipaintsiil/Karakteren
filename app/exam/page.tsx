@@ -269,7 +269,8 @@ function ExamPageInner() {
 
     if (!SR) {
       const mob = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      setMicError(mob ? "Taleinnspilling krever Safari på iPhone." : "Nettleseren støtter ikke taleinnspilling. Prøv Chrome eller Safari.");
+      setMicError(mob ? "Taleinnspilling krever Safari på iPhone — bytt til tekstmodus." : "Nettleseren støtter ikke taleinnspilling — bytt til tekstmodus.");
+      setInputMode("text");
       return;
     }
 
@@ -319,11 +320,13 @@ function ExamPageInner() {
 
       rec.onerror = (e: SpeechRecognitionErrorEvent) => {
         if (e.error === "no-speech" || e.error === "aborted") return;
-        if (e.error === "not-allowed") {
-          shouldContinue = false;
-          setMicError("Mikrofonillatelse nektet. Gå til Innstillinger → Safari → Mikrofon og tillat tilgang.");
-        }
         shouldContinue = false;
+        if (e.error === "not-allowed") {
+          setMicError("Mikrofonillatelse nektet — byttet til tekstmodus.");
+        } else {
+          setMicError("Mikrofon virker ikke — byttet til tekstmodus.");
+        }
+        setInputMode("text");
       };
 
       try { rec.start(); } catch { if (shouldContinue) { shouldContinue = false; finishRecording(); } }
@@ -438,9 +441,15 @@ function ExamPageInner() {
           </p>
           <button
             onClick={() => router.push("/exam/feedback")}
-            style={{ width: "100%", maxWidth: "340px", padding: "15px", borderRadius: KR.rFull, border: "none", backgroundColor: KR.accent, color: "#fff", fontFamily: KR.fontBody, fontWeight: 700, fontSize: "15px", cursor: "pointer", boxShadow: "0 4px 20px rgba(0,0,0,0.12)", WebkitTapHighlightColor: "transparent" }}
+            style={{ width: "100%", maxWidth: "340px", padding: "15px", borderRadius: KR.rFull, border: "none", backgroundColor: KR.accent, color: "#fff", fontFamily: KR.fontBody, fontWeight: 700, fontSize: "15px", cursor: "pointer", boxShadow: "0 4px 20px rgba(0,0,0,0.12)", WebkitTapHighlightColor: "transparent", marginBottom: "12px" }}
           >
             Se karakter og tilbakemelding
+          </button>
+          <button
+            onClick={() => router.push(`/exam?subject=${subject}`)}
+            style={{ width: "100%", maxWidth: "340px", padding: "13px", borderRadius: KR.rFull, border: `2px solid ${KR.border}`, backgroundColor: "transparent", color: KR.inkMid, fontFamily: KR.fontBody, fontWeight: 700, fontSize: "15px", cursor: "pointer", WebkitTapHighlightColor: "transparent" }}
+          >
+            Prøv igjen
           </button>
         </div>
       </div>

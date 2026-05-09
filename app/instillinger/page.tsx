@@ -150,7 +150,7 @@ export default function InstillingerPage() {
               <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>{t("set_app_lang")}</p>
             </div>
             <div style={{ display: "flex", gap: "6px" }}>
-              {([["nb", "Bokmål"], ["nn", "Nynorsk"], ["en", "English"]] as [Lang, string][]).map(([code, lbl]) => (
+              {([["nb", "Bokmål"], ["en", "English"]] as [Lang, string][]).map(([code, lbl]) => (
                 <button key={code} onClick={() => setLang(code)} style={{
                   padding: "5px 10px", borderRadius: "8px", border: "none",
                   backgroundColor: lang === code ? "var(--text)" : "var(--bg-alt)",

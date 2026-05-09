@@ -16,10 +16,14 @@ export async function GET(req: Request) {
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 
-  // Generate a one-time magic link token for your account
+  const devEmail = process.env.DEV_LOGIN_EMAIL;
+  if (!devEmail) {
+    return NextResponse.json({ error: "DEV_LOGIN_EMAIL not set" }, { status: 500 });
+  }
+
   const { data, error } = await admin.auth.admin.generateLink({
     type: "magiclink",
-    email: "k_paintsil@icloud.com",
+    email: devEmail,
   });
 
   if (error || !data.properties?.hashed_token) {

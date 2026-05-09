@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import DarkModeProvider from "@/components/DarkModeProvider";
 import { LangProvider } from "@/components/LangProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://karakteren.no";
 
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       )}
       <body className="min-h-full flex flex-col">
         <DarkModeProvider><LangProvider>{children}</LangProvider></DarkModeProvider>
+        <Analytics />
       </body>
     </html>
   );

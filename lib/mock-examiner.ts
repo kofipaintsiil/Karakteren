@@ -113,10 +113,22 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
         tooShort: "Kan du utdype? Trekk inn konkrete verk og forfatternavn.",
         closing: "Takk. Jeg vurderer nå din kunnskap om norsk og skandinavisk realisme.",
       },
+      {
+        name: "Nasjonalromantikk og romantikken",
+        opening: "Du har trukket tema: Nasjonalromantikk og romantikken. Hva kjennetegner romantikken som litterær og kulturell bevegelse, og når oppstod den?",
+        followUps: [
+          "Hva er nasjonalromantikk, og hvordan kom den til uttrykk i Norge på 1800-tallet?",
+          "Hvem er Henrik Wergeland og Johan Sebastian Welhaven, og hva representerte striden mellom dem?",
+          "Hva er Asbjørnsen og Moes rolle i den norske nasjonalromantikken?",
+          "Hva kjennetegner romantisk litteratur sammenlignet med realismen som kom etterpå?",
+        ],
+        tooShort: "Prøv å trekk inn konkrete forfattere, verk og historiske sammenhenger.",
+        closing: "Takk. Jeg vurderer nå din forståelse av norsk litteraturhistorie.",
+      },
     ],
   },
 
-  // ─── MATEMATIKK (MAT09-01, 1T) ──────────────────────────────────────────────
+  // ─── MATEMATIKK (MAT01-05, 1T) ──────────────────────────────────────────────
   matematikk: {
     topics: [
       {
@@ -148,9 +160,9 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
         opening: "Du har trukket tema: Polynomer og algebraiske metoder. Hva er et polynom, og hva kjennetegner en andregradsfunksjon?",
         followUps: [
           "Løs ligningen x i andre minus 5x pluss 6 lik 0, og forklar hvilken metode du bruker.",
-          "Hva er polynomdivisjon, og hva bruker vi det til?",
-          "Forklar sammenhengen mellom røttene til et polynom og faktoriseringen av det.",
-          "Hva er en rasjonale funksjon, og hva kjennetegner dens graf sammenlignet med et polynom?",
+          "Hva er abc-formelen, og når bruker vi den?",
+          "Forklar sammenhengen mellom røttene til et andregradsspolynom og faktoriseringen av det.",
+          "Hva er eksponentialfunksjoner, og hva kjennetegner vekst og forfall?",
         ],
         tooShort: "Kan du gi et mer fullstendig svar? Bruk gjerne formler og eksempler.",
         closing: "Bra. Jeg har nå vurdert dine algebraiske ferdigheter.",
@@ -161,7 +173,7 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
         followUps: [
           "Hva er addisjonsprinsippet og multiplikasjonsprinsippet, og når bruker vi dem?",
           "Forklar hva en permutasjon og en kombinasjon er, og gi et eksempel på hvert.",
-          "Hva er betinget sannsynlighet, og hva er Bayes' setning?",
+          "Hva er betinget sannsynlighet, og gi et praktisk eksempel?",
           "En pose inneholder 5 røde og 3 blå kuler. Du trekker to uten tilbakelegging. Hva er sannsynligheten for at begge er røde?",
         ],
         tooShort: "Kan du utdype med et konkret regnestykke?",
@@ -216,7 +228,7 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
           "Hva kjennetegner det elektromagnetiske spekteret, og hvilke typer stråling inngår i det?",
           "Hva er forskjellen mellom ioniserende og ikke-ioniserende stråling, og hvilke helseeffekter kan de ha?",
           "Forklar hvordan trådløs kommunikasjon fungerer, og hvilke bølger som brukes.",
-          "Hva er fotoelektrisk effekt, og hva forteller det oss om lysets natur?",
+          "Hva er ultrafiolett stråling, og hva er sammenhengen mellom UV-stråling og ozonlaget?",
         ],
         tooShort: "Kan du utdype? Prøv å trekk inn konkrete eksempler og fagbegreper.",
         closing: "Takk. Jeg setter nå karakter basert på det du har forklart.",
@@ -292,6 +304,18 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
         ],
         tooShort: "Kan du utdype? Trekk inn konkrete eksempler og fagbegreper.",
         closing: "Bra. Jeg vurderer nå din forståelse av teknologi og samfunn.",
+      },
+      {
+        name: "Kropp og helse",
+        opening: "Du har trukket tema: Kropp og helse. Forklar hva som menes med folkehelse, og hva som påvirker helsen til befolkningen.",
+        followUps: [
+          "Hva er hormoner, og hva er eksempler på hormonenes rolle i kroppen?",
+          "Hva er de viktigste næringsstoffene vi trenger, og hva er konsekvensene av feil kosthold?",
+          "Drøft sammenhengen mellom livsstil — fysisk aktivitet, søvn, kosthold — og helse.",
+          "Hva er smittsomme sykdommer, og hva er de viktigste tiltakene for å forebygge dem?",
+        ],
+        tooShort: "Prøv å utdype med fagbegreper og konkrete eksempler.",
+        closing: "Takk. Jeg setter nå karakter basert på dine svar.",
       },
     ],
   },
@@ -395,23 +419,23 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
         followUps: [
           "Hva er pH, og hva forteller en pH-verdi oss om konsentrasjonen av hydroniumer i løsningen?",
           "En løsning har H-pluss-konsentrasjon på 2,5 ganger 10 i minus femte. Beregn pH-verdien.",
-          "Hva er en buffer, og hvorfor er buffere viktige i biologiske systemer som blod?",
           "Hva skjer kjemisk ved nøytralisering, og hva er titrering?",
+          "Hva er en sterk syre og en svak syre — hva er forskjellen, og gi eksempler?",
         ],
         tooShort: "Prøv å utdype med en formel eller et konkret eksempel.",
         closing: "Takk for svarene dine. Jeg vurderer nå din kjemikompetanse.",
       },
       {
-        name: "Likevekter og reaksjonsfart",
-        opening: "Du har trukket tema: Likevekter og reaksjonsfart. Forklar hva et kjemisk likevektssystem er.",
+        name: "Entalpi og kjemisk energi",
+        opening: "Du har trukket tema: Entalpi og kjemisk energi. Forklar hva entalpi er, og hva vi mener med en eksoterm og en endoterm reaksjon.",
         followUps: [
-          "Hva sier massevirkningsloven, og hvordan bruker vi den til å beregne likevektskonstanten?",
-          "Hva er Le Chateliers prinsipp, og gi et eksempel på hvordan et system reagerer på en forstyrrelse?",
-          "Hvilke faktorer påvirker reaksjonsfarten, og hva er forklaringen på atomnivå?",
-          "Hva er en katalysator, og hva er forskjellen mellom en homogen og en heterogen katalysator?",
+          "Hva er reaksjonsvarme, og hva er enheten for entalpiendring?",
+          "Forklar hva aktiveringsenergi er, og hva er en katalysators rolle for aktiveringsenergi?",
+          "Hvilke faktorer påvirker reaksjonsfarten, og hva er forklaringen på partikkelnivå?",
+          "Gi et praktisk eksempel der energiendring i en kjemisk reaksjon er viktig — fra hverdagslivet eller industrien.",
         ],
         tooShort: "Kan du gi et mer fullstendig svar med fagbegreper?",
-        closing: "Takk. Jeg har nå vurdert din forståelse av kjemiske likevekter.",
+        closing: "Takk. Jeg har nå vurdert din forståelse av kjemisk energi.",
       },
       {
         name: "Organisk kjemi",
@@ -630,11 +654,35 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
         closing: "Takk. Jeg setter nå karakter.",
       },
       {
+        name: "Sápmi og urfolkshistorie i Norge",
+        opening: "Du har trukket tema: Sápmi og urfolkshistorie i Norge. Forklar hvem samene er, og hva Sápmi er som geografisk og kulturelt område.",
+        followUps: [
+          "Hva er fornorskingspolitikken, og hva var konsekvensene av den for samisk språk og kultur?",
+          "Hva er urfolksrettigheter, og hva er ILO-konvensjon 169 sin betydning for samer i Norge?",
+          "Hva er Sametinget, og hva er dets rolle i norsk demokrati?",
+          "Drøft sammenhengen mellom samisk arealbruk — reindrift og landrettigheter — og konflikter med norske myndigheter.",
+        ],
+        tooShort: "Kan du utdype? Trekk inn konkrete hendelser, lover og historiske sammenhenger.",
+        closing: "Takk. Jeg vurderer nå din historiske forståelse av urfolk og minoritetsrettigheter.",
+      },
+      {
+        name: "Antikkens demokrati og demokratiets utvikling",
+        opening: "Du har trukket tema: Antikkens demokrati. Hva var demokratiet i det antikke Athen, og hva kjennetegnet det?",
+        followUps: [
+          "Hvem hadde stemmerett i Athen, og hvem var ekskludert — og hva sier det om demokratiets grenser?",
+          "Hva er sammenhengen mellom antikkens demokrati og moderne demokratiske ideer?",
+          "Hvordan utviklet demokratiet seg fra antikken gjennom opplysningstiden og frem til i dag?",
+          "Hva er de viktigste truslene mot demokratiet i vår tid, og hva kan vi lære av historien?",
+        ],
+        tooShort: "Prøv å trekk inn konkrete eksempler og historiske sammenhenger.",
+        closing: "Takk. Jeg setter nå karakter basert på dine svar.",
+      },
+      {
         name: "Første verdenskrig og mellomkrigstiden",
         opening: "Du har trukket tema: Første verdenskrig og mellomkrigstiden. Hva var de viktigste årsakene til at første verdenskrig brøt ut i 1914?",
         followUps: [
           "Hva var alliansesystemet, og hva var Sarajevoskuddet og dets konsekvenser?",
-          "Hva var Versaillestraktaten, og hva var dens konsekvenser for Germany og Europa?",
+          "Hva var Versaillestraktaten, og hva var dens konsekvenser for Tyskland og Europa?",
           "Drøft mellomkrigstidens krise — den store depresjonen og fremveksten av ekstreme bevegelser.",
           "Hva er sammenhengen mellom første verdenskrig og fremveksten av fascismen?",
         ],
@@ -644,7 +692,7 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
     ],
   },
 
-  // ─── SAMFUNNSFAG (SAK01-01, VGS) ────────────────────────────────────────────
+  // ─── SAMFUNNSKUNNSKAP (SAF01-03, VGS) ───────────────────────────────────────
   samfunnsfag: {
     topics: [
       {
@@ -1223,7 +1271,7 @@ const EXAMINER_DATA: Record<string, SubjectData> = {
         followUps: [
           "Hva er sentripetalkraft, og hva forårsaker den i sirkelbevegelse?",
           "Beskriv prinsippene i spesiell relativitetsteori — hva sier de om tid og rom?",
-          "Hva sier generell relativitetsteori, og hva er forskjellen fra den spesielle?",
+          "Hva er tidsdilatasjon og lengdekontraksjon, og gi et konkret eksempel?",
           "Forklar energibevaring i et gravitasjonelt sentralfelt med et eksempel.",
         ],
         tooShort: "Kan du utdype? Bruk fagbegreper og konkrete beregninger.",
@@ -1423,6 +1471,42 @@ const FRANSK_1_DATA: SubjectData = {
       ],
       tooShort: "Développe ton opinion avec des arguments et des exemples.",
       closing: "Très bien. Je vais maintenant noter ta performance.",
+    },
+    {
+      name: "La santé et le corps",
+      opening: "Tu as tiré le thème : La santé et le corps. Qu'est-ce que tu fais pour rester en bonne santé ? Parle de ton alimentation et de tes activités.",
+      followUps: [
+        "Qu'est-ce que tu manges normalement ? Est-ce que tu penses que ton alimentation est saine ?",
+        "Quels sports ou activités physiques pratiques-tu ? C'est important pour toi ?",
+        "Qu'est-ce que tu fais quand tu es malade ? Tu vas chez le médecin ?",
+        "Quelles sont les différences entre le système de santé français et norvégien ?",
+      ],
+      tooShort: "Peux-tu développer davantage avec des exemples concrets ?",
+      closing: "Merci. J'ai suffisamment d'éléments pour t'évaluer.",
+    },
+    {
+      name: "L'environnement et le développement durable",
+      opening: "Tu as tiré le thème : L'environnement et le développement durable. Quels sont les problèmes environnementaux qui te préoccupent le plus ?",
+      followUps: [
+        "Qu'est-ce que tu fais dans ta vie quotidienne pour protéger l'environnement ?",
+        "Qu'est-ce que le réchauffement climatique ? Quelles en sont les conséquences ?",
+        "Comment les jeunes peuvent-ils agir pour l'environnement ?",
+        "Compare les habitudes écologiques en Norvège et en France.",
+      ],
+      tooShort: "Développe ta réponse avec des exemples et des arguments.",
+      closing: "Très bien. Je vais maintenant noter ta compétence.",
+    },
+    {
+      name: "Projets d'avenir et métiers",
+      opening: "Tu as tiré le thème : Projets d'avenir et métiers. Qu'est-ce que tu veux faire après le lycée ? Quels sont tes projets ?",
+      followUps: [
+        "Quel métier voudrais-tu exercer, et pourquoi ?",
+        "Est-ce que tu voudrais étudier à l'université ? Quelle matière t'intéresse le plus ?",
+        "Est-ce que tu voudrais habiter dans un autre pays ? Pourquoi ou pourquoi pas ?",
+        "Quelles qualités sont importantes pour réussir dans le monde du travail aujourd'hui ?",
+      ],
+      tooShort: "Peux-tu développer tes réponses avec plus de détails ?",
+      closing: "Merci. J'ai maintenant une bonne image de ta compétence linguistique.",
     },
   ],
 };

@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   if (!auth.ok) return auth.response;
 
   const ip = req.headers.get("x-forwarded-for") ?? auth.userId;
-  if (!rateLimit(`tts:${ip}`, 30, 60_000)) {
+  if (!await rateLimit(`tts:${ip}`, 30, 60_000)) {
     return NextResponse.json({ error: "For mange forespørsler" }, { status: 429 });
   }
 

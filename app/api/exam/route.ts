@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Ikke innlogget" }, { status: 401 });
 
   const ip = req.headers.get("x-forwarded-for") ?? user.id;
-  if (!rateLimit(`exam:${ip}`, 50, 60_000)) {
+  if (!await rateLimit(`exam:${ip}`, 50, 60_000)) {
     return NextResponse.json({ error: "For mange forespørsler" }, { status: 429 });
   }
 
