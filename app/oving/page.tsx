@@ -17,7 +17,8 @@ const SUBJECT_COLORS: Record<string, string> = {
   geografi:    "oklch(0.58 0.14 80)",
 };
 
-function SubjectIcon({ id, size = 18 }: { id: string; size?: number }) {
+function SubjectIcon({ id, size = 18, color }: { id: string; size?: number; color?: string }) {
+  const stroke = color ?? SUBJECT_COLORS[id] ?? "var(--accent)";
   const icons: Record<string, JSX.Element> = {
     norsk: (
       /* pen writing */
@@ -61,7 +62,7 @@ function SubjectIcon({ id, size = 18 }: { id: string; size?: number }) {
     ),
   };
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       {icons[id] ?? <circle cx="12" cy="12" r="8"/>}
     </svg>
   );
@@ -330,9 +331,7 @@ export default function OvingPage() {
                       WebkitTapHighlightColor: "transparent",
                     }}
                   >
-                    <span style={{ width: "24px", height: "24px", borderRadius: "6px", backgroundColor: SUBJECT_COLORS[s.id] ?? "var(--accent)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <SubjectIcon id={s.id} size={13} />
-                    </span>
+                    <SubjectIcon id={s.id} size={15} />
                     {s.label}
                     {s.variants && (
                       <span style={{ fontSize: "11px", color: "var(--ink-light)", fontWeight: 400 }}>
@@ -364,9 +363,7 @@ export default function OvingPage() {
                     position: "relative",
                   }}
                 >
-                  <div style={{ width: "38px", height: "38px", borderRadius: "var(--r-md)", backgroundColor: SUBJECT_COLORS[s.id] ?? "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <SubjectIcon id={s.id} size={18} />
-                  </div>
+                  <SubjectIcon id={s.id} size={22} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ lineHeight: 1.2 }}>{s.label}</div>
                     {s.variants && (
