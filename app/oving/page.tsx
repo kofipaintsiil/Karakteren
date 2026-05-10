@@ -341,80 +341,47 @@ export default function OvingPage() {
     return (
       <AppShell>
         <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
-          <div style={{ padding: "20px 0 16px" }}>
-            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
+          <div style={{ padding: "16px 0 12px" }}>
+            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "2px" }}>
               Velg tema selv
             </h1>
             <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
-              Du bestemmer — velg fag og kapitler
+              Velg fag og kapitler — Blobb stiller spørsmål
             </p>
           </div>
 
           <div style={{ paddingBottom: "32px" }}>
-            {/* Recently practiced */}
-            <div style={{ marginBottom: "24px" }}>
-              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px" }}>
-                Sist øvd
-              </p>
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                {recentSubjects.map(s => (
-                  <button
-                    key={s.id}
-                    onClick={() => pickSubject(s.id)}
-                    style={{
-                      display: "flex", alignItems: "center", gap: "8px",
-                      backgroundColor: "var(--surface)", color: "var(--text)",
-                      border: "1.5px solid var(--border)",
-                      borderRadius: "var(--r-full)", padding: "8px 16px",
-                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "14px", fontWeight: 500,
-                      cursor: "pointer", transition: "all 0.15s",
-                      WebkitTapHighlightColor: "transparent",
-                    }}
-                  >
-                    <SubjectIcon id={s.id} size={15} />
-                    {s.label}
-                    {s.variants && (
-                      <span style={{ fontSize: "11px", color: "var(--ink-light)", fontWeight: 400 }}>
-                        {s.variants.length} nivåer
+            <div style={{
+              backgroundColor: "var(--surface)", border: "1px solid var(--border)",
+              borderRadius: "var(--r-lg)", padding: "10px",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+            }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "4px" }}>
+                {SUBJECTS.map(s => {
+                  const color = SUBJECT_COLORS[s.id] ?? "var(--accent)";
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => pickSubject(s.id)}
+                      style={{
+                        display: "flex", flexDirection: "column", alignItems: "center",
+                        justifyContent: "center", gap: "4px",
+                        padding: "8px 4px", borderRadius: "8px", border: "none",
+                        backgroundColor: "var(--bg-alt)", color: "var(--text)",
+                        fontFamily: "Inter, system-ui, sans-serif", fontSize: "10px", fontWeight: 500,
+                        cursor: "pointer", transition: "background 0.12s",
+                        WebkitTapHighlightColor: "transparent",
+                        textAlign: "center", lineHeight: 1.2, minHeight: "52px",
+                      }}
+                    >
+                      <SubjectIcon id={s.id} size={16} color={color} />
+                      <span style={{ maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingInline: "3px" }}>
+                        {s.label.split(" ")[0]}
                       </span>
-                    )}
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </div>
-            </div>
-
-            {/* All subjects */}
-            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "12px" }}>
-              Alle fag
-            </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              {SUBJECTS.map(s => (
-                <button
-                  key={s.id}
-                  onClick={() => pickSubject(s.id)}
-                  style={{
-                    display: "flex", alignItems: "center", gap: "12px",
-                    backgroundColor: "var(--surface)", color: "var(--text)",
-                    border: "1.5px solid var(--border)",
-                    borderRadius: "var(--r-lg)", padding: "14px 16px",
-                    fontFamily: "Inter, system-ui, sans-serif", fontSize: "14px", fontWeight: 500,
-                    cursor: "pointer", transition: "all 0.15s",
-                    textAlign: "left", WebkitTapHighlightColor: "transparent",
-                    position: "relative",
-                  }}
-                >
-                  <SubjectIcon id={s.id} size={22} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ lineHeight: 1.2 }}>{s.label}</div>
-                    {s.variants && (
-                      <div style={{ fontSize: "11px", color: "var(--ink-light)", marginTop: "2px" }}>
-                        {s.variants.map(v => v.label).join(" · ")}
-                      </div>
-                    )}
-                  </div>
-                  <ChevronRight size={14} />
-                </button>
-              ))}
             </div>
           </div>
         </div>
