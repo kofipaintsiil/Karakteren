@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 import Blobb from "@/components/Blobb";
-import { SubjectIcon, subjectColor } from "@/components/SubjectIcon";
+import { SubjectIcon, SUBJECT_COLORS } from "@/components/SubjectIcon";
 
 async function loadPreferences() {
   try {
@@ -218,25 +218,25 @@ export default function EksamenPage() {
       <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
 
         {/* Header */}
-        <div style={{ padding: "20px 0 12px", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+        <div style={{ padding: "16px 0 12px", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div>
-            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "24px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
+            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "2px" }}>
               Eksamen
             </h1>
             <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
               Blobb trekker tema — akkurat som en ekte sensor
             </p>
           </div>
-          <div style={{ marginTop: "4px" }}>
-            <Blobb mood="idle" size={48} animate />
+          <div style={{ marginTop: "2px" }}>
+            <Blobb mood="idle" size={44} animate />
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "14px", paddingBottom: "24px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px", paddingBottom: "32px" }}>
 
           {/* Exam date */}
-          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px" }}>
+          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "14px 16px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "8px" }}>
               Eksamensdato
             </p>
             <input
@@ -244,7 +244,7 @@ export default function EksamenPage() {
               value={examDate}
               onChange={e => handleDateChange(e.target.value)}
               style={{
-                width: "100%", padding: "11px 14px",
+                width: "100%", padding: "10px 12px",
                 borderRadius: "var(--r-md)",
                 border: `1.5px solid ${examDate ? "var(--accent)" : "var(--border)"}`,
                 fontFamily: "Inter, system-ui, sans-serif", fontSize: "15px", color: "var(--text)",
@@ -254,7 +254,7 @@ export default function EksamenPage() {
             />
             {daysLeft !== null && (
               <div style={{ marginTop: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <div style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: urgencyColor, flexShrink: 0 }} />
+                <div style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: urgencyColor, flexShrink: 0 }} />
                 <span style={{ fontSize: "13px", color: urgencyColor, fontWeight: 600 }}>
                   {daysLeft === 0 ? "Eksamen i dag!" : `${daysLeft} dag${daysLeft === 1 ? "" : "er"} igjen`}
                 </span>
@@ -262,40 +262,43 @@ export default function EksamenPage() {
             )}
           </div>
 
-          {/* Subject */}
-          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "12px 12px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
+          {/* Subject — 4-col compact grid */}
+          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "10px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
             <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "8px", paddingLeft: "2px" }}>Fag</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "5px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "4px" }}>
               {SUBJECTS.map(s => {
                 const active = selectedFag === s.id;
-                const color = subjectColor(s.id);
+                const color = SUBJECT_COLORS[s.id] ?? "var(--accent)";
                 return (
                   <button
                     key={s.id}
                     onClick={() => handleFagChange(s.id)}
                     style={{
-                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                      gap: "4px", padding: "8px 4px", borderRadius: "var(--r-md)", border: "none",
+                      display: "flex", flexDirection: "column", alignItems: "center",
+                      justifyContent: "center", gap: "4px",
+                      padding: "8px 4px", borderRadius: "8px", border: "none",
                       backgroundColor: active ? "var(--text)" : "var(--bg-alt)",
                       color: active ? "var(--bg)" : "var(--text)",
-                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "11px", fontWeight: active ? 600 : 400,
-                      cursor: "pointer", transition: "all 0.15s",
+                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "10px", fontWeight: active ? 600 : 500,
+                      cursor: "pointer", transition: "background 0.12s",
                       WebkitTapHighlightColor: "transparent",
-                      textAlign: "center", minHeight: "52px", lineHeight: 1.2,
+                      textAlign: "center", lineHeight: 1.2, minHeight: "52px",
                     }}
                   >
-                    <SubjectIcon id={s.id} size={15} color={active ? "var(--bg)" : color} />
-                    <span>{s.short}</span>
+                    <SubjectIcon id={s.id} size={16} color={active ? "var(--bg)" : color} />
+                    <span style={{ maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingInline: "3px" }}>
+                      {s.short}
+                    </span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Variant selector — only shown for subjects with variants */}
+          {/* Variant selector */}
           {activeFag.variants && (
-            <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "14px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px", paddingLeft: "2px" }}>
+            <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "12px 12px 10px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "8px", paddingLeft: "2px" }}>
                 Hvilken {activeFag.label}?
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
@@ -304,41 +307,41 @@ export default function EksamenPage() {
                     key={v.id}
                     onClick={() => handleVariantChange(v.id)}
                     style={{
-                      padding: "12px 14px", borderRadius: "var(--r-md)", border: "none",
-                      backgroundColor: selectedVariant === v.id ? "var(--accent)" : "var(--bg-alt)",
-                      color: selectedVariant === v.id ? "#fff" : "var(--text)",
-                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "14px", fontWeight: 600,
-                      cursor: "pointer", transition: "all 0.15s",
+                      display: "flex", flexDirection: "column", alignItems: "flex-start",
+                      gap: "3px", padding: "14px 14px",
+                      borderRadius: "var(--r-lg)", border: "none",
+                      backgroundColor: selectedVariant === v.id ? "var(--text)" : "var(--bg-alt)",
+                      color: selectedVariant === v.id ? "var(--bg)" : "var(--text)",
+                      fontFamily: "Inter, system-ui, sans-serif",
+                      cursor: "pointer", transition: "background 0.12s",
                       WebkitTapHighlightColor: "transparent",
-                      textAlign: "left", minHeight: "52px",
+                      textAlign: "left", minHeight: "56px",
                     }}
                   >
-                    {v.label}
-                    <span style={{ display: "block", fontSize: "11px", fontWeight: 400, opacity: 0.7, marginTop: "2px" }}>
-                      {v.desc}
-                    </span>
+                    <span style={{ fontWeight: 700, fontSize: "15px" }}>{v.label}</span>
+                    <span style={{ fontSize: "11px", fontWeight: 400, opacity: 0.6 }}>{v.desc}</span>
                   </button>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Topic draw */}
+          {/* Topic draw card */}
           <div style={{
             backgroundColor: drawnTopic ? "var(--text)" : "var(--surface)",
-            border: `1px solid ${drawnTopic ? "var(--text)" : "var(--border)"}`,
-            borderRadius: "var(--r-lg)", padding: "28px 20px",
+            border: `1.5px solid ${drawnTopic ? "var(--text)" : "var(--border)"}`,
+            borderRadius: "var(--r-lg)", padding: "24px 20px",
             textAlign: "center", transition: "all 0.4s ease",
-            minHeight: "120px", display: "flex", flexDirection: "column",
-            alignItems: "center", justifyContent: "center", gap: "10px",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+            minHeight: "112px", display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center", gap: "8px",
+            boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
           }}>
             {drawing ? (
               <>
                 <div style={{ display: "flex", gap: "6px" }}>
                   {[0, 1, 2].map(i => (
                     <div key={i} style={{
-                      width: "8px", height: "8px", borderRadius: "50%",
+                      width: "7px", height: "7px", borderRadius: "50%",
                       backgroundColor: "var(--accent)",
                       animation: `pulse 0.8s ${i * 0.15}s infinite`,
                     }} />
@@ -348,14 +351,14 @@ export default function EksamenPage() {
               </>
             ) : drawnTopic ? (
               <>
-                <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.8px", textTransform: "uppercase" }}>Trukket tema</p>
-                <p style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", color: "#fff", letterSpacing: "-0.3px" }}>{drawnTopic}</p>
-                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>{activeLabel}</p>
+                <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.8px", textTransform: "uppercase" }}>Trukket tema</p>
+                <p style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", color: "#fff", letterSpacing: "-0.3px", lineHeight: 1.25 }}>{drawnTopic}</p>
+                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)" }}>{activeLabel}</p>
               </>
             ) : (
               <>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "44px", height: "44px", borderRadius: "var(--r-md)", backgroundColor: "var(--bg-alt)" }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <div style={{ width: "40px", height: "40px", borderRadius: "var(--r-md)", backgroundColor: "var(--bg-alt)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
                     <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
                   </svg>
@@ -381,6 +384,7 @@ export default function EksamenPage() {
                 cursor: canDraw ? "pointer" : "default",
                 boxShadow: canDraw ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
                 opacity: drawing ? 0.7 : 1,
+                transition: "opacity 0.15s",
               }}
             >
               {drawing ? "Trekker..." : "Trekk tema og start eksamen"}
@@ -415,7 +419,7 @@ export default function EksamenPage() {
 
           <div style={{
             backgroundColor: "var(--accent-bg)", borderRadius: "var(--r-md)",
-            padding: "12px 14px", fontSize: "12px", color: "var(--accent-dark)", lineHeight: 1.5,
+            padding: "11px 14px", fontSize: "12px", color: "var(--accent-dark)", lineHeight: 1.5,
             display: "flex", gap: "10px", alignItems: "flex-start",
           }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}>
