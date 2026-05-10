@@ -143,7 +143,7 @@ function LoginForm() {
     }
   }
 
-  const titles = { login: "Logg inn", signup: "Opprett konto", forgot: "Glemt passord" };
+  const titles = { login: "Logg inn", signup: "Lag gratis konto", forgot: "Send tilbakestillingslenke" };
 
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
@@ -156,9 +156,37 @@ function LoginForm() {
             Karakteren
           </h1>
           <p style={{ fontSize: "14px", color: "var(--text-muted)", fontWeight: 600, marginTop: "4px" }}>
-            Øv til muntlig eksamen
+            {mode === "signup" ? "Tren til muntlig eksamen med AI-sensor" : "Øv til muntlig eksamen"}
           </p>
         </div>
+
+        {/* Signup benefits strip */}
+        {mode === "signup" && (
+          <div style={{
+            backgroundColor: "var(--accent-bg)",
+            border: "1.5px solid var(--accent-dark)",
+            borderRadius: "var(--r-lg)",
+            padding: "14px 16px",
+            marginBottom: "16px",
+          }}>
+            <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--accent-dark)", marginBottom: "8px" }}>
+              Du får gratis tilgang til:
+            </p>
+            {[
+              "3 gratis eksamensøkter — ingen kredittkort",
+              "20+ fag fra norsk VGS-pensum",
+              "Karakter 1–6 med konkret tilbakemelding",
+            ].map(text => (
+              <div key={text} style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "5px" }}>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
+                  <circle cx="7" cy="7" r="7" fill="var(--accent-dark)" opacity="0.15"/>
+                  <path d="M4 7l2 2 4-4" stroke="var(--accent-dark)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span style={{ fontSize: "13px", color: "var(--accent-dark)", fontWeight: 500 }}>{text}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Card */}
         <div style={{
@@ -168,9 +196,15 @@ function LoginForm() {
           boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
           padding: "24px",
         }}>
-          <h2 style={{ fontWeight: 800, fontSize: "1.125rem", marginBottom: "20px", color: "var(--text)" }}>
-            {titles[mode]}
+          <h2 style={{ fontWeight: 800, fontSize: "1.125rem", marginBottom: "4px", color: "var(--text)" }}>
+            {mode === "signup" ? "Lag gratis konto" : mode === "login" ? "Logg inn" : "Glemt passord"}
           </h2>
+          {mode === "signup" && (
+            <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "16px" }}>
+              Bruk hvilken e-post du vil — skole, Gmail, alt fungerer.
+            </p>
+          )}
+          {mode !== "signup" && <div style={{ marginBottom: "20px" }} />}
 
           {/* Error/success message */}
           {message && (
@@ -241,7 +275,7 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="deg@skole.no"
+                placeholder="deg@gmail.com"
                 style={{
                   width: "100%", height: "48px", padding: "0 14px",
                   backgroundColor: "var(--bg)",
