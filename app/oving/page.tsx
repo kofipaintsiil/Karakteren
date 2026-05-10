@@ -339,8 +339,11 @@ export default function OvingPage() {
 
   function startSession() {
     if (selected.size === 0) return;
-    const params = new URLSearchParams({ subject: selectedVariant ?? selectedFag! });
-    Array.from(selected).forEach(id => params.append("chapter", id));
+    // Pick a random selected chapter — use its title as the exam topic
+    const selectedIds = Array.from(selected);
+    const randomId = selectedIds[Math.floor(Math.random() * selectedIds.length)];
+    const topic = chapters.find(c => c.id === randomId)?.title ?? "";
+    const params = new URLSearchParams({ subject: selectedVariant ?? selectedFag!, topic });
     router.push(`/exam?${params.toString()}`);
   }
 

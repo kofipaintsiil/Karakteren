@@ -1,4 +1,5 @@
 // Kompetansemål hentet fra udir.no LK20 — oppdatert april 2026
+import { SUBJECT_LABELS } from "@/lib/subjects";
 
 export interface ExamTopic {
   name: string;
@@ -1625,9 +1626,26 @@ const ALIASES: Record<string, string> = {
   "biologi-1": "biologi",
 };
 
+function genericData(subject: string): SubjectData {
+  const label = SUBJECT_LABELS[subject] ?? subject;
+  return {
+    topics: [{
+      name: `Generelt om ${label}`,
+      opening: `Du har trukket et tema i ${label}. Kan du gi meg en oversikt over hva du kan om dette emnet?`,
+      followUps: [
+        "Kan du utdype det litt mer?",
+        "Gi meg et konkret eksempel.",
+        "Hva er sammenhengen mellom dette og andre deler av faget?",
+      ],
+      tooShort: "Kan du si litt mer om det?",
+      closing: "Takk, jeg har det jeg trenger.",
+    }],
+  };
+}
+
 export function getSubjectData(subject: string): SubjectData {
   const key = ALIASES[subject] ?? subject;
-  return EXAMINER_DATA[key] ?? EXAMINER_DATA["matematikk"];
+  return EXAMINER_DATA[key] ?? genericData(subject);
 }
 
 export function pickRandomTopic(subject: string): ExamTopic {
