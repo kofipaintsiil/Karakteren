@@ -276,9 +276,27 @@ function LoginForm() {
               </div>
             )}
 
-            <Button size="md" fullWidth disabled={loading} style={{ marginTop: "4px" }}>
-              {loading ? "Laster..." : titles[mode]}
-            </Button>
+            {(() => {
+              const ready = mode === "forgot" ? email.length > 0 : email.length > 0 && password.length >= 6;
+              return (
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    marginTop: "4px", width: "100%", height: "48px",
+                    borderRadius: "var(--r-full)", border: "none",
+                    backgroundColor: ready ? "var(--accent)" : "var(--bg-alt)",
+                    color: ready ? "#fff" : "var(--text-muted)",
+                    fontFamily: "Inter, system-ui, sans-serif", fontWeight: 700, fontSize: "15px",
+                    cursor: loading ? "default" : "pointer",
+                    transition: "background-color 0.2s, color 0.2s",
+                    boxShadow: ready ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
+                  }}
+                >
+                  {loading ? "Laster..." : titles[mode]}
+                </button>
+              );
+            })()}
           </form>
 
           {/* Footer links */}

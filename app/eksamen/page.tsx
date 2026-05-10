@@ -338,95 +338,78 @@ export default function EksamenPage() {
             </div>
           )}
 
-          {/* Topic draw card */}
-          <div style={{
-            backgroundColor: drawnTopic ? "var(--text)" : "var(--surface)",
-            border: `1.5px solid ${drawnTopic ? "var(--text)" : "var(--border)"}`,
-            borderRadius: "var(--r-lg)", padding: "24px 20px",
-            textAlign: "center", transition: "all 0.4s ease",
-            minHeight: "112px", display: "flex", flexDirection: "column",
-            alignItems: "center", justifyContent: "center", gap: "8px",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-          }}>
-            {drawing ? (
-              <>
-                <div style={{ display: "flex", gap: "6px" }}>
-                  {[0, 1, 2].map(i => (
-                    <div key={i} style={{
-                      width: "7px", height: "7px", borderRadius: "50%",
-                      backgroundColor: "var(--accent)",
-                      animation: `pulse 0.8s ${i * 0.15}s infinite`,
-                    }} />
-                  ))}
-                </div>
-                <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>Blobb trekker tema...</p>
-              </>
-            ) : drawnTopic ? (
-              <>
-                <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.8px", textTransform: "uppercase" }}>Trukket tema</p>
-                <p style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", color: "#fff", letterSpacing: "-0.3px", lineHeight: 1.25 }}>{drawnTopic}</p>
-                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)" }}>{activeLabel}</p>
-              </>
-            ) : (
-              <>
-                <div style={{ width: "40px", height: "40px", borderRadius: "var(--r-md)", backgroundColor: "var(--bg-alt)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
-                    <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
-                  </svg>
-                </div>
-                <p style={{ fontSize: "14px", color: canDraw ? "var(--text-muted)" : "var(--text-faint)" }}>
-                  {canDraw ? "Klar for et tilfeldig tema?" : `Velg hvilken ${activeFag.label} du har eksamen i`}
-                </p>
-                {canDraw && <p style={{ fontSize: "12px", color: "var(--ink-light)" }}>Akkurat som en ekte eksamen</p>}
-              </>
-            )}
-          </div>
-
-          {/* CTA */}
+          {/* CTA — always visible right after subject/variant picker */}
           {!drawnTopic ? (
             <button
               onClick={drawTopic}
               disabled={drawing || !canDraw}
               style={{
-                width: "100%", padding: "14px", borderRadius: "var(--r-full)", border: "none",
+                width: "100%", padding: "15px", borderRadius: "var(--r-full)", border: "none",
                 backgroundColor: canDraw ? "var(--accent)" : "var(--bg-alt)",
                 color: canDraw ? "#fff" : "var(--text-muted)",
-                fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
+                fontFamily: "Inter, system-ui, sans-serif", fontWeight: 700, fontSize: "15px",
                 cursor: canDraw ? "pointer" : "default",
                 boxShadow: canDraw ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
                 opacity: drawing ? 0.7 : 1,
-                transition: "opacity 0.15s",
+                transition: "opacity 0.15s, background-color 0.15s",
               }}
             >
-              {drawing ? "Trekker..." : "Trekk tema og start eksamen"}
+              {drawing ? "Trekker tema..." : canDraw ? "Trekk tema og start eksamen" : `Velg hvilken ${activeFag.label} du har eksamen i`}
             </button>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <button
-                onClick={startExam}
-                style={{
-                  width: "100%", padding: "14px", borderRadius: "var(--r-full)", border: "none",
-                  backgroundColor: "var(--accent)", color: "#fff",
-                  fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
-                  cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-                }}
-              >
-                Start eksamen med dette temaet →
-              </button>
-              <button
-                onClick={drawTopic}
-                style={{
-                  width: "100%", padding: "14px", borderRadius: "var(--r-full)",
-                  border: "1.5px solid var(--border)",
-                  backgroundColor: "var(--surface)", color: "var(--text)",
-                  fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
-                  cursor: "pointer",
-                }}
-              >
-                Trekk nytt tema
-              </button>
-            </div>
+            <>
+              {/* Drawn topic card */}
+              <div style={{
+                backgroundColor: "var(--text)",
+                borderRadius: "var(--r-lg)", padding: "20px",
+                textAlign: "center",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+              }}>
+                {drawing ? (
+                  <div style={{ display: "flex", gap: "6px", justifyContent: "center" }}>
+                    {[0, 1, 2].map(i => (
+                      <div key={i} style={{
+                        width: "7px", height: "7px", borderRadius: "50%",
+                        backgroundColor: "var(--accent)",
+                        animation: `pulse 0.8s ${i * 0.15}s infinite`,
+                      }} />
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "6px" }}>Trukket tema</p>
+                    <p style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "20px", color: "#fff", letterSpacing: "-0.3px", lineHeight: 1.25 }}>{drawnTopic}</p>
+                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", marginTop: "4px" }}>{activeLabel}</p>
+                  </>
+                )}
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <button
+                  onClick={startExam}
+                  style={{
+                    width: "100%", padding: "15px", borderRadius: "var(--r-full)", border: "none",
+                    backgroundColor: "var(--accent)", color: "#fff",
+                    fontFamily: "Inter, system-ui, sans-serif", fontWeight: 700, fontSize: "15px",
+                    cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+                  }}
+                >
+                  Start eksamen med dette temaet →
+                </button>
+                <button
+                  onClick={drawTopic}
+                  style={{
+                    width: "100%", padding: "13px", borderRadius: "var(--r-full)",
+                    border: "1.5px solid var(--border)",
+                    backgroundColor: "var(--surface)", color: "var(--text)",
+                    fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "14px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Trekk nytt tema
+                </button>
+              </div>
+            </>
           )}
 
           <div style={{
