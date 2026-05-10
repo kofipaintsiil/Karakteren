@@ -26,16 +26,36 @@ const SUBJECT_LABELS: Record<string, string> = {
   fysikk: "Fysikk", kjemi: "Kjemi", biologi: "Biologi",
   historie: "Historie", samfunnsfag: "Samfunnskunnskap", engelsk: "Engelsk", geografi: "Geografi",
   "fransk-1": "Français (Niveau I)", "fransk-2": "Français (Niveau II)",
+  "samfunnsøkonomi-1": "Samfunnsøkonomi 1", "samfunnsøkonomi-2": "Samfunnsøkonomi 2",
+  sosiologi: "Sosiologi og sosialantropologi",
+  "psykologi-1": "Psykologi 1", "psykologi-2": "Psykologi 2",
+  "rettslære-1": "Rettslære 1", "rettslære-2": "Rettslære 2",
+  "markedsføring-1": "Markedsføring og ledelse 1", "markedsføring-2": "Markedsføring og ledelse 2",
+  teknologi: "Teknologi og forskningslære 1",
+  "tysk-2": "Deutsch (Niveau II)", "spansk-2": "Español (Nivel II)",
+  religion: "Religion og etikk",
 };
 
 function buildSystemPrompt(subject: string, topic: string): string {
   const subjectLabel = SUBJECT_LABELS[subject] ?? subject;
   const isEnglish = subject === "engelsk";
   const isFrench = subject === "fransk-1" || subject === "fransk-2";
+  const isGerman = subject === "tysk-2";
+  const isSpanish = subject === "spansk-2";
+
+  const langInstruction = isEnglish
+    ? "Conduct this exam entirely in English. The student must also answer in English."
+    : isFrench
+    ? "Conduis cet examen entièrement en français. L'élève doit aussi répondre en français."
+    : isGerman
+    ? "Führe diese Prüfung vollständig auf Deutsch durch. Der Schüler muss ebenfalls auf Deutsch antworten."
+    : isSpanish
+    ? "Conduce este examen completamente en español. El alumno también debe responder en español."
+    : "Eksamen foregår på norsk bokmål.";
 
   return `Du er en muntlig eksamenssensor for norsk videregående skole (VGS). Du eksaminerer en elev i faget ${subjectLabel}, tema: "${topic}".
 
-${isEnglish ? "Conduct this exam in English since the subject is English." : isFrench ? "Conduis cet examen entièrement en français. L'élève doit aussi répondre en français." : "Eksamen foregår på norsk bokmål."}
+${langInstruction}
 
 SENSORENS VIKTIGSTE OPPGAVE:
 Muntlig eksamen handler om å gi eleven best mulig mulighet til å vise hva de KAN — ikke å avsløre hva de ikke kan. En rettferdig sensor:
@@ -94,8 +114,7 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Ikke innlogget" }, { status: 401 });
 
-  const ip = req.headers.get("x-forwarded-for") ?? user.id;
-  if (!await rateLimit(`exam:${ip}`, 50, 60_000)) {
+  if (!await rateLimit(`exam:${user.id}`, 50, 60_000)) {
     return NextResponse.json({ error: "For mange forespørsler" }, { status: 429 });
   }
 

@@ -30,6 +30,31 @@ const SUBJECTS = [
   { id: "samfunnsfag", label: "Samfunnsfag", variants: null },
   { id: "engelsk",     label: "Engelsk",     variants: null },
   { id: "geografi",    label: "Geografi",    variants: null },
+  { id: "tysk",        label: "Tysk",        variants: [
+    { id: "tysk-2", label: "Tysk 2", desc: "Vg3 Nivå II" },
+  ]},
+  { id: "spansk",      label: "Spansk",      variants: [
+    { id: "spansk-2", label: "Spansk 2", desc: "Vg3 Nivå II" },
+  ]},
+  { id: "samfunnsøkonomi", label: "Samfunnsøkonomi", variants: [
+    { id: "samfunnsøkonomi-1", label: "Samfunnsøkonomi 1", desc: "Vg2" },
+    { id: "samfunnsøkonomi-2", label: "Samfunnsøkonomi 2", desc: "Vg3" },
+  ]},
+  { id: "sosiologi",   label: "Sosiologi og sosialantropologi", variants: null },
+  { id: "psykologi",   label: "Psykologi",   variants: [
+    { id: "psykologi-1", label: "Psykologi 1", desc: "Vg2" },
+    { id: "psykologi-2", label: "Psykologi 2", desc: "Vg3" },
+  ]},
+  { id: "rettslære",   label: "Rettslære",   variants: [
+    { id: "rettslære-1", label: "Rettslære 1", desc: "Vg2" },
+    { id: "rettslære-2", label: "Rettslære 2", desc: "Vg3" },
+  ]},
+  { id: "markedsføring", label: "Markedsføring og ledelse", variants: [
+    { id: "markedsføring-1", label: "Markedsføring 1", desc: "Vg2" },
+    { id: "markedsføring-2", label: "Markedsføring 2", desc: "Vg3" },
+  ]},
+  { id: "teknologi",   label: "Teknologi og forskningslære 1", variants: null },
+  { id: "religion",    label: "Religion og etikk",             variants: null },
 ];
 
 const CHAPTERS: Record<string, { id: string; title: string; topics: string[] }[]> = {
@@ -138,6 +163,84 @@ const CHAPTERS: Record<string, { id: string; title: string; topics: string[] }[]
     { id: "g2", title: "Befolkning", topics: ["Demografisk utvikling", "Migrasjon", "Urbanisering"] },
     { id: "g3", title: "Ressurser og næring", topics: ["Landbruk", "Industri", "Energiressurser"] },
     { id: "g4", title: "Naturkatastrofer", topics: ["Jordskjelv", "Vulkaner", "Flom"] },
+  ],
+  "tysk-2": [
+    { id: "ty1", title: "Gesellschaft und Kultur", topics: ["Deutsche Identität", "Traditionen", "Alltagsleben"] },
+    { id: "ty2", title: "Geschichte", topics: ["Erinnerungskultur", "Zweiter Weltkrieg", "Wiedervereinigung"] },
+    { id: "ty3", title: "Europa und Globalisierung", topics: ["Die EU", "Migration", "Nachhaltigkeit"] },
+    { id: "ty4", title: "Sprache und Medien", topics: ["Mediennutzung", "Jugendsprache", "Kommunikation"] },
+  ],
+  "spansk-2": [
+    { id: "sp1", title: "Cultura e identidad", topics: ["Identidad hispana", "Tradiciones", "Diversidad"] },
+    { id: "sp2", title: "Sociedad y política", topics: ["España y Latinoamérica", "Democracia", "Desigualdad"] },
+    { id: "sp3", title: "Medio ambiente", topics: ["Cambio climático", "Sostenibilidad", "Energías renovables"] },
+    { id: "sp4", title: "Jóvenes y comunicación", topics: ["Redes sociales", "Migración", "Globalización"] },
+  ],
+  "samfunnsøkonomi-1": [
+    { id: "so1-1", title: "Markeder og priser", topics: ["Tilbud og etterspørsel", "Likevektspris", "Prismekanismen"] },
+    { id: "so1-2", title: "Makroøkonomi", topics: ["BNP", "Konjunktursvingninger", "Nasjonalregnskap"] },
+    { id: "so1-3", title: "Penge- og finanspolitikk", topics: ["Rentepolitikk", "Statsbudsjettet", "Inflasjon"] },
+    { id: "so1-4", title: "Arbeid og handel", topics: ["Arbeidsledighet", "Lønnsdannelse", "Handelspolitikk"] },
+  ],
+  "samfunnsøkonomi-2": [
+    { id: "so2-1", title: "Konkurranse og markedssvikt", topics: ["Monopol", "Eksternaliteter", "Offentlige goder"] },
+    { id: "so2-2", title: "Fordeling og velferd", topics: ["Inntektsfordeling", "Skattesystem", "Velferdsstaten"] },
+    { id: "so2-3", title: "Internasjonal økonomi", topics: ["Valutakurs", "Betalingsbalansen", "Valutapolitikk"] },
+    { id: "so2-4", title: "Vekst og miljø", topics: ["Vekstteori", "Bærekraftig økonomi", "Miljøpolitikk"] },
+  ],
+  sosiologi: [
+    { id: "sas1", title: "Sosialisering og identitet", topics: ["Primærsosialisering", "Identitetsdannelse", "Roller"] },
+    { id: "sas2", title: "Ulikhet og stratifikasjon", topics: ["Klasse", "Kjønn", "Etnisitet"] },
+    { id: "sas3", title: "Kultur og samfunn", topics: ["Kulturmøter", "Subkulturer", "Normer og verdier"] },
+    { id: "sas4", title: "Sosial kontroll og avvik", topics: ["Kriminalitet", "Sanksjoner", "Devians"] },
+  ],
+  "psykologi-1": [
+    { id: "psy1-1", title: "Sansing og læring", topics: ["Persepsjon", "Klassisk betinging", "Operant betinging"] },
+    { id: "psy1-2", title: "Kognisjon og hukommelse", topics: ["Korttidshukommelse", "Langtidshukommelse", "Tenkning"] },
+    { id: "psy1-3", title: "Personlighet og motivasjon", topics: ["Personlighetsteorier", "Maslows behovshierarki", "Emosjoner"] },
+    { id: "psy1-4", title: "Psykisk helse", topics: ["Psykiske lidelser", "Sosialpsykologi", "Biologisk psykologi"] },
+  ],
+  "psykologi-2": [
+    { id: "psy2-1", title: "Utviklingspsykologi", topics: ["Piaget", "Vygotsky", "Eriksons stadier"] },
+    { id: "psy2-2", title: "Klinisk psykologi", topics: ["Behandlingsmetoder", "KAT", "Psykoanalyse"] },
+    { id: "psy2-3", title: "Nevropsykologi", topics: ["Hjernen og atferd", "Nevrale nettverk", "Hjerneskader"] },
+    { id: "psy2-4", title: "Positiv psykologi og mestring", topics: ["Resiliens", "Stressmestring", "Selvregulering"] },
+  ],
+  "rettslære-1": [
+    { id: "rl1-1", title: "Rettssystemet", topics: ["Rettskilder", "Domstoler", "Rettsstatsprinsipper"] },
+    { id: "rl1-2", title: "Avtaleretten", topics: ["Avtaleinngåelse", "Ugyldighetsgrunner", "Tolkning"] },
+    { id: "rl1-3", title: "Kjøp og erstatning", topics: ["Forbrukervern", "Mislighold", "Erstatningsvilkår"] },
+    { id: "rl1-4", title: "Familie og strafferett", topics: ["Ekteskap og arv", "Strafferettslige begreper", "Arbeidsretten"] },
+  ],
+  "rettslære-2": [
+    { id: "rl2-1", title: "Selskapsretten", topics: ["Aksjeselskap", "Ansvarlig selskap", "Enkeltpersonforetak"] },
+    { id: "rl2-2", title: "Immaterialretten", topics: ["Opphavsrett", "Patent", "Varemerke"] },
+    { id: "rl2-3", title: "Forvaltning og kontrakt", topics: ["Forvaltningsretten", "Kontraktsbrudd", "Sanksjoner"] },
+    { id: "rl2-4", title: "Arbeidsrett og internasjonal rett", topics: ["Oppsigelse", "Diskriminering", "Internasjonal privatrett"] },
+  ],
+  "markedsføring-1": [
+    { id: "mrl1-1", title: "Markedsføringens grunnlag", topics: ["4P-modellen", "Segmentering", "Markedsanalyse"] },
+    { id: "mrl1-2", title: "Produkt og pris", topics: ["Produktutvikling", "Produktlivssyklus", "Prisstrategier"] },
+    { id: "mrl1-3", title: "Kommunikasjon og distribusjon", topics: ["Reklame", "Digital markedsføring", "Salgskanaler"] },
+    { id: "mrl1-4", title: "Etikk og samfunnsansvar", topics: ["Markedsføringsloven", "Bærekraft", "Forbrukeratferd"] },
+  ],
+  "markedsføring-2": [
+    { id: "mrl2-1", title: "Strategisk ledelse", topics: ["SWOT", "Porters konkurransekrefter", "Forretningsmodeller"] },
+    { id: "mrl2-2", title: "Merkevare og internasjonal markedsføring", topics: ["Merkevarebygging", "Posisjonering", "Global markedsføring"] },
+    { id: "mrl2-3", title: "Ledelse og organisasjon", topics: ["Ledelsesstiler", "Teamarbeid", "Endringsledelse"] },
+    { id: "mrl2-4", title: "Gründerskap og økonomi", topics: ["Forretningsplan", "Budsjett", "Innovasjon"] },
+  ],
+  religion: [
+    { id: "re1", title: "Kristendom og kirkehistorie", topics: ["Bibelen", "Reformasjonen", "Kirkesamfunn"] },
+    { id: "re2", title: "Verdensreligioner", topics: ["Islam", "Jødedom", "Hinduisme og buddhisme"] },
+    { id: "re3", title: "Etikk og livssyn", topics: ["Pliktetikk", "Konsekvensetikk", "Humanisme"] },
+    { id: "re4", title: "Religion og samfunn", topics: ["Sekularisering", "Religionsfrihet", "Nyreligiøsitet"] },
+  ],
+  teknologi: [
+    { id: "tf1", title: "Vitenskapelig metode", topics: ["Hypotesetesting", "Forsøksdesign", "Feilkilder"] },
+    { id: "tf2", title: "Teknologi og samfunn", topics: ["Teknologihistorie", "Digitalisering", "KI og etikk"] },
+    { id: "tf3", title: "Bærekraft og energi", topics: ["Fornybar energi", "Klimateknologi", "Sirkulærøkonomi"] },
+    { id: "tf4", title: "Bioteknologi", topics: ["Genteknologi", "CRISPR", "Medisinsk teknologi"] },
   ],
 };
 

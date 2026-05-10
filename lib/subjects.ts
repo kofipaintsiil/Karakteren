@@ -9,4 +9,12 @@ export const SUBJECT_LABELS: Record<string, string> = {
   "fysikk-1": "Fysikk 1", "fysikk-2": "Fysikk 2",
   "biologi-1": "Biologi 1", "biologi-2": "Biologi 2",
   "fransk-1": "Fransk 1", "fransk-2": "Fransk 2",
+  "samfunnsøkonomi-1": "Samfunnsøkonomi 1", "samfunnsøkonomi-2": "Samfunnsøkonomi 2",
+  sosiologi: "Sosiologi og sosialantropologi",
+  "psykologi-1": "Psykologi 1", "psykologi-2": "Psykologi 2",
+  "rettslære-1": "Rettslære 1", "rettslære-2": "Rettslære 2",
+  "markedsføring-1": "Markedsføring og ledelse 1", "markedsføring-2": "Markedsføring og ledelse 2",
+  teknologi: "Teknologi og forskningslære 1",
+  "tysk-2": "Deutsch (Niveau II)", "spansk-2": "Español (Nivel II)",
+  religion: "Religion og etikk",
 };

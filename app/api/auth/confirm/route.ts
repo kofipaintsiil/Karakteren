@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ error: "Feil ved oppslag." }, { status: 500 });
 
   const user = data.users.find((u) => u.email === email);
-  if (!user) return NextResponse.json({ error: "Bruker ikke funnet." }, { status: 404 });
+  // Always return 200 — never reveal whether an email is registered
+  if (!user) return NextResponse.json({ ok: true });
 
   await admin.auth.admin.updateUserById(user.id, { email_confirm: true });
   return NextResponse.json({ ok: true });

@@ -5,9 +5,10 @@ import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import LogoutButton from "@/components/LogoutButton";
 import { useLang } from "@/components/LangProvider";
+import { usePush } from "@/components/PushProvider";
 import type { Lang } from "@/lib/i18n";
 
-function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
+function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void | Promise<void> }) {
   return (
     <button
       onClick={() => onChange(!value)}
@@ -75,25 +76,24 @@ function Card({ children }: { children: React.ReactNode }) {
 
 export default function InstillingerPage() {
   const { lang, setLang, t } = useLang();
+  const { permission, subscribe, unsubscribe } = usePush();
   const [dark, setDark] = useState(false);
-  const [notifications, setNotifications] = useState(true);
-  const [streakAlert, setStreakAlert] = useState(true);
   const [voice, setVoice] = useState<"female" | "male">("female");
 
   useEffect(() => {
     setDark(localStorage.getItem("dark-mode") === "true");
-    const savedNotif = localStorage.getItem("notifications");
-    if (savedNotif !== null) setNotifications(savedNotif === "true");
-    const savedStreak = localStorage.getItem("streak-alert");
-    if (savedStreak !== null) setStreakAlert(savedStreak === "true");
     const savedVoice = localStorage.getItem("examiner-voice") as "female" | "male" | null;
     if (savedVoice) setVoice(savedVoice);
 
-    // Sync voice from DB
+    // Sync prefs from DB (source of truth)
     fetch("/api/preferences").then(r => r.ok ? r.json() : null).then(prefs => {
-      if (prefs?.examiner_voice) {
+      if (!prefs) return;
+      if (prefs.examiner_voice) {
         setVoice(prefs.examiner_voice);
         localStorage.setItem("examiner-voice", prefs.examiner_voice);
+      }
+      if (prefs.dark_mode !== undefined && prefs.dark_mode !== null) {
+        setDark(prefs.dark_mode);
       }
     }).catch(() => {});
   }, []);
@@ -113,16 +113,19 @@ export default function InstillingerPage() {
     localStorage.setItem("dark-mode", String(v));
     document.documentElement.setAttribute("data-dark", v ? "true" : "false");
     window.dispatchEvent(new Event("dark-mode-change"));
+    fetch("/api/preferences", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ dark_mode: v }),
+    }).catch(() => {});
   }
 
-  function toggleNotifications(v: boolean) {
-    setNotifications(v);
-    localStorage.setItem("notifications", String(v));
-  }
-
-  function toggleStreakAlert(v: boolean) {
-    setStreakAlert(v);
-    localStorage.setItem("streak-alert", String(v));
+  async function toggleNotifications(v: boolean) {
+    if (v) {
+      await subscribe();
+    } else {
+      await unsubscribe();
+    }
   }
 
   return (
@@ -151,7 +154,14 @@ export default function InstillingerPage() {
             </div>
             <div style={{ display: "flex", gap: "6px" }}>
               {([["nb", "Bokmål"], ["en", "English"]] as [Lang, string][]).map(([code, lbl]) => (
-                <button key={code} onClick={() => setLang(code)} style={{
+                <button key={code} onClick={() => {
+                  setLang(code);
+                  fetch("/api/preferences", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ language: code }),
+                  }).catch(() => {});
+                }} style={{
                   padding: "5px 10px", borderRadius: "8px", border: "none",
                   backgroundColor: lang === code ? "var(--text)" : "var(--bg-alt)",
                   color: lang === code ? "var(--bg)" : "var(--text-muted)",
@@ -200,12 +210,15 @@ export default function InstillingerPage() {
         {/* Varsler */}
         <SectionLabel>{t("set_notifs")}</SectionLabel>
         <Card>
-          <Row label={t("set_daily")} sublabel={t("set_daily_sub")}>
-            <Toggle value={notifications} onChange={toggleNotifications} />
-          </Row>
-          <Row label={t("set_streak")} sublabel={t("set_streak_sub")}>
-            <Toggle value={streakAlert} onChange={toggleStreakAlert} />
-          </Row>
+          {permission === "unsupported" ? (
+            <Row label={t("set_daily")} sublabel="Ikke støttet i denne nettleseren">
+              <span style={{ fontSize: "12px", color: "var(--ink-light)" }}>—</span>
+            </Row>
+          ) : (
+            <Row label={t("set_daily")} sublabel={permission === "denied" ? "Blokkert i nettleserinnstillinger" : t("set_daily_sub")}>
+              <Toggle value={permission === "granted"} onChange={toggleNotifications} />
+            </Row>
+          )}
         </Card>
 
         {/* Konto */}

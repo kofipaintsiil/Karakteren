@@ -11,7 +11,7 @@ export async function GET() {
 
   const { data } = await supabase
     .from("profiles")
-    .select("exam_date, exam_fag, exam_variant, examiner_voice")
+    .select("exam_date, exam_fag, exam_variant, examiner_voice, dark_mode, language")
     .eq("id", user.id)
     .single();
 
@@ -28,6 +28,8 @@ export async function PATCH(req: NextRequest) {
     exam_fag?: string | null;
     exam_variant?: string | null;
     examiner_voice?: string | null;
+    dark_mode?: boolean | null;
+    language?: string | null;
   };
 
   const record: ProfileInsert = { id: user.id };
@@ -35,6 +37,8 @@ export async function PATCH(req: NextRequest) {
   if ("exam_fag" in body) record.exam_fag = body.exam_fag ?? null;
   if ("exam_variant" in body) record.exam_variant = body.exam_variant ?? null;
   if ("examiner_voice" in body) record.examiner_voice = body.examiner_voice ?? null;
+  if ("dark_mode" in body) record.dark_mode = body.dark_mode ?? false;
+  if ("language" in body) record.language = body.language ?? "nb";
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("profiles") as any).upsert(record, { onConflict: "id" });

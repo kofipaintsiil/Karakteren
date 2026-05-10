@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { fetchLeaderboard } from "@/lib/sessions-server";
 import LeaderboardClient from "./LeaderboardClient";
 import InviteClient from "./InviteClient";
+import LeaderboardOptIn from "./LeaderboardOptIn";
 
 const SUBJECTS = ["Alle", "Norsk", "Matematikk", "Naturfag", "Fysikk", "Kjemi", "Biologi", "Historie", "Samfunnsfag", "Engelsk", "Geografi"];
 
@@ -13,6 +14,12 @@ export default async function ToplistePage() {
   const entries = await fetchLeaderboard();
   const userRank = user ? entries.findIndex((e) => e.user_id === user.id) + 1 : 0;
   const medals = ["#1", "#2", "#3"];
+
+  // Check if user has explicitly opted in
+  const { data: profileRow } = user
+    ? await supabase.from("profiles").select("show_on_leaderboard").eq("id", user.id).single()
+    : { data: null };
+  const hasOptedIn = (profileRow as { show_on_leaderboard: boolean | null } | null)?.show_on_leaderboard === true;
 
   return (
     <AppShell>
@@ -54,6 +61,9 @@ export default async function ToplistePage() {
             </div>
           </div>
         )}
+
+        {/* Opt-in banner for users not yet on the leaderboard */}
+        {user && !hasOptedIn && <LeaderboardOptIn userId={user.id} />}
 
         <InviteClient />
         <LeaderboardClient

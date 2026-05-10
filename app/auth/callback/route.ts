@@ -10,6 +10,17 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Send new users (no sessions yet) to onboarding
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { count } = await supabase
+          .from("sessions")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id);
+        if (count === 0) {
+          return NextResponse.redirect(`${origin}/welcome`);
+        }
+      }
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

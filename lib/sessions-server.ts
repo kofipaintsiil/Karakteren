@@ -176,8 +176,8 @@ export async function fetchProfile(userId: string) {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
-    .select("display_name, show_on_leaderboard, avatar_url")
+    .select("display_name, show_on_leaderboard, avatar_url, exam_date")
     .eq("id", userId)
     .single();
-  return data as { display_name: string | null; show_on_leaderboard: boolean | null; avatar_url: string | null } | null;
+  return data as { display_name: string | null; show_on_leaderboard: boolean | null; avatar_url: string | null; exam_date: string | null } | null;
 }

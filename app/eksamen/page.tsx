@@ -50,6 +50,31 @@ const SUBJECTS = [
     { id: "fransk-1", label: "Fransk 1", desc: "Vg2 Niveau I" },
     { id: "fransk-2", label: "Fransk 2", desc: "Vg3 Niveau II" },
   ]},
+  { id: "tysk",        label: "Tysk",        variants: [
+    { id: "tysk-2", label: "Tysk 2", desc: "Vg3 Nivå II" },
+  ]},
+  { id: "spansk",      label: "Spansk",      variants: [
+    { id: "spansk-2", label: "Spansk 2", desc: "Vg3 Nivå II" },
+  ]},
+  { id: "samfunnsøkonomi", label: "Samfunnsøkonomi", variants: [
+    { id: "samfunnsøkonomi-1", label: "Samfunnsøkonomi 1", desc: "Vg2" },
+    { id: "samfunnsøkonomi-2", label: "Samfunnsøkonomi 2", desc: "Vg3" },
+  ]},
+  { id: "sosiologi",   label: "Sosiologi og sosialantropologi", variants: null },
+  { id: "psykologi",   label: "Psykologi",   variants: [
+    { id: "psykologi-1", label: "Psykologi 1", desc: "Vg2" },
+    { id: "psykologi-2", label: "Psykologi 2", desc: "Vg3" },
+  ]},
+  { id: "rettslære",   label: "Rettslære",   variants: [
+    { id: "rettslære-1", label: "Rettslære 1", desc: "Vg2" },
+    { id: "rettslære-2", label: "Rettslære 2", desc: "Vg3" },
+  ]},
+  { id: "markedsføring", label: "Markedsføring og ledelse", variants: [
+    { id: "markedsføring-1", label: "Markedsføring 1", desc: "Vg2" },
+    { id: "markedsføring-2", label: "Markedsføring 2", desc: "Vg3" },
+  ]},
+  { id: "teknologi",   label: "Teknologi og forskningslære 1", variants: null },
+  { id: "religion",    label: "Religion og etikk",             variants: null },
 ];
 
 const TOPICS: Record<string, string[]> = {
@@ -71,6 +96,19 @@ const TOPICS: Record<string, string[]> = {
   geografi:         ["Klima og miljø", "Befolkningsvekst", "Ressurser og bærekraft", "Urbanisering", "Naturkatastrofer", "Geopolitikk", "Migrasjon", "Næringsgeografi"],
   "fransk-1":       ["Présentation personnelle et famille", "La vie quotidienne et l'école", "La gastronomie française", "Paris et les régions françaises", "Les loisirs et le sport", "La mode et les tendances"],
   "fransk-2":       ["Culture et identité française", "La Francophonie", "Littérature et cinéma français", "Société et politique en France", "L'environnement et le développement durable", "La jeunesse et les réseaux sociaux", "L'éducation en France", "La technologie et l'avenir"],
+  "tysk-2":         ["Deutsche Gesellschaft und Kultur", "Geschichte und Erinnerungskultur", "Die Europäische Union", "Umwelt und Nachhaltigkeit", "Jugend und Lebenswelt", "Migration und Integration", "Medien und Kommunikation", "Wirtschaft und Beruf"],
+  "spansk-2":       ["Cultura e identidad hispana", "Historia y política en el mundo hispano", "Medio ambiente y sostenibilidad", "Migración y globalización", "Jóvenes y redes sociales", "Literatura y cine hispanohablante", "Economía y trabajo", "Sociedad y diversidad"],
+  "samfunnsøkonomi-1": ["Tilbud og etterspørsel", "Markedsmekanismen og prisdannelse", "Nasjonalregnskap og BNP", "Konjunktursvingninger", "Penge- og finanspolitikk", "Arbeidsledighet og inflasjon", "Offentlig sektor og skatter", "Internasjonal handel"],
+  "samfunnsøkonomi-2": ["Fullkommen og ufullkommen konkurranse", "Markedssvikt og offentlige inngrep", "Fordelingspolitikk og velferd", "Valutamarkedet og valutapolitikk", "Miljøøkonomi og bærekraft", "Makroøkonomiske modeller", "Vekstteori og innovasjon", "Internasjonale finansmarkeder"],
+  sosiologi:        ["Sosialisering og identitet", "Sosiale grupper og institusjoner", "Sosial ulikhet og stratifikasjon", "Kultur og kulturmøter", "Etnisitet og minoriteter", "Kjønn og kjønnsroller", "Sosial kontroll og avvik", "Globalisering og sosiale endringer"],
+  "psykologi-1":    ["Sansing og persepsjon", "Klassisk og operant betinging", "Kognisjon og hukommelse", "Motivasjon og emosjoner", "Personlighet og personlighetsteorier", "Psykisk helse og psykiske lidelser", "Sosialpsykologi", "Biologisk psykologi"],
+  "psykologi-2":    ["Kognitiv psykologi og informasjonsbehandling", "Utviklingspsykologi", "Klinisk psykologi og behandling", "Nevropsykologi og hjernen", "Positiv psykologi og mestring", "Stresspsykologi", "Psykologisk forskning og etikk", "Kulturpsykologi"],
+  "rettslære-1":    ["Rettsstatens prinsipper og rettssystemet", "Rettskilder og lovgivning", "Avtaleretten", "Kjøpsretten og forbrukervern", "Erstatningsretten", "Strafferettens grunnbegreper", "Familieretten", "Arbeidsretten"],
+  "rettslære-2":    ["Selskapsretten (AS, ANS, ENK)", "Immaterialretten", "Arbeidsrettens avtaleverk", "Forvaltningsretten", "Kontraktsrett og mislighold", "Kredittsikkerhet og panterett", "Internasjonal privatrett", "Strafferetten"],
+  "markedsføring-1": ["Markedsføring og markedsmekanismer", "Markedsanalyse og segmentering", "Produkt og produktutvikling", "Pris og prisstrategier", "Distribusjon og salgsstrategi", "Markedskommunikasjon og reklame", "Digital markedsføring", "Bedriftsetikk og samfunnsansvar"],
+  "markedsføring-2": ["Strategisk ledelse og SWOT-analyse", "Merkevarebygging", "Internasjonal markedsføring", "Ledelsesteorier og ledelsesstiler", "Prosjektledelse og teamarbeid", "Forretningsmodeller og innovasjon", "Budsjett og økonomiplanlegging", "Gründerskap"],
+  teknologi:        ["Vitenskapelig metode og hypotesetesting", "Teknologiutvikling og samfunn", "Bærekraftig teknologi og grønn innovasjon", "Datateknologi og kunstig intelligens", "Bioteknologi og etikk", "Energiteknologi og fornybar energi", "Forsøksdesign og dataanalyse", "Teknologihistorie og fremtidsperspektiver"],
+  religion:         ["Kristendom og kirkehistorie", "Islam", "Jødedom", "Hinduisme og buddhisme", "Ikke-religiøse livssyn (humanisme)", "Etikk og etiske teorier", "Religion og samfunn", "Nyreligiøsitet og new age"],
 };
 
 export default function EksamenPage() {

@@ -7,13 +7,13 @@ import PremiumButton from "@/components/PremiumButton";
 
 const freeFeatures = [
   "3 prøver per måned",
-  "Alle 10 fag",
+  "20+ fag",
   "Enkel tilbakemelding",
 ];
 
 const premiumFeatures = [
   "Ubegrensede prøver",
-  "Alle 10 fag",
+  "20+ fag",
   "Detaljert tilbakemelding",
   "Del resultater med venner",
   "Fremgangsanalyse",

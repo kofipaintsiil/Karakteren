@@ -63,6 +63,33 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["subscriptions"]["Insert"]>;
         Relationships: [];
       };
+      push_subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth_key: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth_key: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          endpoint?: string;
+          p256dh?: string;
+          auth_key?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           id: string;
@@ -73,6 +100,8 @@ export interface Database {
           exam_fag: string | null;
           exam_variant: string | null;
           examiner_voice: string | null;
+          dark_mode: boolean | null;
+          language: string | null;
           created_at: string;
         };
         Insert: {
@@ -84,6 +113,8 @@ export interface Database {
           exam_fag?: string | null;
           exam_variant?: string | null;
           examiner_voice?: string | null;
+          dark_mode?: boolean | null;
+          language?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;

@@ -22,13 +22,32 @@ export async function POST(req: NextRequest) {
     await admin.storage.createBucket("avatars", { public: true });
   }
 
-  const ext = file.name.split(".").pop() ?? "jpg";
-  const path = `${user.id}/avatar.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
+
+  // Detect type from magic bytes — never trust client-supplied extension or MIME
+  type ImageType = { ext: string; mime: string };
+  function detectImageType(buf: Buffer): ImageType | null {
+    if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return { ext: "jpg", mime: "image/jpeg" };
+    if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return { ext: "png", mime: "image/png" };
+    if (buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46) return { ext: "webp", mime: "image/webp" };
+    if (buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46) return { ext: "gif", mime: "image/gif" };
+    return null;
+  }
+
+  const imageType = detectImageType(buffer);
+  if (!imageType) {
+    return NextResponse.json({ error: "Kun JPG, PNG, WebP og GIF er tillatt" }, { status: 400 });
+  }
+
+  if (buffer.length > 5 * 1024 * 1024) {
+    return NextResponse.json({ error: "Bildet er for stort (maks 5 MB)" }, { status: 400 });
+  }
+
+  const path = `${user.id}/avatar.${imageType.ext}`;
 
   const { error: uploadError } = await admin.storage
     .from("avatars")
-    .upload(path, buffer, { contentType: file.type, upsert: true });
+    .upload(path, buffer, { contentType: imageType.mime, upsert: true });
 
   if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 });
 

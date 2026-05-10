@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, CheckCircle2, ArrowRight } from "lucide-react";
 import Blobb from "@/components/Blobb";
+import ShareButton from "@/components/ShareButton";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Tilbakemelding" };
@@ -179,6 +180,12 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
         )}
+
+        <ShareButton
+          url={`${process.env.NEXT_PUBLIC_APP_URL ?? "https://karakteren.no"}/dashboard/session/${session.id}`}
+          grade={grade}
+          subject={session.subject}
+        />
 
         <Link href={`/exam?subject=${session.subject.toLowerCase()}`}>
           <div style={{

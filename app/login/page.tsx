@@ -116,7 +116,7 @@ function LoginForm() {
       if (signInError) {
         setMessage({ type: "error", text: ERROR_MESSAGES[signInError.message] ?? signInError.message });
       } else {
-        window.location.href = next;
+        window.location.href = "/welcome";
       }
       return;
     }

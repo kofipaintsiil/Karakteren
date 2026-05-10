@@ -96,6 +96,10 @@ async function DashboardContent() {
   const recentSessions = sessions.slice(0, 6);
   const streak = stats?.streak ?? 0;
 
+  const daysToExam = profile?.exam_date
+    ? Math.ceil((new Date(profile.exam_date).setHours(23, 59, 59, 999) - Date.now()) / 86400000)
+    : null;
+
   return (
     <div style={{ paddingTop: "8px" }}>
 
@@ -138,6 +142,29 @@ async function DashboardContent() {
         </div>
       </div>
 
+      {/* Exam countdown */}
+      {daysToExam !== null && daysToExam >= 0 && (
+        <div style={{
+          backgroundColor: daysToExam <= 3 ? "oklch(0.96 0.05 22)" : "var(--surface)",
+          border: `1px solid ${daysToExam <= 3 ? "oklch(0.75 0.14 22)" : "var(--border)"}`,
+          borderRadius: "var(--r-md)",
+          padding: "12px 16px",
+          marginBottom: "14px",
+          display: "flex", alignItems: "center", gap: "10px",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+        }}>
+          <span style={{ fontSize: "20px" }}>{daysToExam <= 3 ? "🔥" : "📅"}</span>
+          <div>
+            <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>
+              {daysToExam === 0 ? "Eksamen er i dag!" : daysToExam === 1 ? "1 dag til eksamen" : `${daysToExam} dager til eksamen`}
+            </p>
+            <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>
+              {daysToExam <= 3 ? "Øv nå!" : "Hold streaken og du er klar"}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* New exam CTA */}
       <div style={{ marginBottom: "20px" }}>
         <Link href="/eksamen" style={{
@@ -151,6 +178,34 @@ async function DashboardContent() {
           Gå til eksamen →
         </Link>
       </div>
+
+      {/* Empty state */}
+      {recentSessions.length === 0 && (
+        <div style={{
+          backgroundColor: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-lg)",
+          padding: "32px 20px",
+          textAlign: "center",
+          marginBottom: "24px",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+        }}>
+          <p style={{ fontSize: "32px", marginBottom: "12px" }}>🎓</p>
+          <p style={{ fontSize: "15px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Ingen prøver ennå</p>
+          <p style={{ fontSize: "13px", color: "var(--ink-light)", marginBottom: "20px" }}>
+            Ta din første muntlige prøve og se hvordan du ligger an.
+          </p>
+          <Link href="/eksamen" style={{
+            display: "inline-flex", alignItems: "center", gap: "6px",
+            backgroundColor: "var(--accent)", color: "#fff",
+            fontWeight: 700, fontSize: "14px",
+            padding: "10px 20px", borderRadius: "var(--r-full)",
+            textDecoration: "none",
+          }}>
+            Start første prøve →
+          </Link>
+        </div>
+      )}
 
       {/* Recent sessions */}
       {recentSessions.length > 0 && (
