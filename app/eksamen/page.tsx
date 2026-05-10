@@ -23,59 +23,59 @@ function savePreferences(patch: Record<string, string | null>) {
 }
 
 const SUBJECTS = [
-  { id: "norsk",       label: "Norsk",       variants: null },
-  { id: "matematikk",  label: "Matematikk",  variants: [
+  { id: "norsk",       label: "Norsk",                         short: "Norsk",          variants: null },
+  { id: "matematikk",  label: "Matematikk",                    short: "Matte",          variants: [
     { id: "matematikk-1t", label: "1T",  desc: "Vg1 teoretisk" },
     { id: "matematikk-r1", label: "R1",  desc: "Vg2 realfag" },
     { id: "matematikk-r2", label: "R2",  desc: "Vg3 realfag" },
     { id: "matematikk-2p", label: "2P",  desc: "Vg2 praktisk" },
   ]},
-  { id: "fysikk",      label: "Fysikk",      variants: [
+  { id: "fysikk",      label: "Fysikk",                        short: "Fysikk",         variants: [
     { id: "fysikk-1", label: "Fysikk 1", desc: "Vg2" },
     { id: "fysikk-2", label: "Fysikk 2", desc: "Vg3" },
   ]},
-  { id: "kjemi",       label: "Kjemi",       variants: [
+  { id: "kjemi",       label: "Kjemi",                         short: "Kjemi",          variants: [
     { id: "kjemi-1", label: "Kjemi 1", desc: "Vg2" },
     { id: "kjemi-2", label: "Kjemi 2", desc: "Vg3" },
   ]},
-  { id: "biologi",     label: "Biologi",     variants: [
+  { id: "biologi",     label: "Biologi",                       short: "Biologi",        variants: [
     { id: "biologi-1", label: "Biologi 1", desc: "Vg2" },
     { id: "biologi-2", label: "Biologi 2", desc: "Vg3" },
   ]},
-  { id: "historie",    label: "Historie",    variants: null },
-  { id: "naturfag",    label: "Naturfag",    variants: null },
-  { id: "samfunnsfag", label: "Samfunnskunnskap", variants: null },
-  { id: "engelsk",     label: "Engelsk",     variants: null },
-  { id: "geografi",    label: "Geografi",    variants: null },
-  { id: "fransk",      label: "Fransk",      variants: [
+  { id: "historie",    label: "Historie",                      short: "Historie",       variants: null },
+  { id: "naturfag",    label: "Naturfag",                      short: "Naturfag",       variants: null },
+  { id: "samfunnsfag", label: "Samfunnskunnskap",              short: "Samfunn",        variants: null },
+  { id: "engelsk",     label: "Engelsk",                       short: "Engelsk",        variants: null },
+  { id: "geografi",    label: "Geografi",                      short: "Geografi",       variants: null },
+  { id: "fransk",      label: "Fransk",                        short: "Fransk",         variants: [
     { id: "fransk-1", label: "Fransk 1", desc: "Vg2 Niveau I" },
     { id: "fransk-2", label: "Fransk 2", desc: "Vg3 Niveau II" },
   ]},
-  { id: "tysk",        label: "Tysk",        variants: [
+  { id: "tysk",        label: "Tysk",                          short: "Tysk",           variants: [
     { id: "tysk-2", label: "Tysk 2", desc: "Vg3 Nivå II" },
   ]},
-  { id: "spansk",      label: "Spansk",      variants: [
+  { id: "spansk",      label: "Spansk",                        short: "Spansk",         variants: [
     { id: "spansk-2", label: "Spansk 2", desc: "Vg3 Nivå II" },
   ]},
-  { id: "samfunnsøkonomi", label: "Samfunnsøkonomi", variants: [
+  { id: "samfunnsøkonomi", label: "Samfunnsøkonomi",          short: "Samf.øk.",       variants: [
     { id: "samfunnsøkonomi-1", label: "Samfunnsøkonomi 1", desc: "Vg2" },
     { id: "samfunnsøkonomi-2", label: "Samfunnsøkonomi 2", desc: "Vg3" },
   ]},
-  { id: "sosiologi",   label: "Sosiologi og sosialantropologi", variants: null },
-  { id: "psykologi",   label: "Psykologi",   variants: [
+  { id: "sosiologi",   label: "Sosiologi og sosialantropologi", short: "Sosiologi",     variants: null },
+  { id: "psykologi",   label: "Psykologi",                     short: "Psykologi",     variants: [
     { id: "psykologi-1", label: "Psykologi 1", desc: "Vg2" },
     { id: "psykologi-2", label: "Psykologi 2", desc: "Vg3" },
   ]},
-  { id: "rettslære",   label: "Rettslære",   variants: [
+  { id: "rettslære",   label: "Rettslære",                     short: "Rettslære",     variants: [
     { id: "rettslære-1", label: "Rettslære 1", desc: "Vg2" },
     { id: "rettslære-2", label: "Rettslære 2", desc: "Vg3" },
   ]},
-  { id: "markedsføring", label: "Markedsføring og ledelse", variants: [
+  { id: "markedsføring", label: "Markedsføring og ledelse",   short: "Marked.",        variants: [
     { id: "markedsføring-1", label: "Markedsføring 1", desc: "Vg2" },
     { id: "markedsføring-2", label: "Markedsføring 2", desc: "Vg3" },
   ]},
-  { id: "teknologi",   label: "Teknologi og forskningslære 1", variants: null },
-  { id: "religion",    label: "Religion og etikk",             variants: null },
+  { id: "teknologi",   label: "Teknologi og forskningslære 1", short: "Teknologi",     variants: null },
+  { id: "religion",    label: "Religion og etikk",             short: "Religion",      variants: null },
 ];
 
 const TOPICS: Record<string, string[]> = {
@@ -263,9 +263,9 @@ export default function EksamenPage() {
           </div>
 
           {/* Subject */}
-          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "14px 14px 10px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px", paddingLeft: "2px" }}>Fag</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "12px 12px 8px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
+            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "8px", paddingLeft: "2px" }}>Fag</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "5px" }}>
               {SUBJECTS.map(s => {
                 const active = selectedFag === s.id;
                 const color = subjectColor(s.id);
@@ -274,20 +274,18 @@ export default function EksamenPage() {
                     key={s.id}
                     onClick={() => handleFagChange(s.id)}
                     style={{
-                      display: "flex", alignItems: "center", gap: "10px",
-                      padding: "11px 12px", borderRadius: "var(--r-md)", border: "none",
+                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                      gap: "4px", padding: "8px 4px", borderRadius: "var(--r-md)", border: "none",
                       backgroundColor: active ? "var(--text)" : "var(--bg-alt)",
                       color: active ? "var(--bg)" : "var(--text)",
-                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "13px", fontWeight: active ? 600 : 400,
+                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "11px", fontWeight: active ? 600 : 400,
                       cursor: "pointer", transition: "all 0.15s",
                       WebkitTapHighlightColor: "transparent",
-                      textAlign: "left", minHeight: "44px",
+                      textAlign: "center", minHeight: "52px", lineHeight: 1.2,
                     }}
                   >
-                    <span style={{ flexShrink: 0, opacity: active ? 0.85 : 1 }}>
-                      <SubjectIcon id={s.id} size={16} color={active ? "var(--bg)" : color} />
-                    </span>
-                    <span style={{ lineHeight: 1.2 }}>{s.label}</span>
+                    <SubjectIcon id={s.id} size={15} color={active ? "var(--bg)" : color} />
+                    <span>{s.short}</span>
                   </button>
                 );
               })}
