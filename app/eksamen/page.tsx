@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 import Blobb from "@/components/Blobb";
+import { SubjectIcon, subjectColor } from "@/components/SubjectIcon";
 
 async function loadPreferences() {
   try {
@@ -262,50 +263,60 @@ export default function EksamenPage() {
           </div>
 
           {/* Subject */}
-          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px" }}>Fag</p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-              {SUBJECTS.map(s => (
-                <button
-                  key={s.id}
-                  onClick={() => handleFagChange(s.id)}
-                  style={{
-                    padding: "7px 14px", borderRadius: "var(--r-full)", border: "none",
-                    backgroundColor: selectedFag === s.id ? "var(--text)" : "var(--bg-alt)",
-                    color: selectedFag === s.id ? "var(--bg)" : "var(--text-muted)",
-                    fontFamily: "Inter, system-ui, sans-serif", fontSize: "13px", fontWeight: 500,
-                    cursor: "pointer", transition: "all 0.15s",
-                    WebkitTapHighlightColor: "transparent",
-                  }}
-                >
-                  {s.label}
-                </button>
-              ))}
+          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "14px 14px 10px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
+            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px", paddingLeft: "2px" }}>Fag</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+              {SUBJECTS.map(s => {
+                const active = selectedFag === s.id;
+                const color = subjectColor(s.id);
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => handleFagChange(s.id)}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "10px",
+                      padding: "11px 12px", borderRadius: "var(--r-md)", border: "none",
+                      backgroundColor: active ? "var(--text)" : "var(--bg-alt)",
+                      color: active ? "var(--bg)" : "var(--text)",
+                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "13px", fontWeight: active ? 600 : 400,
+                      cursor: "pointer", transition: "all 0.15s",
+                      WebkitTapHighlightColor: "transparent",
+                      textAlign: "left", minHeight: "44px",
+                    }}
+                  >
+                    <span style={{ flexShrink: 0, opacity: active ? 0.85 : 1 }}>
+                      <SubjectIcon id={s.id} size={16} color={active ? "var(--bg)" : color} />
+                    </span>
+                    <span style={{ lineHeight: 1.2 }}>{s.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           {/* Variant selector — only shown for subjects with variants */}
           {activeFag.variants && (
-            <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px" }}>
+            <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "14px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
+              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "10px", paddingLeft: "2px" }}>
                 Hvilken {activeFag.label}?
               </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
                 {activeFag.variants.map(v => (
                   <button
                     key={v.id}
                     onClick={() => handleVariantChange(v.id)}
                     style={{
-                      padding: "10px 16px", borderRadius: "var(--r-md)", border: "none",
+                      padding: "12px 14px", borderRadius: "var(--r-md)", border: "none",
                       backgroundColor: selectedVariant === v.id ? "var(--accent)" : "var(--bg-alt)",
                       color: selectedVariant === v.id ? "#fff" : "var(--text)",
                       fontFamily: "Inter, system-ui, sans-serif", fontSize: "14px", fontWeight: 600,
                       cursor: "pointer", transition: "all 0.15s",
                       WebkitTapHighlightColor: "transparent",
+                      textAlign: "left", minHeight: "52px",
                     }}
                   >
                     {v.label}
-                    <span style={{ display: "block", fontSize: "11px", fontWeight: 400, opacity: 0.75, marginTop: "1px" }}>
+                    <span style={{ display: "block", fontSize: "11px", fontWeight: 400, opacity: 0.7, marginTop: "2px" }}>
                       {v.desc}
                     </span>
                   </button>
