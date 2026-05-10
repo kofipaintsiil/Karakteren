@@ -83,14 +83,20 @@ function ExamPageInner() {
 
   useEffect(() => { messagesRef.current = messages; }, [messages]);
 
+  const examLang = subject === "engelsk" ? "en-GB"
+    : subject === "tysk-2" ? "de-DE"
+    : subject === "spansk-2" ? "es-ES"
+    : (subject === "fransk-1" || subject === "fransk-2") ? "fr-FR"
+    : "nb-NO";
+
   const examinerSpeak = useCallback(async (text: string, nextState: BlobbState = "listening") => {
     setLastExaminerText(text);
     setIsSpeaking(true);
     setBlobbState("talking");
-    await speak(text, subject === "engelsk" ? "en-GB" : "nb-NO");
+    await speak(text, examLang);
     setIsSpeaking(false);
     setBlobbState(nextState);
-  }, [subject]);
+  }, [examLang]);
 
   function addMessage(role: "examiner" | "student", text: string) {
     setMessages((prev) => [...prev, { role, text }]);
@@ -525,7 +531,7 @@ function ExamPageInner() {
             <div style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "11px", color: "var(--ink-light)", fontWeight: 600, letterSpacing: "0.5px", textTransform: "uppercase" }}>Spørsmål</div>
             {lastExaminerText && !isSpeaking && !isStreaming && phase === "conversation" && (
               <button
-                onClick={() => examinerSpeak(lastExaminerText)}
+                onClick={() => { unlockAudio(); void examinerSpeak(lastExaminerText); }}
                 style={{ display: "flex", alignItems: "center", gap: "3px", background: "none", border: `1px solid var(--border)`, borderRadius: "var(--r-full)", padding: "3px 8px", cursor: "pointer", fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", fontFamily: "Inter, system-ui, sans-serif", WebkitTapHighlightColor: "transparent" }}
               >
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
