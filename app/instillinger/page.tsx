@@ -355,6 +355,11 @@ export default function InstillingerPage() {
           <LogoutButton />
         </div>
 
+        <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "20px" }}>
+          <Link href="/vilkaar" style={{ fontSize: "12px", color: "var(--ink-light)", textDecoration: "none" }}>Vilkår for bruk</Link>
+          <Link href="/personvern" style={{ fontSize: "12px", color: "var(--ink-light)", textDecoration: "none" }}>Personvernerklæring</Link>
+        </div>
+
       </div>
     </AppShell>
   );

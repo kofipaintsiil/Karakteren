@@ -177,6 +177,22 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* Footer */}
+      <div style={{ borderTop: "1px solid var(--border)", backgroundColor: "var(--bg)" }}>
+        <div style={{
+          maxWidth: "640px", margin: "0 auto", padding: "20px",
+          display: "flex", flexWrap: "wrap", justifyContent: "space-between",
+          alignItems: "center", gap: "10px",
+        }}>
+          <span style={{ fontSize: "12px", color: "var(--ink-light)" }}>© 2025 Karakteren</span>
+          <div style={{ display: "flex", gap: "20px" }}>
+            <Link href="/vilkaar" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}>Vilkår for bruk</Link>
+            <Link href="/personvern" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}>Personvernerklæring</Link>
+            <Link href="/pricing" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}>Priser</Link>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }

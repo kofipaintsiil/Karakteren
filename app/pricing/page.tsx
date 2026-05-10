@@ -184,6 +184,10 @@ export default function PricingPage() {
         <p style={{ textAlign: "center", fontSize: "12px", color: "var(--ink-light)", marginTop: "20px" }}>
           Betalingsalternativer: Stripe og Vipps. {annual ? "Faktureres én gang per år." : "Ingen bindingstid."}
         </p>
+        <div style={{ textAlign: "center", marginTop: "16px", display: "flex", justifyContent: "center", gap: "16px" }}>
+          <Link href="/vilkaar" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}>Vilkår for bruk</Link>
+          <Link href="/personvern" style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}>Personvern</Link>
+        </div>
       </div>
     </AppShell>
   );
