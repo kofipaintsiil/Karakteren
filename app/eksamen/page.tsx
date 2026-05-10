@@ -120,6 +120,13 @@ export default function EksamenPage() {
   const [drawing, setDrawing] = useState(false);
   const [drawnTopic, setDrawnTopic] = useState<string | null>(null);
   const hydrated = useRef(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Load from DB first, fall back to localStorage
   useEffect(() => {
@@ -262,10 +269,10 @@ export default function EksamenPage() {
             )}
           </div>
 
-          {/* Subject — 4-col compact grid */}
-          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "10px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+          {/* Subject picker — responsive */}
+          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "12px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
             <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "8px", paddingLeft: "2px" }}>Fag</p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "4px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isDesktop ? "repeat(5, 1fr)" : "repeat(4, 1fr)", gap: isDesktop ? "6px" : "4px" }}>
               {SUBJECTS.map(s => {
                 const active = selectedFag === s.id;
                 const color = SUBJECT_COLORS[s.id] ?? "var(--accent)";
@@ -275,17 +282,22 @@ export default function EksamenPage() {
                     onClick={() => handleFagChange(s.id)}
                     style={{
                       display: "flex", flexDirection: "column", alignItems: "center",
-                      justifyContent: "center", gap: "4px",
-                      padding: "8px 4px", borderRadius: "8px", border: "none",
-                      backgroundColor: active ? "var(--text)" : "var(--bg-alt)",
+                      justifyContent: "center", gap: isDesktop ? "6px" : "4px",
+                      padding: isDesktop ? "12px 8px" : "8px 4px",
+                      borderRadius: "var(--r-md)",
+                      border: isDesktop ? `1.5px solid ${active ? "var(--text)" : "var(--border)"}` : "none",
+                      backgroundColor: active ? "var(--text)" : isDesktop ? "var(--surface)" : "var(--bg-alt)",
                       color: active ? "var(--bg)" : "var(--text)",
-                      fontFamily: "Inter, system-ui, sans-serif", fontSize: "10px", fontWeight: active ? 600 : 500,
-                      cursor: "pointer", transition: "background 0.12s",
+                      fontFamily: "Inter, system-ui, sans-serif",
+                      fontSize: isDesktop ? "12px" : "10px",
+                      fontWeight: active ? 600 : 500,
+                      cursor: "pointer", transition: "background 0.12s, border-color 0.12s",
                       WebkitTapHighlightColor: "transparent",
-                      textAlign: "center", lineHeight: 1.2, minHeight: "52px",
+                      textAlign: "center", lineHeight: 1.2,
+                      minHeight: isDesktop ? "66px" : "52px",
                     }}
                   >
-                    <SubjectIcon id={s.id} size={16} color={active ? "var(--bg)" : color} />
+                    <SubjectIcon id={s.id} size={isDesktop ? 20 : 16} color={active ? "var(--bg)" : color} />
                     <span style={{ maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingInline: "3px" }}>
                       {s.short}
                     </span>

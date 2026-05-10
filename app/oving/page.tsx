@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 import { SubjectIcon, SUBJECT_COLORS } from "@/components/SubjectIcon";
@@ -277,6 +277,14 @@ export default function OvingPage() {
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const recentSubjects = SUBJECTS.filter(s => ["norsk", "matematikk"].includes(s.id));
 
@@ -353,10 +361,10 @@ export default function OvingPage() {
           <div style={{ paddingBottom: "32px" }}>
             <div style={{
               backgroundColor: "var(--surface)", border: "1px solid var(--border)",
-              borderRadius: "var(--r-lg)", padding: "10px",
+              borderRadius: "var(--r-lg)", padding: "12px",
               boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
             }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "4px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: isDesktop ? "repeat(5, 1fr)" : "repeat(4, 1fr)", gap: isDesktop ? "6px" : "4px" }}>
                 {SUBJECTS.map(s => {
                   const color = SUBJECT_COLORS[s.id] ?? "var(--accent)";
                   return (
@@ -365,16 +373,21 @@ export default function OvingPage() {
                       onClick={() => pickSubject(s.id)}
                       style={{
                         display: "flex", flexDirection: "column", alignItems: "center",
-                        justifyContent: "center", gap: "4px",
-                        padding: "8px 4px", borderRadius: "8px", border: "none",
-                        backgroundColor: "var(--bg-alt)", color: "var(--text)",
-                        fontFamily: "Inter, system-ui, sans-serif", fontSize: "10px", fontWeight: 500,
+                        justifyContent: "center", gap: isDesktop ? "6px" : "4px",
+                        padding: isDesktop ? "12px 8px" : "8px 4px",
+                        borderRadius: "var(--r-md)",
+                        border: isDesktop ? "1.5px solid var(--border)" : "none",
+                        backgroundColor: isDesktop ? "var(--surface)" : "var(--bg-alt)",
+                        color: "var(--text)",
+                        fontFamily: "Inter, system-ui, sans-serif",
+                        fontSize: isDesktop ? "12px" : "10px", fontWeight: 500,
                         cursor: "pointer", transition: "background 0.12s",
                         WebkitTapHighlightColor: "transparent",
-                        textAlign: "center", lineHeight: 1.2, minHeight: "52px",
+                        textAlign: "center", lineHeight: 1.2,
+                        minHeight: isDesktop ? "66px" : "52px",
                       }}
                     >
-                      <SubjectIcon id={s.id} size={16} color={color} />
+                      <SubjectIcon id={s.id} size={isDesktop ? 20 : 16} color={color} />
                       <span style={{ maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingInline: "3px" }}>
                         {s.label.split(" ")[0]}
                       </span>
