@@ -153,7 +153,15 @@ async function DashboardContent() {
           display: "flex", alignItems: "center", gap: "10px",
           boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
         }}>
-          <span style={{ fontSize: "20px" }}>{daysToExam <= 3 ? "🔥" : "📅"}</span>
+          {daysToExam <= 3 ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="oklch(0.55 0.18 22)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10"/><path d="M12 8v4l3 3"/>
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          )}
           <div>
             <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>
               {daysToExam === 0 ? "Eksamen er i dag!" : daysToExam === 1 ? "1 dag til eksamen" : `${daysToExam} dager til eksamen`}
@@ -190,7 +198,11 @@ async function DashboardContent() {
           marginBottom: "24px",
           boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
         }}>
-          <p style={{ fontSize: "32px", marginBottom: "12px" }}>🎓</p>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </div>
           <p style={{ fontSize: "15px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Ingen prøver ennå</p>
           <p style={{ fontSize: "13px", color: "var(--ink-light)", marginBottom: "20px" }}>
             Ta din første muntlige prøve og se hvordan du ligger an.

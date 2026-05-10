@@ -31,7 +31,9 @@ export default function LeaderboardOptIn({ userId }: { userId: string }) {
         marginBottom: "20px",
         display: "flex", alignItems: "center", gap: "10px",
       }}>
-        <span style={{ fontSize: "20px" }}>🎉</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="oklch(0.45 0.12 150)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
         <p style={{ fontSize: "13px", fontWeight: 700, color: "oklch(0.35 0.1 150)" }}>
           Du er nå på topplisten! Last siden på nytt for å se deg selv.
         </p>
