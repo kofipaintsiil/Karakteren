@@ -11,13 +11,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid subscription" }, { status: 400 });
   }
 
+  // Remove any existing record for this endpoint before inserting.
+  // Prevents a recycled browser endpoint from staying linked to another user.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (supabase.from("push_subscriptions") as any).upsert({
+  await (supabase.from("push_subscriptions") as any).delete().eq("endpoint", endpoint);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase.from("push_subscriptions") as any).insert({
     user_id: user.id,
     endpoint,
     p256dh: keys.p256dh,
     auth_key: keys.auth,
-  }, { onConflict: "endpoint" });
+  });
 
   return NextResponse.json({ ok: true });
 }

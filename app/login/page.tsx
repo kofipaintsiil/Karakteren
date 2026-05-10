@@ -124,22 +124,14 @@ function LoginForm() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error?.message === "Email not confirmed") {
-      const res = await fetch("/api/auth/confirm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (res.ok) {
-        const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
-        clearTimeout(timeout);
-        setLoading(false);
-        if (retryError) {
-          setMessage({ type: "error", text: ERROR_MESSAGES[retryError.message] ?? retryError.message });
-        } else {
-          window.location.href = next;
-        }
-        return;
-      }
+      // Retry once — account was likely created before auto-confirm was in place.
+      // New signups are auto-confirmed server-side so this path should rarely trigger.
+      const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
+      clearTimeout(timeout);
+      setLoading(false);
+      if (!retryError) { window.location.href = next; return; }
+      setMessage({ type: "error", text: "Kontoen er ikke bekreftet. Kontakt support." });
+      return;
     }
 
     clearTimeout(timeout);
