@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import LogoutButton from "@/components/LogoutButton";
@@ -79,11 +79,33 @@ export default function InstillingerPage() {
   const { permission, subscribe, unsubscribe } = usePush();
   const [dark, setDark] = useState(false);
   const [voice, setVoice] = useState<"female" | "male">("female");
+  const [notifLoading, setNotifLoading] = useState(false);
+  const [notifError, setNotifError] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const deferredInstall = useRef<any>(null);
+  const [canInstall, setCanInstall] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showIOSHint, setShowIOSHint] = useState(false);
 
   useEffect(() => {
+    setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const safari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
+    setIsIOS(ios && safari);
+
+    const handler = (e: Event) => {
+      e.preventDefault();
+      deferredInstall.current = e;
+      setCanInstall(true);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+
     setDark(localStorage.getItem("dark-mode") === "true");
     const savedVoice = localStorage.getItem("examiner-voice") as "female" | "male" | null;
     if (savedVoice) setVoice(savedVoice);
+
+    return () => window.removeEventListener("beforeinstallprompt", handler);
 
     // Sync prefs from DB (source of truth)
     fetch("/api/preferences").then(r => r.ok ? r.json() : null).then(prefs => {
@@ -121,10 +143,31 @@ export default function InstillingerPage() {
   }
 
   async function toggleNotifications(v: boolean) {
-    if (v) {
-      await subscribe();
-    } else {
-      await unsubscribe();
+    setNotifError(null);
+    setNotifLoading(true);
+    try {
+      if (v) {
+        const ok = await subscribe();
+        if (!ok && Notification.permission === "denied") {
+          setNotifError("Blokkert av nettleseren — tillat varsler i nettleserinnstillingene");
+        } else if (!ok) {
+          setNotifError("Kunne ikke aktivere varsler. Prøv igjen.");
+        }
+      } else {
+        await unsubscribe();
+      }
+    } finally {
+      setNotifLoading(false);
+    }
+  }
+
+  async function installApp() {
+    if (deferredInstall.current) {
+      deferredInstall.current.prompt();
+      const { outcome } = await deferredInstall.current.userChoice;
+      if (outcome === "accepted") { setCanInstall(false); deferredInstall.current = null; }
+    } else if (isIOS) {
+      setShowIOSHint(true);
     }
   }
 
@@ -215,11 +258,53 @@ export default function InstillingerPage() {
               <span style={{ fontSize: "12px", color: "var(--ink-light)" }}>—</span>
             </Row>
           ) : (
-            <Row label={t("set_daily")} sublabel={permission === "denied" ? "Blokkert i nettleserinnstillinger" : t("set_daily_sub")}>
-              <Toggle value={permission === "granted"} onChange={toggleNotifications} />
-            </Row>
+            <div>
+              <Row label={t("set_daily")} sublabel={permission === "denied" ? "Blokkert — tillat i nettleserinnstillingene" : t("set_daily_sub")}>
+                {notifLoading
+                  ? <span style={{ fontSize: "12px", color: "var(--ink-light)" }}>...</span>
+                  : <Toggle value={permission === "granted"} onChange={toggleNotifications} />
+                }
+              </Row>
+              {notifError && (
+                <div style={{ padding: "10px 16px", fontSize: "12px", color: "var(--error)", borderTop: "1px solid var(--border)" }}>
+                  {notifError}
+                </div>
+              )}
+            </div>
           )}
         </Card>
+
+        {/* Legg til på hjemskjerm */}
+        {!isStandalone && (isIOS || canInstall) && (
+          <>
+            <SectionLabel>App</SectionLabel>
+            <Card>
+              <div style={{ padding: "14px 16px" }}>
+                <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)", marginBottom: "2px" }}>Legg til på hjemskjermen</p>
+                <p style={{ fontSize: "12px", color: "var(--ink-light)", marginBottom: "12px" }}>
+                  Få raskere tilgang — fungerer som en vanlig app
+                </p>
+                {showIOSHint ? (
+                  <div style={{ backgroundColor: "var(--bg-alt)", borderRadius: "var(--r-md)", padding: "12px 14px", fontSize: "13px", color: "var(--text)", lineHeight: 1.5 }}>
+                    Trykk <strong>Del-knappen</strong> (firkant med pil opp) nederst i Safari, og velg <strong>«Legg til på hjemskjerm»</strong>.
+                  </div>
+                ) : (
+                  <button
+                    onClick={installApp}
+                    style={{
+                      width: "100%", padding: "12px", borderRadius: "var(--r-full)",
+                      border: "none", backgroundColor: "var(--accent)", color: "#fff",
+                      fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "14px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {isIOS ? "Vis meg hvordan" : "Installer app"}
+                  </button>
+                )}
+              </div>
+            </Card>
+          </>
+        )}
 
         {/* Konto */}
         <SectionLabel>{t("set_account")}</SectionLabel>
