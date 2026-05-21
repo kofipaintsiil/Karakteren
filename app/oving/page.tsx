@@ -108,10 +108,11 @@ const CHAPTERS: Record<string, { id: string; title: string; topics: string[] }[]
   ],
   "kjemi-1": [
     { id: "k1-1", title: "Periodesystemet", topics: ["Atomstruktur", "Elektronkonfigurasjon", "Periodetrender"] },
-    { id: "k1-2", title: "Kjemiske bindinger", topics: ["Ionebinding", "Kovalent binding", "Metall"] },
+    { id: "k1-2", title: "Kjemiske bindinger", topics: ["Ionebinding", "Kovalent binding", "Metallbinding"] },
     { id: "k1-3", title: "Syrer og baser", topics: ["pH", "Nøytralisering", "Buffere"] },
     { id: "k1-4", title: "Redoks", topics: ["Oksidasjonstall", "Reduksjon", "Galvaniske celler"] },
-    { id: "k1-5", title: "Organisk kjemi (intro)", topics: ["Alkaner", "Alkener", "Alkoholer"] },
+    { id: "k1-5", title: "Organisk kjemi – struktur", topics: ["Alkaner", "Alkener", "Alkyner", "Sykloalkaner", "Primære, sekundære og tertiære alkoholer"] },
+    { id: "k1-6", title: "Funksjonelle grupper", topics: ["Aldehyder", "Ketoner", "Karboksylsyrer", "Etere", "Estere", "Aminer"] },
   ],
   "kjemi-2": [
     { id: "k2-1", title: "Organisk kjemi (avansert)", topics: ["Funksjonelle grupper", "Reaksjonsmekanismer", "Stereokjemi"] },
