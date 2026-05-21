@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 import { SubjectIcon, SUBJECT_COLORS } from "@/components/SubjectIcon";
@@ -277,16 +277,6 @@ export default function OvingPage() {
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 640);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  const recentSubjects = SUBJECTS.filter(s => ["norsk", "matematikk"].includes(s.id));
 
   // The chapter key is the variant ID if selected, otherwise the base subject
   const chapterKey = selectedVariant ?? selectedFag ?? "";
@@ -348,12 +338,19 @@ export default function OvingPage() {
   }
 
   // ── STEP 1: Subject picker ─────────────────────────────────────────
+  const CATEGORIES = [
+    { label: "Realfag", ids: ["matematikk", "fysikk", "kjemi", "biologi", "naturfag", "teknologi"] },
+    { label: "Språk", ids: ["norsk", "engelsk", "tysk", "spansk"] },
+    { label: "Samfunnsfag", ids: ["historie", "samfunnsfag", "geografi", "religion", "sosiologi"] },
+    { label: "Økonomi og jus", ids: ["samfunnsøkonomi", "rettslære", "markedsføring", "psykologi"] },
+  ];
+
   if (step === "fag") {
     return (
       <AppShell>
         <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
-          <div style={{ padding: "16px 0 12px" }}>
-            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "2px" }}>
+          <div style={{ padding: "20px 0 16px" }}>
+            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
               Velg tema selv
             </h1>
             <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
@@ -361,44 +358,59 @@ export default function OvingPage() {
             </p>
           </div>
 
-          <div style={{ paddingBottom: "32px" }}>
-            <div style={{
-              backgroundColor: "var(--surface)", border: "1px solid var(--border)",
-              borderRadius: "var(--r-lg)", padding: "12px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-            }}>
-              <div style={{ display: "grid", gridTemplateColumns: isDesktop ? "repeat(5, 1fr)" : "repeat(4, 1fr)", gap: isDesktop ? "6px" : "4px" }}>
-                {SUBJECTS.map(s => {
-                  const color = SUBJECT_COLORS[s.id] ?? "var(--accent)";
-                  return (
-                    <button
-                      key={s.id}
-                      onClick={() => pickSubject(s.id)}
-                      style={{
-                        display: "flex", flexDirection: "column", alignItems: "center",
-                        justifyContent: "center", gap: isDesktop ? "6px" : "4px",
-                        padding: isDesktop ? "12px 8px" : "8px 4px",
-                        borderRadius: "var(--r-md)",
-                        border: isDesktop ? "1.5px solid var(--border)" : "none",
-                        backgroundColor: isDesktop ? "var(--surface)" : "var(--bg-alt)",
-                        color: "var(--text)",
-                        fontFamily: "Inter, system-ui, sans-serif",
-                        fontSize: isDesktop ? "12px" : "10px", fontWeight: 500,
-                        cursor: "pointer", transition: "background 0.12s",
-                        WebkitTapHighlightColor: "transparent",
-                        textAlign: "center", lineHeight: 1.2,
-                        minHeight: isDesktop ? "66px" : "52px",
-                      }}
-                    >
-                      <SubjectIcon id={s.id} size={isDesktop ? 20 : 16} color={color} />
-                      <span style={{ maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingInline: "3px" }}>
-                        {s.label.split(" ")[0]}
-                      </span>
-                    </button>
-                  );
-                })}
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px", paddingBottom: "40px" }}>
+            {CATEGORIES.map(cat => (
+              <div key={cat.label}>
+                <p style={{
+                  fontSize: "11px", fontWeight: 700, letterSpacing: "0.07em",
+                  textTransform: "uppercase", color: "var(--text-muted)",
+                  marginBottom: "8px", paddingLeft: "4px",
+                }}>
+                  {cat.label}
+                </p>
+                <div style={{
+                  backgroundColor: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--r-lg)",
+                  overflow: "hidden",
+                }}>
+                  {cat.ids.map((id, idx) => {
+                    const subj = SUBJECTS.find(s => s.id === id);
+                    if (!subj) return null;
+                    const color = SUBJECT_COLORS[id] ?? "var(--accent)";
+                    return (
+                      <button
+                        key={id}
+                        onClick={() => pickSubject(id)}
+                        style={{
+                          display: "flex", alignItems: "center", gap: "14px",
+                          width: "100%", minHeight: "56px", padding: "12px 16px",
+                          background: "none",
+                          border: "none",
+                          borderTop: idx > 0 ? "1px solid var(--border)" : "none",
+                          cursor: "pointer", textAlign: "left",
+                          WebkitTapHighlightColor: "transparent",
+                          transition: "background 0.1s",
+                        }}
+                      >
+                        <div style={{
+                          width: "36px", height: "36px", borderRadius: "10px",
+                          backgroundColor: "var(--bg-alt)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          flexShrink: 0,
+                        }}>
+                          <SubjectIcon id={id} size={18} color={color} />
+                        </div>
+                        <span style={{ flex: 1, fontSize: "15px", fontWeight: 500, color: "var(--text)", lineHeight: 1.3 }}>
+                          {subj.label}
+                        </span>
+                        <ChevronRight size={16} />
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </AppShell>
