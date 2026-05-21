@@ -112,7 +112,7 @@ const CHAPTERS: Record<string, { id: string; title: string; topics: string[] }[]
     { id: "k1-3", title: "Syrer og baser", topics: ["pH", "Nøytralisering", "Buffere"] },
     { id: "k1-4", title: "Redoks", topics: ["Oksidasjonstall", "Reduksjon", "Galvaniske celler"] },
     { id: "k1-5", title: "Organisk kjemi – struktur", topics: ["Alkaner", "Alkener", "Alkyner", "Sykloalkaner", "Primære, sekundære og tertiære alkoholer"] },
-    { id: "k1-6", title: "Funksjonelle grupper", topics: ["Aldehyder", "Ketoner", "Karboksylsyrer", "Etere", "Estere", "Aminer"] },
+    { id: "k1-6", title: "Funksjonelle grupper", topics: ["Aldehyder", "Ketoner", "Karboksylsyrer"] },
   ],
   "kjemi-2": [
     { id: "k2-1", title: "Organisk kjemi (avansert)", topics: ["Funksjonelle grupper", "Reaksjonsmekanismer", "Stereokjemi"] },
