@@ -278,6 +278,7 @@ export default function OvingPage() {
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [search, setSearch] = useState("");
 
   // The chapter key is the variant ID if selected, otherwise the base subject
   const chapterKey = selectedVariant ?? selectedFag ?? "";
@@ -346,11 +347,41 @@ export default function OvingPage() {
     { label: "Økonomi og jus", ids: ["samfunnsøkonomi", "rettslære", "markedsføring", "psykologi"] },
   ];
 
+  const searchLower = search.toLowerCase();
+  const filteredSubjects = search
+    ? SUBJECTS.filter(s => s.label.toLowerCase().includes(searchLower))
+    : null;
+
+  const SubjectRow = ({ id, idx, borderTop }: { id: string; idx: number; borderTop?: boolean }) => {
+    const subj = SUBJECTS.find(s => s.id === id);
+    if (!subj) return null;
+    const color = SUBJECT_COLORS[id] ?? "var(--accent)";
+    return (
+      <button
+        onClick={() => { setSearch(""); pickSubject(id); }}
+        style={{
+          display: "flex", alignItems: "center", gap: "14px",
+          width: "100%", minHeight: "56px", padding: "12px 16px",
+          background: "none", border: "none",
+          borderTop: (borderTop ?? idx > 0) ? "1px solid var(--border)" : "none",
+          cursor: "pointer", textAlign: "left",
+          WebkitTapHighlightColor: "transparent",
+        }}
+      >
+        <div style={{ width: "36px", height: "36px", borderRadius: "10px", backgroundColor: "var(--bg-alt)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <SubjectIcon id={id} size={18} color={color} />
+        </div>
+        <span style={{ flex: 1, fontSize: "15px", fontWeight: 500, color: "var(--text)", lineHeight: 1.3 }}>{subj.label}</span>
+        <ChevronRight size={16} />
+      </button>
+    );
+  };
+
   if (step === "fag") {
     return (
       <AppShell>
         <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
-          <div style={{ padding: "20px 0 16px" }}>
+          <div style={{ padding: "20px 0 14px" }}>
             <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
               Velg tema selv
             </h1>
@@ -359,59 +390,45 @@ export default function OvingPage() {
             </p>
           </div>
 
+          {/* Search bar */}
+          <div style={{ position: "relative", marginBottom: "20px" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}>
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="search"
+              placeholder="Søk etter fag..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{
+                width: "100%", height: "44px", padding: "0 16px 0 40px",
+                borderRadius: "var(--r-full)", border: "1.5px solid var(--border)",
+                backgroundColor: "var(--surface)", fontSize: "15px", color: "var(--text)",
+                fontFamily: "Inter, system-ui, sans-serif", outline: "none", boxSizing: "border-box",
+              }}
+            />
+          </div>
+
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", paddingBottom: "40px" }}>
-            {CATEGORIES.map(cat => (
-              <div key={cat.label}>
-                <p style={{
-                  fontSize: "11px", fontWeight: 700, letterSpacing: "0.07em",
-                  textTransform: "uppercase", color: "var(--text-muted)",
-                  marginBottom: "8px", paddingLeft: "4px",
-                }}>
-                  {cat.label}
-                </p>
-                <div style={{
-                  backgroundColor: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "var(--r-lg)",
-                  overflow: "hidden",
-                }}>
-                  {cat.ids.map((id, idx) => {
-                    const subj = SUBJECTS.find(s => s.id === id);
-                    if (!subj) return null;
-                    const color = SUBJECT_COLORS[id] ?? "var(--accent)";
-                    return (
-                      <button
-                        key={id}
-                        onClick={() => pickSubject(id)}
-                        style={{
-                          display: "flex", alignItems: "center", gap: "14px",
-                          width: "100%", minHeight: "56px", padding: "12px 16px",
-                          background: "none",
-                          border: "none",
-                          borderTop: idx > 0 ? "1px solid var(--border)" : "none",
-                          cursor: "pointer", textAlign: "left",
-                          WebkitTapHighlightColor: "transparent",
-                          transition: "background 0.1s",
-                        }}
-                      >
-                        <div style={{
-                          width: "36px", height: "36px", borderRadius: "10px",
-                          backgroundColor: "var(--bg-alt)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          flexShrink: 0,
-                        }}>
-                          <SubjectIcon id={id} size={18} color={color} />
-                        </div>
-                        <span style={{ flex: 1, fontSize: "15px", fontWeight: 500, color: "var(--text)", lineHeight: 1.3 }}>
-                          {subj.label}
-                        </span>
-                        <ChevronRight size={16} />
-                      </button>
-                    );
-                  })}
-                </div>
+            {filteredSubjects ? (
+              <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+                {filteredSubjects.length === 0
+                  ? <p style={{ padding: "20px 16px", fontSize: "14px", color: "var(--text-muted)" }}>Ingen fag funnet.</p>
+                  : filteredSubjects.map((s, idx) => <SubjectRow key={s.id} id={s.id} idx={idx} />)
+                }
               </div>
-            ))}
+            ) : (
+              CATEGORIES.map(cat => (
+                <div key={cat.label}>
+                  <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "8px", paddingLeft: "4px" }}>
+                    {cat.label}
+                  </p>
+                  <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+                    {cat.ids.map((id, idx) => <SubjectRow key={id} id={id} idx={idx} />)}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </AppShell>

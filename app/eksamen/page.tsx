@@ -120,13 +120,7 @@ export default function EksamenPage() {
   const [drawing, setDrawing] = useState(false);
   const [drawnTopic, setDrawnTopic] = useState<string | null>(null);
   const hydrated = useRef(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-  useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 640);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  const [search, setSearch] = useState("");
 
   // Load from DB first, fall back to localStorage
   useEffect(() => {
@@ -269,43 +263,100 @@ export default function EksamenPage() {
             )}
           </div>
 
-          {/* Subject picker — responsive */}
-          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "12px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "8px", paddingLeft: "2px" }}>Fag</p>
-            <div style={{ display: "grid", gridTemplateColumns: isDesktop ? "repeat(5, 1fr)" : "repeat(4, 1fr)", gap: isDesktop ? "6px" : "4px" }}>
-              {SUBJECTS.map(s => {
-                const active = selectedFag === s.id;
-                const color = SUBJECT_COLORS[s.id] ?? "var(--accent)";
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => handleFagChange(s.id)}
+          {/* Subject picker — categorized list with search */}
+          {(() => {
+            const CATEGORIES = [
+              { label: "Realfag", ids: ["matematikk", "fysikk", "kjemi", "biologi", "naturfag", "teknologi"] },
+              { label: "Språk", ids: ["norsk", "engelsk", "fransk", "tysk", "spansk"] },
+              { label: "Samfunnsfag", ids: ["historie", "samfunnsfag", "geografi", "religion", "sosiologi"] },
+              { label: "Økonomi og jus", ids: ["samfunnsøkonomi", "rettslære", "markedsføring", "psykologi"] },
+            ];
+            const searchLower = search.toLowerCase();
+            const filteredIds = search
+              ? SUBJECTS.filter(s => s.label.toLowerCase().includes(searchLower)).map(s => s.id)
+              : null;
+
+            const SubjectRow = ({ id, idx }: { id: string; idx: number }) => {
+              const subj = SUBJECTS.find(s => s.id === id);
+              if (!subj) return null;
+              const active = selectedFag === id;
+              const color = SUBJECT_COLORS[id] ?? "var(--accent)";
+              return (
+                <button
+                  key={id}
+                  onClick={() => { setSearch(""); handleFagChange(id); }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: "14px",
+                    width: "100%", minHeight: "56px", padding: "12px 16px",
+                    background: active ? "var(--accent-bg)" : "none",
+                    border: "none",
+                    borderTop: idx > 0 ? "1px solid var(--border)" : "none",
+                    cursor: "pointer", textAlign: "left",
+                    WebkitTapHighlightColor: "transparent",
+                    transition: "background 0.1s",
+                  }}
+                >
+                  <div style={{ width: "36px", height: "36px", borderRadius: "10px", backgroundColor: active ? "var(--accent)" : "var(--bg-alt)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "background 0.1s" }}>
+                    <SubjectIcon id={id} size={18} color={active ? "#fff" : color} />
+                  </div>
+                  <span style={{ flex: 1, fontSize: "15px", fontWeight: active ? 600 : 500, color: active ? "var(--accent-dark)" : "var(--text)", lineHeight: 1.3 }}>
+                    {subj.label}
+                  </span>
+                  {active && (
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <circle cx="9" cy="9" r="9" fill="var(--accent)"/>
+                      <path d="M5 9l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </button>
+              );
+            };
+
+            return (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+                {/* Search bar */}
+                <div style={{ position: "relative", marginBottom: "12px" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}>
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input
+                    type="search"
+                    placeholder="Søk etter fag..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
                     style={{
-                      display: "flex", flexDirection: "column", alignItems: "center",
-                      justifyContent: "center", gap: isDesktop ? "6px" : "4px",
-                      padding: isDesktop ? "12px 8px" : "8px 4px",
-                      borderRadius: "var(--r-md)",
-                      border: isDesktop ? `1.5px solid ${active ? "var(--text)" : "var(--border)"}` : "none",
-                      backgroundColor: active ? "var(--text)" : isDesktop ? "var(--surface)" : "var(--bg-alt)",
-                      color: active ? "var(--bg)" : "var(--text)",
-                      fontFamily: "Inter, system-ui, sans-serif",
-                      fontSize: isDesktop ? "12px" : "10px",
-                      fontWeight: active ? 600 : 500,
-                      cursor: "pointer", transition: "background 0.12s, border-color 0.12s",
-                      WebkitTapHighlightColor: "transparent",
-                      textAlign: "center", lineHeight: 1.2,
-                      minHeight: isDesktop ? "66px" : "52px",
+                      width: "100%", height: "44px", padding: "0 16px 0 40px",
+                      borderRadius: "var(--r-full)", border: "1.5px solid var(--border)",
+                      backgroundColor: "var(--surface)", fontSize: "15px", color: "var(--text)",
+                      fontFamily: "Inter, system-ui, sans-serif", outline: "none", boxSizing: "border-box",
                     }}
-                  >
-                    <SubjectIcon id={s.id} size={isDesktop ? 20 : 16} color={active ? "var(--bg)" : color} />
-                    <span style={{ maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingInline: "3px" }}>
-                      {s.short}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+                  />
+                </div>
+
+                {filteredIds ? (
+                  <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+                    {filteredIds.length === 0
+                      ? <p style={{ padding: "20px 16px", fontSize: "14px", color: "var(--text-muted)" }}>Ingen fag funnet.</p>
+                      : filteredIds.map((id, idx) => <SubjectRow key={id} id={id} idx={idx} />)
+                    }
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                    {CATEGORIES.map(cat => (
+                      <div key={cat.label}>
+                        <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "6px", paddingLeft: "4px" }}>
+                          {cat.label}
+                        </p>
+                        <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+                          {cat.ids.map((id, idx) => <SubjectRow key={id} id={id} idx={idx} />)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Variant selector */}
           {activeFag.variants && (
