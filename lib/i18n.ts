@@ -3,7 +3,7 @@ export type Lang = "nb" | "en";
 const t = {
   nb: {
     nav_home:        "Hjem",
-    nav_topics:      "Velg tema",
+    nav_topics:      "Øving",
     nav_exam:        "Eksamen",
     nav_social:      "Sosial",
     nav_profile:     "Profil",

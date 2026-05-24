@@ -56,6 +56,7 @@ function ExamPageInner() {
   const subject = params.get("subject") ?? "matematikk";
   const subjectLabel = SUBJECT_LABELS[subject] ?? subject;
   const presetTopic = params.get("topic");
+  const isOvingMode = params.get("mode") === "oving";
 
   const [phase, setPhase] = useState<Phase>("draw");
   const [topicName, setTopicName] = useState<string>("");
@@ -75,6 +76,9 @@ function ExamPageInner() {
   const [micError, setMicError] = useState<string | null>(null);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [inputMode, setInputMode] = useState<InputMode>("voice");
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [gradingFailed, setGradingFailed] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const stopRecognitionRef = useRef<(() => void) | null>(null);
   const messagesRef = useRef<Message[]>([]);
@@ -156,6 +160,29 @@ function ExamPageInner() {
     } catch { return null; }
   }
 
+  async function gradeAndExit() {
+    stopSpeaking();
+    setShowExitConfirm(false);
+    setPhase("grading");
+    setBlobbState("thinking");
+    const result = await callGrade(messagesRef.current, topicName);
+    if (!result?.grade) {
+      setGradingFailed(true);
+      setBlobbState("idle");
+      setPhase("done");
+      return;
+    }
+    const grade = result.grade;
+    const feedback = result.feedback ?? "Øvingsprøve fullført.";
+    const strengths: string[] = result.strengths ?? [];
+    const improvements: string[] = result.improvements ?? [];
+    const sessionResult: SessionResult = { grade, feedback, strengths, improvements, subject: subjectLabel, topic: topicName, messages: messagesRef.current };
+    sessionStorage.setItem("examResult", JSON.stringify(sessionResult));
+    saveSession({ subject: subjectLabel, topic: topicName, grade, feedback, strengths, improvements, messages: messagesRef.current });
+    setBlobbState(grade >= 5 ? "happy" : grade >= 3 ? "idle" : "disappointed");
+    setPhase("done");
+  }
+
   async function startExam() {
     unlockAudio();
     const { allowed, isPremium: premium, used, limit } = await canStartExam();
@@ -174,6 +201,7 @@ function ExamPageInner() {
 
   async function handleStudentAnswer(answer: string) {
     if (!answer.trim() || !topicName) return;
+    textareaRef.current?.blur();
     const trimmed = answer.trim();
     setTypedAnswer("");
     setLiveTranscript("");
@@ -192,10 +220,16 @@ function ExamPageInner() {
       setPhase("grading");
       setBlobbState("thinking");
       const result = await callGrade(messagesWithAI, topicName);
-      const grade = result?.grade ?? 4;
-      const feedback = result?.feedback ?? "Eksamen fullført.";
-      const strengths: string[] = result?.strengths ?? [];
-      const improvements: string[] = result?.improvements ?? [];
+      if (!result?.grade) {
+        setGradingFailed(true);
+        setBlobbState("idle");
+        setPhase("done");
+        return;
+      }
+      const grade = result.grade;
+      const feedback = result.feedback ?? "Eksamen fullført.";
+      const strengths: string[] = result.strengths ?? [];
+      const improvements: string[] = result.improvements ?? [];
       const sessionResult: SessionResult = { grade, feedback, strengths, improvements, subject: subjectLabel, topic: topicName, messages: messagesWithAI };
       sessionStorage.setItem("examResult", JSON.stringify(sessionResult));
       saveSession({ subject: subjectLabel, topic: topicName, grade, feedback, strengths, improvements, messages: messagesWithAI });
@@ -398,6 +432,36 @@ function ExamPageInner() {
 
   // ── DONE SCREEN ──
   if (phase === "done") {
+    if (gradingFailed) {
+      return (
+        <div className="exam-outer" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+        <div className="exam-card">
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px", textAlign: "center" }}>
+            <Blobb state="idle" size={100} />
+            <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontSize: "1.4rem", fontWeight: 800, color: "var(--text)", marginTop: "20px", marginBottom: "8px", letterSpacing: "-0.5px" }}>
+              Noe gikk galt
+            </h1>
+            <p style={{ fontSize: "14px", color: "var(--ink-mid)", marginBottom: "32px", lineHeight: 1.5, maxWidth: "280px" }}>
+              Vi klarte ikke å sette karakter akkurat nå. Det kan skyldes nettverket. Prøv igjen.
+            </p>
+            <button
+              onClick={() => router.push(isOvingMode ? "/oving" : `/exam?subject=${subject}`)}
+              style={{ width: "100%", maxWidth: "340px", padding: "15px", borderRadius: "var(--r-full)", border: "none", backgroundColor: "var(--accent)", color: "#fff", fontFamily: "Inter, system-ui, sans-serif", fontWeight: 700, fontSize: "15px", cursor: "pointer", boxShadow: "0 4px 20px rgba(0,0,0,0.12)", WebkitTapHighlightColor: "transparent", marginBottom: "12px" }}
+            >
+              {isOvingMode ? "Tilbake til øving" : "Prøv igjen"}
+            </button>
+            <button
+              onClick={() => router.push("/dashboard")}
+              style={{ width: "100%", maxWidth: "340px", padding: "13px", borderRadius: "var(--r-full)", border: `2px solid var(--border)`, backgroundColor: "transparent", color: "var(--ink-mid)", fontFamily: "Inter, system-ui, sans-serif", fontWeight: 700, fontSize: "15px", cursor: "pointer", WebkitTapHighlightColor: "transparent" }}
+            >
+              Tilbake til dashboard
+            </button>
+          </div>
+        </div>
+        </div>
+      );
+    }
+
     return (
       <div className="exam-outer" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
       <div className="exam-card">
@@ -463,23 +527,54 @@ function ExamPageInner() {
           {topicName && <div style={{ fontSize: "11px", color: "var(--ink-light)", fontFamily: "Inter, system-ui, sans-serif" }}>{topicName}</div>}
         </div>
 
-        {/* 3-segment progress bar */}
-        <div style={{ display: "flex", gap: "4px" }}>
-          {segments.map((i) => (
-            <div key={i} style={{
-              width: "28px", height: "4px", borderRadius: "2px",
-              background: i < completedSegments ? "var(--green)" : i === completedSegments ? "var(--accent)" : "var(--border)",
-              transition: "background 0.3s ease",
-            }} />
-          ))}
+        {/* 3-segment progress bar + counter */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "3px" }}>
+          <div style={{ display: "flex", gap: "4px" }}>
+            {segments.map((i) => (
+              <div key={i} style={{
+                width: "28px", height: "4px", borderRadius: "2px",
+                background: i < completedSegments ? "var(--green)" : i === completedSegments ? "var(--accent)" : "var(--border)",
+                transition: "background 0.3s ease",
+              }} />
+            ))}
+          </div>
+          <span style={{ fontSize: "10px", color: "var(--ink-light)", fontFamily: "Inter, system-ui, sans-serif" }}>
+            {exchangeCount === 0 ? "Klar" : `Runde ${exchangeCount} av ~4`}
+          </span>
         </div>
 
-        <button
-          onClick={() => { stopSpeaking(); router.push("/dashboard"); }}
-          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-light)", fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px", padding: 0, WebkitTapHighlightColor: "transparent" }}
-        >
-          Avslutt
-        </button>
+        {showExitConfirm ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <button
+              onClick={() => setShowExitConfirm(false)}
+              style={{ background: "none", border: "1px solid var(--border)", borderRadius: "var(--r-full)", cursor: "pointer", color: "var(--ink-mid)", fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px", padding: "4px 10px", WebkitTapHighlightColor: "transparent" }}
+            >
+              Fortsett
+            </button>
+            {isOvingMode && exchangeCount > 0 ? (
+              <button
+                onClick={gradeAndExit}
+                style={{ background: "var(--accent)", border: "none", borderRadius: "var(--r-full)", cursor: "pointer", color: "#fff", fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px", fontWeight: 600, padding: "4px 10px", WebkitTapHighlightColor: "transparent" }}
+              >
+                Avslutt og se tilbakemelding
+              </button>
+            ) : (
+              <button
+                onClick={() => { stopSpeaking(); router.push(isOvingMode ? "/oving" : "/dashboard"); }}
+                style={{ background: "var(--error, oklch(0.58 0.18 22))", border: "none", borderRadius: "var(--r-full)", cursor: "pointer", color: "#fff", fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px", fontWeight: 600, padding: "4px 10px", WebkitTapHighlightColor: "transparent" }}
+              >
+                Avslutt
+              </button>
+            )}
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowExitConfirm(true)}
+            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-light)", fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px", padding: 0, WebkitTapHighlightColor: "transparent" }}
+          >
+            Avslutt
+          </button>
+        )}
       </div>
 
       {/* ── Blobb area ── */}
@@ -573,8 +668,16 @@ function ExamPageInner() {
 
       {/* ── Mic error ── */}
       {micError && (
-        <div style={{ backgroundColor: "oklch(97% 0.03 22)", borderTop: "1px solid oklch(88% 0.06 22)", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", flexShrink: 0 }}>
-          <p style={{ fontSize: "13px", color: "oklch(45% 0.15 22)", lineHeight: 1.4, fontFamily: "Inter, system-ui, sans-serif" }}>{micError}</p>
+        <div style={{ backgroundColor: "oklch(97% 0.03 22)", borderTop: "1px solid oklch(88% 0.06 22)", padding: "10px 16px", display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+          <p style={{ flex: 1, fontSize: "13px", color: "oklch(45% 0.15 22)", lineHeight: 1.4, fontFamily: "Inter, system-ui, sans-serif" }}>{micError}</p>
+          {micError.startsWith("Ingen tale") && (
+            <button
+              onClick={() => { setMicError(null); toggleRecording(); }}
+              style={{ background: "var(--accent)", border: "none", borderRadius: "var(--r-full)", cursor: "pointer", color: "#fff", fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "12px", padding: "5px 12px", flexShrink: 0, WebkitTapHighlightColor: "transparent" }}
+            >
+              Prøv igjen
+            </button>
+          )}
           <button onClick={() => setMicError(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "oklch(55% 0.15 22)", fontSize: "20px", lineHeight: 1, flexShrink: 0, padding: "0 2px" }}>×</button>
         </div>
       )}
@@ -619,6 +722,11 @@ function ExamPageInner() {
             ))}
           </div>
 
+          {inputMode === "text" && micError?.includes("byttet til tekstmodus") && (
+            <div style={{ backgroundColor: "oklch(97% 0.03 22)", border: "1px solid oklch(85% 0.06 22)", borderRadius: "var(--r-md)", padding: "8px 12px", marginBottom: "10px", fontSize: "12px", color: "oklch(45% 0.15 22)", fontFamily: "Inter, system-ui, sans-serif" }}>
+              Mikrofonen virket ikke — skriv svaret ditt nedenfor.
+            </div>
+          )}
           {inputMode === "voice" ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
               <button
@@ -667,6 +775,7 @@ function ExamPageInner() {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <textarea
+                ref={textareaRef}
                 value={typedAnswer}
                 onChange={(e) => setTypedAnswer(e.target.value)}
                 onKeyDown={(e) => {

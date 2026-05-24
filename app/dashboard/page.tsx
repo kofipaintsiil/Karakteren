@@ -7,6 +7,7 @@ import WeakAreas from "@/components/WeakAreas";
 import { SubjectIcon, subjectColor } from "@/components/SubjectIcon";
 import { createClient } from "@/lib/supabase/server";
 import { fetchStats, fetchSessions, fetchProfile } from "@/lib/sessions-server";
+import FirstTimeIntro from "@/components/FirstTimeIntro";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -173,19 +174,12 @@ async function DashboardContent() {
         </div>
       )}
 
-      {/* New exam CTA */}
-      <div style={{ marginBottom: "20px" }}>
-        <Link href="/eksamen" style={{
-          display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-          backgroundColor: "var(--accent)", color: "#fff",
-          fontWeight: 600, fontSize: "15px",
-          padding: "14px", borderRadius: "var(--r-full)",
-          textDecoration: "none",
-          boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-        }}>
-          Gå til eksamen →
-        </Link>
-      </div>
+      {/* First-time intro */}
+      <FirstTimeIntro
+        storageKey="seen_intro_dashboard"
+        title="Velkommen til Karakteren"
+        body="Her ser du statistikk og tidligere prøver. Gå til Øving for å velge tema selv, eller Eksamen for å trene på ukjente tema — akkurat som en ekte eksamen."
+      />
 
       {/* Empty state */}
       {recentSessions.length === 0 && (
@@ -195,7 +189,7 @@ async function DashboardContent() {
           borderRadius: "var(--r-lg)",
           padding: "32px 20px",
           textAlign: "center",
-          marginBottom: "24px",
+          marginBottom: "16px",
           boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
         }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
@@ -204,19 +198,70 @@ async function DashboardContent() {
             </svg>
           </div>
           <p style={{ fontSize: "15px", fontWeight: 700, color: "var(--text)", marginBottom: "6px" }}>Ingen prøver ennå</p>
-          <p style={{ fontSize: "13px", color: "var(--ink-light)", marginBottom: "20px" }}>
-            Ta din første muntlige prøve og se hvordan du ligger an.
+          <p style={{ fontSize: "13px", color: "var(--ink-light)", marginBottom: "20px", lineHeight: 1.5 }}>
+            Start din første prøve — velg et tema selv eller la Blobb trekke et ukjent tema.
           </p>
-          <Link href="/eksamen" style={{
+          <Link href="/oving" style={{
             display: "inline-flex", alignItems: "center", gap: "6px",
             backgroundColor: "var(--accent)", color: "#fff",
             fontWeight: 700, fontSize: "14px",
-            padding: "10px 20px", borderRadius: "var(--r-full)",
+            padding: "12px 24px", borderRadius: "var(--r-full)",
             textDecoration: "none",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.12)",
           }}>
             Start første prøve →
           </Link>
         </div>
+      )}
+
+      {/* Quick links for returning users */}
+      {recentSessions.length > 0 && (
+        <div style={{ display: "flex", gap: "8px", marginBottom: "20px" }}>
+          <Link href="/oving" style={{
+            flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+            backgroundColor: "var(--surface)", color: "var(--text)",
+            fontWeight: 600, fontSize: "13px",
+            padding: "11px", borderRadius: "var(--r-full)",
+            textDecoration: "none", border: "1px solid var(--border)",
+          }}>
+            Øving
+          </Link>
+          <Link href="/eksamen" style={{
+            flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+            backgroundColor: "var(--accent)", color: "#fff",
+            fontWeight: 700, fontSize: "13px",
+            padding: "11px", borderRadius: "var(--r-full)",
+            textDecoration: "none",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+          }}>
+            Eksamen →
+          </Link>
+        </div>
+      )}
+
+      {/* Exam date nudge — only for new users with no sessions and no date set */}
+      {recentSessions.length === 0 && !daysToExam && (
+        <Link href="/eksamen" style={{
+          display: "flex", alignItems: "center", gap: "10px",
+          backgroundColor: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--r-md)",
+          padding: "12px 16px",
+          textDecoration: "none",
+          marginBottom: "20px",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+        }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <div>
+            <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>Legg inn eksamensdatoen din</p>
+            <p style={{ fontSize: "12px", color: "var(--ink-light)", marginTop: "1px" }}>Se nedtelling og hold motivasjonen oppe</p>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ color: "var(--ink-light)", marginLeft: "auto", flexShrink: 0 }}>
+            <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
       )}
 
       {/* Recent sessions */}

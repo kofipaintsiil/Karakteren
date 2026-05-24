@@ -72,8 +72,8 @@ Stil og tone:
 - Naturlige sensorfraser: "Kan du si mer om det?", "Hva skjer hvis...?", "Kan du gi et eksempel på det i praksis?"
 
 Progresjon:
-- Aldri avslutt på de første 3 elevresponsene
-- Avslutt etter 4–8 utvekslinger når du har nok grunnlag — tilpass til svarets dybde
+- Aldri avslutt på de første 2 elevresponsene
+- Avslutt etter 3–5 utvekslinger når du har nok grunnlag — tilpass til svarets dybde
 - Avslutt med én nøytral setning, f.eks. "Takk, jeg har det jeg trenger." og sett [FERDIG] aller sist
 - [FERDIG] settes ALDRI midt i en melding, bare etter avslutningssetningen`;
 }

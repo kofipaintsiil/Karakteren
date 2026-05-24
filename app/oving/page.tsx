@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 import { SubjectIcon, SUBJECT_COLORS } from "@/components/SubjectIcon";
+import FirstTimeIntro from "@/components/FirstTimeIntro";
 
 const SUBJECTS = [
   { id: "norsk",       label: "Norsk",       variants: null },
@@ -335,7 +336,7 @@ export default function OvingPage() {
     const selectedIds = Array.from(selected);
     const randomId = selectedIds[Math.floor(Math.random() * selectedIds.length)];
     const topic = chapters.find(c => c.id === randomId)?.title ?? "";
-    const params = new URLSearchParams({ subject: selectedVariant ?? selectedFag!, topic });
+    const params = new URLSearchParams({ subject: selectedVariant ?? selectedFag!, topic, mode: "oving" });
     router.push(`/exam?${params.toString()}`);
   }
 
@@ -383,12 +384,18 @@ export default function OvingPage() {
         <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Inter, system-ui, sans-serif" }}>
           <div style={{ padding: "20px 0 14px" }}>
             <h1 style={{ fontFamily: "Syne, system-ui, sans-serif", fontWeight: 800, fontSize: "22px", letterSpacing: "-0.5px", color: "var(--text)", marginBottom: "3px" }}>
-              Velg tema selv
+              Øving
             </h1>
             <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>
               Velg fag og kapitler — Blobb stiller spørsmål
             </p>
           </div>
+
+          <FirstTimeIntro
+            storageKey="seen_intro_oving"
+            title="Øving"
+            body="Velg fag og tema du vil øve på. Blobb spiller sensor og stiller muntlige spørsmål. Du kan avslutte når du vil og få tilbakemelding på det du har presentert."
+          />
 
           {/* Search bar */}
           <div style={{ position: "relative", marginBottom: "20px" }}>

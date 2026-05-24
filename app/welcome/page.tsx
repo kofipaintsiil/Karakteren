@@ -21,7 +21,7 @@ const STEPS: { mood: BlobbMood; title: string; desc: string; quote: string }[] =
   {
     mood: "happy",
     title: "Du får karakter 1–6",
-    desc: "Etter hver prøve gir jeg deg detaljert tilbakemelding. Hva var bra, hva var meh, og hva du bør jobbe med.",
+    desc: "Etter hver prøve gir jeg deg detaljert tilbakemelding. Bruk Øving for å velge tema selv, eller Eksamen for å trene på ukjente tema — akkurat som den ekte dagen.",
     quote: "Okay, det var faktisk ganske bra.",
   },
 ];
@@ -80,7 +80,7 @@ export default function WelcomePage() {
         {step < STEPS.length - 1 ? (
           <>
             <button
-              onClick={() => router.push("/login?signup=1")}
+              onClick={() => router.push("/eksamen")}
               style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "14px", color: "var(--text-muted)", background: "none", border: "none", cursor: "pointer", padding: "14px 16px" }}
             >
               Hopp over
@@ -99,7 +99,7 @@ export default function WelcomePage() {
           </>
         ) : (
           <button
-            onClick={() => router.push("/login?signup=1")}
+            onClick={() => router.push("/eksamen")}
             style={{
               flex: 1, fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "15px",
               backgroundColor: "var(--accent)", color: "#fff",
@@ -107,7 +107,7 @@ export default function WelcomePage() {
               cursor: "pointer",
             }}
           >
-            Velg et fag →
+            Start din første prøve →
           </button>
         )}
       </div>

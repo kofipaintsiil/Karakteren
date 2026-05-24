@@ -32,24 +32,42 @@ export default function FeedbackPage() {
   const [result, setResult] = useState<SessionResult | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [premium, setPremium] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const stored = sessionStorage.getItem("examResult");
     if (stored) {
       try { setResult(JSON.parse(stored)); } catch {}
+    } else {
+      setLoading(true);
+      fetch("/api/sessions/latest")
+        .then(r => r.json())
+        .then(data => { if (data) setResult(data); })
+        .catch(() => {})
+        .finally(() => setLoading(false));
     }
     const t = setTimeout(() => setRevealed(true), 500);
     isPremium().then(setPremium);
     return () => clearTimeout(t);
   }, []);
 
-  const grade = result?.grade ?? 5;
+  const grade = result?.grade ?? 0;
   const cfg = gradeConfig[grade] ?? gradeConfig[4];
   const strengths = result?.strengths ?? [];
   const improvements = result?.improvements ?? [];
 
   const circumference = 2 * Math.PI * 52;
   const dashArray = revealed ? (grade / 6) * circumference : 0;
+
+  if (loading) {
+    return (
+      <AppShell>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh", fontFamily: "Inter, system-ui, sans-serif", color: "var(--text-muted)", fontSize: "14px" }}>
+          Laster resultater...
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>

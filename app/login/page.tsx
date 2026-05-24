@@ -36,6 +36,8 @@ function LoginForm() {
   const [message, setMessage] = useState<{ type: "error" | "success"; text: string } | null>(
     hasError ? { type: "error", text: "Pålogging feilet. Prøv igjen." } : null
   );
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const supabaseRef = useRef(createClient());
   const supabase = supabaseRef.current;
@@ -76,8 +78,25 @@ function LoginForm() {
     }
   }
 
+  function validateEmail(value: string) {
+    if (!value) return null;
+    const ok = value.includes("@") && value.includes(".") && value.indexOf("@") < value.lastIndexOf(".");
+    return ok ? null : "Ugyldig e-postadresse — sjekk at du har skrevet riktig.";
+  }
+
+  function validatePassword(value: string) {
+    if (!value || mode !== "signup") return null;
+    return value.length >= 6 ? null : "Passordet må være minst 6 tegn.";
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Client-side validation before hitting the server
+    const emailErr = validateEmail(email);
+    const pwErr = validatePassword(password);
+    setEmailError(emailErr);
+    setPasswordError(pwErr);
+    if (emailErr || pwErr) return;
     setLoading(true);
     setMessage(null);
     const timeout = setTimeout(() => {
@@ -273,18 +292,22 @@ function LoginForm() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setEmailError(null); }}
+                onBlur={(e) => setEmailError(validateEmail(e.target.value))}
                 required
                 placeholder="deg@gmail.com"
                 style={{
                   width: "100%", height: "48px", padding: "0 14px",
                   backgroundColor: "var(--bg)",
-                  border: "2px solid var(--border)",
+                  border: `2px solid ${emailError ? "var(--error)" : "var(--border)"}`,
                   borderRadius: "var(--r-md)",
                   fontSize: "14px", fontWeight: 500,
                   color: "var(--text)", fontFamily: "inherit", outline: "none",
                 }}
               />
+              {emailError && (
+                <p style={{ fontSize: "12px", color: "var(--error)", marginTop: "5px", fontWeight: 500 }}>{emailError}</p>
+              )}
             </div>
 
             {mode !== "forgot" && (
@@ -295,18 +318,27 @@ function LoginForm() {
                 <input
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); setPasswordError(null); }}
+                  onBlur={(e) => setPasswordError(validatePassword(e.target.value))}
                   required
                   placeholder="••••••••"
                   style={{
                     width: "100%", height: "48px", padding: "0 14px",
                     backgroundColor: "var(--bg)",
-                    border: "2px solid var(--border)",
+                    border: `2px solid ${passwordError ? "var(--error)" : "var(--border)"}`,
                     borderRadius: "var(--r-md)",
                     fontSize: "14px", fontWeight: 500,
                     color: "var(--text)", fontFamily: "inherit", outline: "none",
                   }}
                 />
+                {mode === "signup" && (
+                  <p style={{ fontSize: "12px", marginTop: "5px", fontWeight: 500, color: passwordError ? "var(--error)" : password.length >= 6 && password.length > 0 ? "oklch(0.52 0.14 150)" : "var(--text-muted)" }}>
+                    {passwordError ?? (password.length >= 6 && password.length > 0 ? "Passordet er langt nok" : "Minst 6 tegn")}
+                  </p>
+                )}
+                {passwordError && mode !== "signup" && (
+                  <p style={{ fontSize: "12px", color: "var(--error)", marginTop: "5px", fontWeight: 500 }}>{passwordError}</p>
+                )}
               </div>
             )}
 
@@ -337,12 +369,12 @@ function LoginForm() {
           <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "8px", textAlign: "center" }}>
             {mode === "login" && (
               <>
-                <button type="button" onClick={() => { setMode("forgot"); setMessage(null); }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 700, color: "var(--text-muted)", fontFamily: "inherit", padding: "8px 0", minHeight: "44px" }}>
+                <button type="button" onClick={() => { setMode("forgot"); setMessage(null); setEmailError(null); setPasswordError(null); }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 700, color: "var(--text-muted)", fontFamily: "inherit", padding: "8px 0", minHeight: "44px" }}>
                   Glemt passord?
                 </button>
                 <p style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 600 }}>
                   Ingen konto?{" "}
-                  <button type="button" onClick={() => { setMode("signup"); setMessage(null); }} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--coral)", fontWeight: 800, fontFamily: "inherit", fontSize: "13px", padding: "8px 4px", minHeight: "44px" }}>
+                  <button type="button" onClick={() => { setMode("signup"); setMessage(null); setEmailError(null); setPasswordError(null); }} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--coral)", fontWeight: 800, fontFamily: "inherit", fontSize: "13px", padding: "8px 4px", minHeight: "44px" }}>
                     Registrer deg
                   </button>
                 </p>
@@ -351,7 +383,7 @@ function LoginForm() {
             {mode === "signup" && (
               <p style={{ fontSize: "13px", color: "var(--text-muted)", fontWeight: 600 }}>
                 Har du konto?{" "}
-                <button type="button" onClick={() => { setMode("login"); setMessage(null); }} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--coral)", fontWeight: 800, fontFamily: "inherit", fontSize: "13px", padding: "8px 4px", minHeight: "44px" }}>
+                <button type="button" onClick={() => { setMode("login"); setMessage(null); setEmailError(null); setPasswordError(null); }} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--coral)", fontWeight: 800, fontFamily: "inherit", fontSize: "13px", padding: "8px 4px", minHeight: "44px" }}>
                   Logg inn
                 </button>
               </p>
