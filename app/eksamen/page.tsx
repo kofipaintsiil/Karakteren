@@ -58,9 +58,10 @@ export default function EksamenPage() {
   }
 
   const daysLeft = examDate
-    ? Math.max(0, Math.ceil((new Date(examDate).getTime() - Date.now()) / 86400000))
+    ? Math.ceil((new Date(examDate).getTime() - Date.now()) / 86400000)
     : null;
-  const urgency = daysLeft === null ? null : daysLeft <= 3 ? "red" : daysLeft <= 7 ? "amber" : "green";
+  const pastExam = daysLeft !== null && daysLeft < 0;
+  const urgency = daysLeft === null || pastExam ? null : daysLeft <= 3 ? "red" : daysLeft <= 7 ? "amber" : "green";
   const urgencyColor = urgency === "red" ? "var(--error)" : urgency === "amber" ? "var(--accent)" : "var(--green)";
 
   const searchLower = search.toLowerCase();
@@ -129,33 +130,75 @@ export default function EksamenPage() {
             body="Blobb trekker et tilfeldig tema, akkurat som sensor gjør på eksamensdagen. Tren på å håndtere det ukjente. Legg inn eksamensdatoen din for nedtelling."
           />
 
-          {/* Exam date */}
-          <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "14px 16px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "8px" }}>
-              Eksamensdato
-            </p>
-            <input
-              type="date"
-              value={examDate}
-              onChange={e => handleDateChange(e.target.value)}
-              style={{
-                width: "100%", padding: "10px 12px",
-                borderRadius: "var(--r-md)",
-                border: `1.5px solid ${examDate ? "var(--accent)" : "var(--border)"}`,
-                fontFamily: "Inter, system-ui, sans-serif", fontSize: "15px", color: "var(--text)",
-                backgroundColor: "var(--bg)", outline: "none",
-                boxSizing: "border-box",
-              }}
-            />
-            {daysLeft !== null && (
-              <div style={{ marginTop: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <div style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: urgencyColor, flexShrink: 0 }} />
-                <span style={{ fontSize: "13px", color: urgencyColor, fontWeight: 600 }}>
-                  {daysLeft === 0 ? "Eksamen i dag!" : `${daysLeft} dag${daysLeft === 1 ? "" : "er"} igjen`}
-                </span>
+          {/* Exam date — post-exam state */}
+          {pastExam ? (
+            <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "20px 16px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+                <div style={{ width: "34px", height: "34px", borderRadius: "50%", backgroundColor: "oklch(0.95 0.06 150)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(0.52 0.16 150)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+                <p style={{ fontSize: "15px", fontWeight: 700, color: "var(--text)" }}>Hvordan gikk eksamen?</p>
               </div>
-            )}
-          </div>
+              <p style={{ fontSize: "13px", color: "var(--ink-light)", lineHeight: 1.55, marginBottom: "16px" }}>
+                Klar for å øve til neste fagsamtale eller eksamen? Tøm datoen og start på nytt.
+              </p>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  onClick={() => handleDateChange("")}
+                  style={{
+                    flex: 1, padding: "11px", borderRadius: "var(--r-full)",
+                    border: "1.5px solid var(--border)", backgroundColor: "var(--bg)", color: "var(--text)",
+                    fontFamily: "Inter, system-ui, sans-serif", fontWeight: 600, fontSize: "13px",
+                    cursor: "pointer", WebkitTapHighlightColor: "transparent",
+                  }}
+                >
+                  Tøm dato
+                </button>
+                <button
+                  onClick={() => router.push("/oving")}
+                  style={{
+                    flex: 1, padding: "11px", borderRadius: "var(--r-full)",
+                    border: "none", backgroundColor: "var(--accent)", color: "#fff",
+                    fontFamily: "Inter, system-ui, sans-serif", fontWeight: 700, fontSize: "13px",
+                    cursor: "pointer", WebkitTapHighlightColor: "transparent",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.12)",
+                  }}
+                >
+                  Øv videre →
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Normal date picker */
+            <div style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "14px 16px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-light)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: "8px" }}>
+                Eksamensdato
+              </p>
+              <input
+                type="date"
+                value={examDate}
+                onChange={e => handleDateChange(e.target.value)}
+                style={{
+                  width: "100%", padding: "10px 12px",
+                  borderRadius: "var(--r-md)",
+                  border: `1.5px solid ${examDate ? "var(--accent)" : "var(--border)"}`,
+                  fontFamily: "Inter, system-ui, sans-serif", fontSize: "15px", color: "var(--text)",
+                  backgroundColor: "var(--bg)", outline: "none",
+                  boxSizing: "border-box",
+                }}
+              />
+              {daysLeft !== null && (
+                <div style={{ marginTop: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: urgencyColor, flexShrink: 0 }} />
+                  <span style={{ fontSize: "13px", color: urgencyColor, fontWeight: 600 }}>
+                    {daysLeft === 0 ? "Eksamen i dag!" : `${daysLeft} dag${daysLeft === 1 ? "" : "er"} igjen`}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Subject picker */}
           <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>

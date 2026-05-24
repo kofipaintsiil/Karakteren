@@ -143,7 +143,7 @@ async function DashboardContent() {
         </div>
       </div>
 
-      {/* Exam countdown */}
+      {/* Exam countdown / post-exam */}
       {daysToExam !== null && daysToExam >= 0 && (
         <div style={{
           backgroundColor: daysToExam <= 3 ? "oklch(0.96 0.05 22)" : "var(--surface)",
@@ -172,6 +172,31 @@ async function DashboardContent() {
             </p>
           </div>
         </div>
+      )}
+      {daysToExam !== null && daysToExam < 0 && (
+        <Link href="/eksamen" style={{
+          display: "flex", alignItems: "center", gap: "12px",
+          backgroundColor: "oklch(0.97 0.04 150)",
+          border: "1px solid oklch(0.82 0.1 150)",
+          borderRadius: "var(--r-md)",
+          padding: "12px 16px",
+          marginBottom: "14px",
+          textDecoration: "none",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+        }}>
+          <div style={{ width: "34px", height: "34px", borderRadius: "50%", backgroundColor: "oklch(0.92 0.1 150)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(0.42 0.16 150)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: "13px", fontWeight: 700, color: "oklch(0.35 0.12 150)" }}>Hvordan gikk eksamen?</p>
+            <p style={{ fontSize: "12px", color: "oklch(0.45 0.1 150)", marginTop: "1px" }}>Klar for neste runde? Tøm datoen og øv videre.</p>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ color: "oklch(0.52 0.12 150)", flexShrink: 0 }}>
+            <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
       )}
 
       {/* First-time intro */}
