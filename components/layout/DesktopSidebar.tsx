@@ -90,7 +90,7 @@ export default function DesktopSidebar() {
       {links.map(({ href, label, icon: Icon }) => {
         const active = pathname.startsWith(href);
         return (
-          <Link key={href} href={href} style={{
+          <Link key={href} href={href} prefetch={true} style={{
             display: "flex",
             alignItems: "center",
             gap: "10px",

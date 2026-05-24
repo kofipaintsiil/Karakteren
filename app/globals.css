@@ -121,6 +121,16 @@ select:focus {
 }
 .slide-from-right { animation: slideFromRight 230ms ease-out; }
 .slide-from-left  { animation: slideFromLeft  230ms ease-out; }
+
+/* Page transition — fades content in on tab navigation so the swap
+   from skeleton to real content (and between tabs) feels smooth, not abrupt. */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-in {
+  animation: pageIn 0.18s ease-out;
+}
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }

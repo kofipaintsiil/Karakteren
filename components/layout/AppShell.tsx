@@ -147,7 +147,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             willChange: dragX !== 0 ? "transform" : "auto",
           }}
         >
-          <main className="main-content">
+          <main key={pathname} className="main-content page-in">
             {children}
           </main>
         </div>

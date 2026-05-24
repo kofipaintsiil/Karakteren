@@ -90,7 +90,7 @@ export default function BottomNav() {
         {tabs.map(({ href, label, icon: Icon }, i) => {
           const active = activeIdx === i;
           return (
-            <Link key={href} href={href} style={{
+            <Link key={href} href={href} prefetch={true} style={{
               flex: 1,
               display: "flex",
               flexDirection: "column",

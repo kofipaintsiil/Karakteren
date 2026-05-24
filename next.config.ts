@@ -4,6 +4,12 @@ import { withSentryConfig } from "@sentry/nextjs";
 const nextConfig: NextConfig = {
   // Allow all devices on the local network to load dev resources
   allowedDevOrigins: ["10.0.0.12", "10.0.0.*", "192.168.*"],
+
+  experimental: {
+    // Enables React's View Transitions API integration for smoother
+    // client-side navigations between tabs.
+    viewTransition: true,
+  },
 };
 
 export default withSentryConfig(nextConfig, {
