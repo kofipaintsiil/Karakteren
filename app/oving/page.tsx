@@ -32,9 +32,11 @@ const SUBJECTS = [
   { id: "engelsk",     label: "Engelsk",     variants: null },
   { id: "geografi",    label: "Geografi",    variants: null },
   { id: "tysk",        label: "Tysk",        variants: [
+    { id: "tysk-1", label: "Tysk 1", desc: "Vg2 Nivå I" },
     { id: "tysk-2", label: "Tysk 2", desc: "Vg3 Nivå II" },
   ]},
   { id: "spansk",      label: "Spansk",      variants: [
+    { id: "spansk-1", label: "Spansk 1", desc: "Vg2 Nivå I" },
     { id: "spansk-2", label: "Spansk 2", desc: "Vg3 Nivå II" },
   ]},
   { id: "samfunnsøkonomi", label: "Samfunnsøkonomi", variants: [
@@ -166,17 +168,29 @@ const CHAPTERS: Record<string, { id: string; title: string; topics: string[] }[]
     { id: "g3", title: "Ressurser og næring", topics: ["Landbruk", "Industri", "Energiressurser"] },
     { id: "g4", title: "Naturkatastrofer", topics: ["Jordskjelv", "Vulkaner", "Flom"] },
   ],
+  "tysk-1": [
+    { id: "ty1-1", title: "Persönliche Vorstellung", topics: ["Familie", "Hobbys", "Alltag"] },
+    { id: "ty1-2", title: "Schule og Freizeit", topics: ["Schulalltag", "Sport", "Musik"] },
+    { id: "ty1-3", title: "Essen und Reisen", topics: ["Deutsche Küche", "Urlaub", "Sehenswürdigkeiten"] },
+    { id: "ty1-4", title: "Natur og Zukunft", topics: ["Umwelt", "Berufe", "Träume"] },
+  ],
   "tysk-2": [
-    { id: "ty1", title: "Gesellschaft und Kultur", topics: ["Deutsche Identität", "Traditionen", "Alltagsleben"] },
-    { id: "ty2", title: "Geschichte", topics: ["Erinnerungskultur", "Zweiter Weltkrieg", "Wiedervereinigung"] },
-    { id: "ty3", title: "Europa und Globalisierung", topics: ["Die EU", "Migration", "Nachhaltigkeit"] },
-    { id: "ty4", title: "Sprache und Medien", topics: ["Mediennutzung", "Jugendsprache", "Kommunikation"] },
+    { id: "ty2-1", title: "Gesellschaft und Kultur", topics: ["Deutsche Identität", "Traditionen", "Alltagsleben"] },
+    { id: "ty2-2", title: "Geschichte", topics: ["Erinnerungskultur", "Zweiter Weltkrieg", "Wiedervereinigung"] },
+    { id: "ty2-3", title: "Europa und Globalisierung", topics: ["Die EU", "Migration", "Nachhaltigkeit"] },
+    { id: "ty2-4", title: "Sprache und Medien", topics: ["Mediennutzung", "Jugendsprache", "Kommunikation"] },
+  ],
+  "spansk-1": [
+    { id: "sp1-1", title: "Presentación personal", topics: ["Familia", "Pasatiempos", "Vida cotidiana"] },
+    { id: "sp1-2", title: "Escuela y tiempo libre", topics: ["El colegio", "Deportes", "Música"] },
+    { id: "sp1-3", title: "Comida y viajes", topics: ["Gastronomía española", "Turismo", "Lugares de interés"] },
+    { id: "sp1-4", title: "Medio ambiente y futuro", topics: ["Naturaleza", "Profesiones", "Redes sociales"] },
   ],
   "spansk-2": [
-    { id: "sp1", title: "Cultura e identidad", topics: ["Identidad hispana", "Tradiciones", "Diversidad"] },
-    { id: "sp2", title: "Sociedad y política", topics: ["España y Latinoamérica", "Democracia", "Desigualdad"] },
-    { id: "sp3", title: "Medio ambiente", topics: ["Cambio climático", "Sostenibilidad", "Energías renovables"] },
-    { id: "sp4", title: "Jóvenes y comunicación", topics: ["Redes sociales", "Migración", "Globalización"] },
+    { id: "sp2-1", title: "Cultura e identidad", topics: ["Identidad hispana", "Tradiciones", "Diversidad"] },
+    { id: "sp2-2", title: "Sociedad y política", topics: ["España y Latinoamérica", "Democracia", "Desigualdad"] },
+    { id: "sp2-3", title: "Medio ambiente", topics: ["Cambio climático", "Sostenibilidad", "Energías renovables"] },
+    { id: "sp2-4", title: "Jóvenes y comunicación", topics: ["Redes sociales", "Migración", "Globalización"] },
   ],
   "samfunnsøkonomi-1": [
     { id: "so1-1", title: "Markeder og priser", topics: ["Tilbud og etterspørsel", "Likevektspris", "Prismekanismen"] },

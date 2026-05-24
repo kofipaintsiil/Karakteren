@@ -28,9 +28,11 @@ export const EXAM_SUBJECTS = [
     { id: "fransk-2", label: "Fransk 2", desc: "Vg3 Niveau II" },
   ]},
   { id: "tysk",        label: "Tysk",                          short: "Tysk",           variants: [
+    { id: "tysk-1", label: "Tysk 1", desc: "Vg2 Nivå I" },
     { id: "tysk-2", label: "Tysk 2", desc: "Vg3 Nivå II" },
   ]},
   { id: "spansk",      label: "Spansk",                        short: "Spansk",         variants: [
+    { id: "spansk-1", label: "Spansk 1", desc: "Vg2 Nivå I" },
     { id: "spansk-2", label: "Spansk 2", desc: "Vg3 Nivå II" },
   ]},
   { id: "samfunnsøkonomi", label: "Samfunnsøkonomi",          short: "Samf.øk.",       variants: [
@@ -73,7 +75,9 @@ export const EXAM_TOPICS: Record<string, string[]> = {
   geografi:         ["Klima og miljø", "Befolkningsvekst", "Ressurser og bærekraft", "Urbanisering", "Naturkatastrofer", "Geopolitikk", "Migrasjon", "Næringsgeografi"],
   "fransk-1":       ["Présentation personnelle et famille", "La vie quotidienne et l'école", "La gastronomie française", "Paris et les régions françaises", "Les loisirs et le sport", "La mode et les tendances"],
   "fransk-2":       ["Culture et identité française", "La Francophonie", "Littérature et cinéma français", "Société et politique en France", "L'environnement et le développement durable", "La jeunesse et les réseaux sociaux", "L'éducation en France", "La technologie et l'avenir"],
+  "tysk-1":         ["Persönliche Vorstellung und Familie", "Schule und Alltag", "Freizeit und Hobbys", "Essen und Trinken", "Deutschland und deutschsprachige Länder", "Reisen und Urlaub", "Natur und Umwelt", "Berufe und Zukunft"],
   "tysk-2":         ["Deutsche Gesellschaft und Kultur", "Geschichte und Erinnerungskultur", "Die Europäische Union", "Umwelt und Nachhaltigkeit", "Jugend und Lebenswelt", "Migration und Integration", "Medien und Kommunikation", "Wirtschaft und Beruf"],
+  "spansk-1":       ["Presentación personal y familia", "La escuela y la vida cotidiana", "El tiempo libre y los pasatiempos", "La comida y la gastronomía", "España y los países hispanohablantes", "Los viajes y el turismo", "El medio ambiente", "Los jóvenes y las redes sociales"],
   "spansk-2":       ["Cultura e identidad hispana", "Historia y política en el mundo hispano", "Medio ambiente y sostenibilidad", "Migración y globalización", "Jóvenes y redes sociales", "Literatura y cine hispanohablante", "Economía y trabajo", "Sociedad y diversidad"],
   "samfunnsøkonomi-1": ["Tilbud og etterspørsel", "Markedsmekanismen og prisdannelse", "Nasjonalregnskap og BNP", "Konjunktursvingninger", "Penge- og finanspolitikk", "Arbeidsledighet og inflasjon", "Offentlig sektor og skatter", "Internasjonal handel"],
   "samfunnsøkonomi-2": ["Fullkommen og ufullkommen konkurranse", "Markedssvikt og offentlige inngrep", "Fordelingspolitikk og velferd", "Valutamarkedet og valutapolitikk", "Miljøøkonomi og bærekraft", "Makroøkonomiske modeller", "Vekstteori og innovasjon", "Internasjonale finansmarkeder"],
