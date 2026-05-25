@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 function GearIcon() {
   return (
@@ -13,6 +14,19 @@ function GearIcon() {
 }
 
 export default function TopNav() {
+  const [showDot, setShowDot] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem("seen_settings_hint")) {
+      setShowDot(true);
+    }
+  }, []);
+
+  function handleSettingsClick() {
+    localStorage.setItem("seen_settings_hint", "1");
+    setShowDot(false);
+  }
+
   return (
     <header style={{
       backgroundColor: "rgba(250,248,244,0.92)",
@@ -45,7 +59,8 @@ export default function TopNav() {
         </Link>
 
         {/* Settings gear — top right */}
-        <Link href="/instillinger" style={{
+        <Link href="/instillinger" onClick={handleSettingsClick} style={{
+          position: "relative",
           width: "36px", height: "36px",
           borderRadius: "var(--r-md)",
           backgroundColor: "var(--bg-alt)",
@@ -55,6 +70,14 @@ export default function TopNav() {
           textDecoration: "none",
         }}>
           <GearIcon />
+          {showDot && (
+            <span style={{
+              position: "absolute", top: "4px", right: "4px",
+              width: "8px", height: "8px", borderRadius: "50%",
+              backgroundColor: "var(--error)",
+              border: "1.5px solid var(--bg-alt)",
+            }} />
+          )}
         </Link>
       </div>
     </header>
