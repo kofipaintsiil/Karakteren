@@ -91,8 +91,8 @@ function ExamPageInner() {
   useEffect(() => { messagesRef.current = messages; }, [messages]);
 
   const examLang = subject === "engelsk" ? "en-GB"
-    : subject === "tysk-2" ? "de-DE"
-    : subject === "spansk-2" ? "es-ES"
+    : (subject === "tysk-1" || subject === "tysk-2") ? "de-DE"
+    : (subject === "spansk-1" || subject === "spansk-2") ? "es-ES"
     : (subject === "fransk-1" || subject === "fransk-2") ? "fr-FR"
     : "nb-NO";
 
@@ -306,7 +306,7 @@ function ExamPageInner() {
     function startSession() {
       const rec = new SRClass();
       activeRec = rec;
-      rec.lang = subject === "engelsk" ? "en-US" : "nb-NO";
+      rec.lang = examLang === "en-GB" ? "en-US" : examLang;
       rec.continuous = true;
       rec.interimResults = true;
       rec.maxAlternatives = 3;

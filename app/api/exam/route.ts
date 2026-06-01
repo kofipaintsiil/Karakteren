@@ -124,25 +124,32 @@ function buildGradePrompt(subject: string, topic: string, messages: Message[]): 
     .map((m) => `${m.role === "examiner" ? "SENSOR" : "ELEV"}: ${m.text}`)
     .join("\n");
 
-  return `Du har nå gjennomført en muntlig eksamen i ${subjectLabel}, tema "${topic}".
+  return `Du har nå gjennomført en muntlig prøve i ${subjectLabel}, tema: "${topic}".
 
 Samtalen:
 ${conversation}
 
-Sett karakter fra 1–6 basert på norsk vurderingsskala (LK20):
-- 6: Fremragende kompetanse
-- 5: Meget god kompetanse
-- 4: God kompetanse
-- 3: Nokså god kompetanse
-- 2: Lav kompetanse
-- 1: Svært lav kompetanse / ikke bestått
+KARAKTERSETTING — norsk vurderingsskala LK20, muntlig eksamen VGS:
+- 6: Fremragende. Eleven svarer presist, viser analytisk dybde, knytter begreper til hverandre, håndterer uventede vinkler.
+- 5: Meget god. Eleven viser solid faglig forståelse, bruker korrekt terminologi, kan forklare og eksemplifisere.
+- 4: God. Eleven kan det grunnleggende korrekt og tydelig. Dette er normalkarakteren for en forberedt elev som svarer riktig på de fleste spørsmål.
+- 3: Nokså god. Eleven kan noe, men forklaringene er delvis upresise eller mangler faglig dybde.
+- 2: Lav kompetanse. Eleven kan svært lite, mange feil eller fraværende forklaringer.
+- 1: Ikke bestått. Eleven kan nesten ingenting relevant.
 
-Basert på det eleven faktisk sa i denne samtalen, identifiser:
-- "strengths": Konkrete ting eleven gjorde bra — sitér gjerne fra svarene. Maks 3 punkter. Tom liste hvis karakteren er 1–2.
-- "improvements": Konkrete ting som trakk karakteren ned — f.eks. "Svarte ikke på spørsmålet om X", "Brukte ikke fagterminologi for Y", "Forklaringen av Z var for overfladisk". Maks 3 punkter.
+VIKTIG KALIBRERING:
+- En elev som svarer riktig på grunnleggende spørsmål og kan forklare konseptene = minimum karakter 4.
+- Vær IKKE streng med nervøsitet, pauser eller ufullstendige setninger — muntlig eksamen er en samtale.
+- Gi karakteren du ville gitt i en ekte VGS muntlig eksamen. Ikke la grensene mellom 3 og 4 trekke ned en 4-er.
+- Hvis du er i tvil mellom to karakterer, velg den høyere.
+
+Basert på det eleven faktisk sa i samtalen:
+- "strengths": 3–5 SPESIFIKKE styrker. Sitér direkte fra elevens svar med anførselstegn. Eksempel: "Forklarte korrekt at [sitat] — dette viser god forståelse av X". Ikke vage fraser som "god faglig forståelse".
+- "improvements": 3–5 KONKRETE forbedringsområder. Referer til spesifikke spørsmål/svar: "Da sensor spurte om X, svarte eleven Y — det riktige hadde vært Z". Nevn fagbegreper eleven burde ha brukt men ikke brukte.
+- "feedback": 3–4 setninger som oppsummerer hva eleven mestrer og hva som kan bli bedre. Konkret og handlingsorientert.
 
 Svar KUN med dette JSON-formatet (ingen annen tekst):
-{"grade": <tall 1-6>, "feedback": "<2-3 setninger oppsummering>", "strengths": ["<punkt 1>", "..."], "improvements": ["<punkt 1>", "..."]}`;
+{"grade": <tall 1-6>, "feedback": "<3-4 setninger konkret oppsummering>", "strengths": ["<spesifikt punkt med sitat>", "..."], "improvements": ["<spesifikt punkt med referanse>", "..."]}`;
 }
 
 export async function POST(req: NextRequest) {
