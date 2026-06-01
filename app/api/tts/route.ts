@@ -22,6 +22,7 @@ async function elevenLabsTTS(text: string, voiceId: string): Promise<ArrayBuffer
       body: JSON.stringify({
         text,
         model_id: "eleven_multilingual_v2",
+        language_code: "no",
         voice_settings: { stability: 0.65, similarity_boost: 0.80, style: 0.10 },
       }),
       signal: AbortSignal.timeout(15_000),
