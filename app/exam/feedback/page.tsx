@@ -11,6 +11,7 @@ import Link from "next/link";
 
 interface SessionResult {
   grade: number;
+  gradeDisplay?: string;
   feedback: string;
   strengths: string[];
   improvements: string[];
@@ -52,6 +53,7 @@ export default function FeedbackPage() {
   }, []);
 
   const grade = result?.grade ?? 0;
+  const gradeDisplay = result?.gradeDisplay ?? String(grade || "?");
   const cfg = gradeConfig[grade] ?? gradeConfig[4];
   const strengths = result?.strengths ?? [];
   const improvements = result?.improvements ?? [];
@@ -99,8 +101,8 @@ export default function FeedbackPage() {
               />
             </svg>
             <div style={{ position: "absolute", textAlign: "center" }}>
-              <div style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 900, fontSize: "44px", color: cfg.color, lineHeight: 1, transition: "all 0.5s" }}>
-                {revealed ? grade : "?"}
+              <div style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 900, fontSize: gradeDisplay.length > 1 ? "36px" : "44px", color: cfg.color, lineHeight: 1, transition: "all 0.5s" }}>
+                {revealed ? gradeDisplay : "?"}
               </div>
               <div style={{ fontSize: "10px", color: "var(--ink-light)", marginTop: "2px" }}>av 6</div>
             </div>

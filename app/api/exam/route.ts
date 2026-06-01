@@ -130,26 +130,35 @@ Samtalen:
 ${conversation}
 
 KARAKTERSETTING — norsk vurderingsskala LK20, muntlig eksamen VGS:
-- 6: Fremragende. Eleven svarer presist, viser analytisk dybde, knytter begreper til hverandre, håndterer uventede vinkler.
-- 5: Meget god. Eleven viser solid faglig forståelse, bruker korrekt terminologi, kan forklare og eksemplifisere.
-- 4: God. Eleven kan det grunnleggende korrekt og tydelig. Dette er normalkarakteren for en forberedt elev som svarer riktig på de fleste spørsmål.
-- 3: Nokså god. Eleven kan noe, men forklaringene er delvis upresise eller mangler faglig dybde.
-- 2: Lav kompetanse. Eleven kan svært lite, mange feil eller fraværende forklaringer.
+- 6: Fremragende. Eleven svarer selvstendig og presist, går ikke glipp av nøkkelbegreper, viser analytisk dybde og kan knytte fagstoff til hverandre på eget initiativ.
+- 5: Meget god. Eleven viser solid forståelse, bruker fagterminologi korrekt, kan forklare og eksemplifisere — men har noen hull eller unøyaktigheter.
+- 4: God. Eleven forstår og kan gjøre rede for sentrale begreper, men trenger noen hint fra sensor og mangler dybde på noen punkter.
+- 3: Nokså god. Eleven kan noe grunnleggende, men forklaringene er ofte overfladiske, upresise eller ufullstendige.
+- 2: Lav kompetanse. Eleven strever med å forklare de fleste konseptene, mange feil eller manglende svar.
 - 1: Ikke bestått. Eleven kan nesten ingenting relevant.
 
-VIKTIG KALIBRERING:
-- En elev som svarer riktig på grunnleggende spørsmål og kan forklare konseptene = minimum karakter 4.
-- Vær IKKE streng med nervøsitet, pauser eller ufullstendige setninger — muntlig eksamen er en samtale.
-- Gi karakteren du ville gitt i en ekte VGS muntlig eksamen. Ikke la grensene mellom 3 og 4 trekke ned en 4-er.
-- Hvis du er i tvil mellom to karakterer, velg den høyere.
+VIKTIG — BRUK + OG - KARAKTERER:
+Du kan gi karakterer med pluss og minus for å differensiere innenfor samme trinn:
+- "5+" = svært sterk 5, nær 6-nivå
+- "5" = tydelig 5
+- "5-" = svak 5, nær 4-nivå
+- Samme logikk for alle trinn: 4+, 4, 4-, 3+, 3, 3-, 2+, 2, 2-, 1+, 1, 6-, 6
+- "gradeDisplay" er displaykarakteren (f.eks. "5+", "4-", "3")
+- "grade" er grunntallet (1–6 uten + eller -)
+
+KALIBRERING:
+- Vær realistisk — ikke for snill og ikke for streng
+- Vær IKKE streng med nervøsitet, pauser eller ufullstendige setninger
+- En elev som bare svarer overfladisk og trenger mange hint fra sensor = 3-nivå, ikke 4
+- En elev som forklarer godt men med noen hull = 4 til 4+
 
 Basert på det eleven faktisk sa i samtalen:
-- "strengths": 3–5 SPESIFIKKE styrker. Sitér direkte fra elevens svar med anførselstegn. Eksempel: "Forklarte korrekt at [sitat] — dette viser god forståelse av X". Ikke vage fraser som "god faglig forståelse".
-- "improvements": 3–5 KONKRETE forbedringsområder. Referer til spesifikke spørsmål/svar: "Da sensor spurte om X, svarte eleven Y — det riktige hadde vært Z". Nevn fagbegreper eleven burde ha brukt men ikke brukte.
-- "feedback": 3–4 setninger som oppsummerer hva eleven mestrer og hva som kan bli bedre. Konkret og handlingsorientert.
+- "strengths": 3–5 SPESIFIKKE styrker med direkte sitater fra elevens svar i anførselstegn. Eksempel: "Forklarte presist at '[sitat]' — dette viser god forståelse av X". Aldri vage fraser.
+- "improvements": 3–5 KONKRETE forbedringsområder. Referer til spesifikke spørsmål/svar: "Da sensor spurte om X svarte eleven Y — det riktige hadde vært Z". Nevn fagbegreper eleven burde brukt.
+- "feedback": 3–4 setninger som konkret oppsummerer hva eleven mestrer og hva som kan bli bedre.
 
 Svar KUN med dette JSON-formatet (ingen annen tekst):
-{"grade": <tall 1-6>, "feedback": "<3-4 setninger konkret oppsummering>", "strengths": ["<spesifikt punkt med sitat>", "..."], "improvements": ["<spesifikt punkt med referanse>", "..."]}`;
+{"grade": <grunntall 1-6>, "gradeDisplay": "<f.eks. 5+ eller 4->", "feedback": "<3-4 setninger>", "strengths": ["<spesifikt med sitat>", "..."], "improvements": ["<spesifikt med referanse>", "..."]}`;
 }
 
 export async function POST(req: NextRequest) {

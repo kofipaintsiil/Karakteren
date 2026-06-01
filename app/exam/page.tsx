@@ -20,6 +20,7 @@ interface Message {
 
 interface SessionResult {
   grade: number;
+  gradeDisplay?: string;
   feedback: string;
   strengths: string[];
   improvements: string[];
@@ -176,10 +177,11 @@ function ExamPageInner() {
       return;
     }
     const grade = result.grade;
+    const gradeDisplay: string | undefined = result.gradeDisplay;
     const feedback = result.feedback ?? "Øvingsprøve fullført.";
     const strengths: string[] = result.strengths ?? [];
     const improvements: string[] = result.improvements ?? [];
-    const sessionResult: SessionResult = { grade, feedback, strengths, improvements, subject: subjectLabel, topic: topicName, messages: messagesRef.current };
+    const sessionResult: SessionResult = { grade, gradeDisplay, feedback, strengths, improvements, subject: subjectLabel, topic: topicName, messages: messagesRef.current };
     sessionStorage.setItem("examResult", JSON.stringify(sessionResult));
     saveSession({ subject: subjectLabel, topic: topicName, grade, feedback, strengths, improvements, messages: messagesRef.current });
     setBlobbState(grade >= 5 ? "happy" : grade >= 3 ? "idle" : "disappointed");
@@ -230,10 +232,11 @@ function ExamPageInner() {
         return;
       }
       const grade = result.grade;
+      const gradeDisplay: string | undefined = result.gradeDisplay;
       const feedback = result.feedback ?? "Eksamen fullført.";
       const strengths: string[] = result.strengths ?? [];
       const improvements: string[] = result.improvements ?? [];
-      const sessionResult: SessionResult = { grade, feedback, strengths, improvements, subject: subjectLabel, topic: topicName, messages: messagesWithAI };
+      const sessionResult: SessionResult = { grade, gradeDisplay, feedback, strengths, improvements, subject: subjectLabel, topic: topicName, messages: messagesWithAI };
       sessionStorage.setItem("examResult", JSON.stringify(sessionResult));
       saveSession({ subject: subjectLabel, topic: topicName, grade, feedback, strengths, improvements, messages: messagesWithAI });
       setBlobbState(grade >= 5 ? "happy" : grade >= 3 ? "idle" : "disappointed");
