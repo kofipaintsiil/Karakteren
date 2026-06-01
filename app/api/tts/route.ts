@@ -3,7 +3,7 @@ import { requireAuth } from "@/lib/auth-guard";
 import { rateLimit } from "@/lib/rate-limit";
 
 const VOICES = {
-  female: process.env.ELEVENLABS_VOICE_ID ?? "k5IgYJw2jfo6mO5HhagG",
+  female: process.env.ELEVENLABS_VOICE_ID ?? "BGEU6wFi2uNm6Kje1Yhk",
   male:   process.env.ELEVENLABS_VOICE_ID_MALE ?? "St7X3jjf2NZQB9rcGjjZ",
 };
 const FALLBACK_VOICE_ID = "XB0fDUnXU5powFXDhCwa"; // Charlotte — public fallback
