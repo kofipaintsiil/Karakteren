@@ -21,9 +21,8 @@ async function elevenLabsTTS(text: string, voiceId: string): Promise<ArrayBuffer
       },
       body: JSON.stringify({
         text,
-        model_id: "eleven_turbo_v2_5",
-        // Calm, professional examiner — high stability, minimal style flair
-        voice_settings: { stability: 0.70, similarity_boost: 0.75, style: 0.05 },
+        model_id: "eleven_multilingual_v2",
+        voice_settings: { stability: 0.65, similarity_boost: 0.80, style: 0.10 },
       }),
       signal: AbortSignal.timeout(15_000),
     }
@@ -76,7 +75,7 @@ export async function POST(req: NextRequest) {
           "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ model: "tts-1", voice: "alloy", input: text, speed: 1.0 }),
+        body: JSON.stringify({ model: "tts-1-hd", voice: "nova", input: text, speed: 1.0 }),
         signal: AbortSignal.timeout(15_000),
       });
       if (res.ok) {
