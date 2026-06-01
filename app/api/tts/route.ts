@@ -4,7 +4,7 @@ import { rateLimit } from "@/lib/rate-limit";
 
 const VOICES = {
   female: process.env.ELEVENLABS_VOICE_ID ?? "k5IgYJw2jfo6mO5HhagG",
-  male:   process.env.ELEVENLABS_VOICE_ID_MALE ?? "ikwOHnCcqQJgOoz5Wxex",
+  male:   process.env.ELEVENLABS_VOICE_ID_MALE ?? "St7X3jjf2NZQB9rcGjjZ",
 };
 const FALLBACK_VOICE_ID = "XB0fDUnXU5powFXDhCwa"; // Charlotte — public fallback
 const MAX_TEXT_LENGTH = 1000;
