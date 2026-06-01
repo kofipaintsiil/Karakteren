@@ -16,6 +16,7 @@ interface Message {
 interface ExamRequest {
   subject: string;
   topic: string;
+  topics?: string[];
   messages: Message[];
   phase: "opening" | "followup" | "grade";
   studentAnswers: string[];
@@ -32,30 +33,69 @@ const SUBJECT_LABELS: Record<string, string> = {
   "rettslære-1": "Rettslære 1", "rettslære-2": "Rettslære 2",
   "markedsføring-1": "Markedsføring og ledelse 1", "markedsføring-2": "Markedsføring og ledelse 2",
   teknologi: "Teknologi og forskningslære 1",
-  "tysk-2": "Deutsch (Niveau II)", "spansk-2": "Español (Nivel II)",
+  "tysk-1": "Deutsch (Niveau I)", "tysk-2": "Deutsch (Niveau II)",
+  "spansk-1": "Español (Nivel I)", "spansk-2": "Español (Nivel II)",
   religion: "Religion og etikk",
 };
 
+function getLangInstruction(subject: string): string {
+  if (subject === "engelsk") return "Conduct this conversation entirely in English. The student must also answer in English.";
+  if (subject === "fransk-1" || subject === "fransk-2") return "Conduis cette conversation entièrement en français. L'élève doit aussi répondre en français.";
+  if (subject === "tysk-1" || subject === "tysk-2") return "Führe dieses Gespräch vollständig auf Deutsch durch. Der Schüler muss ebenfalls auf Deutsch antworten.";
+  if (subject === "spansk-1" || subject === "spansk-2") return "Conduce esta conversación completamente en español. El alumno también debe responder en español.";
+  return "Samtalen foregår på norsk bokmål.";
+}
+
+function buildOvingSystemPrompt(subject: string, topics: string[]): string {
+  const subjectLabel = SUBJECT_LABELS[subject] ?? subject;
+  const topicList = topics.map((t, i) => `${i + 1}. ${t}`).join("\n");
+
+  return `Du er en faglærer som gjennomfører en muntlig fagsamtale med en elev i ${subjectLabel}.
+
+${getLangInstruction(subject)}
+
+Emnene for fagsamtalen er:
+${topicList}
+
+DIN OPPGAVE:
+- Gå gjennom ALLE emnene i løpet av samtalen — dette er en fagsamtale, ikke en eksamen om ett tema
+- Start med emne 1. Etter 2–3 utvekslinger per emne, gå naturlig videre: "La oss gå videre til [neste emne]..."
+- Still åpne spørsmål som lar eleven vise hva de kan
+- Følg opp gode svar: "Kan du gi et konkret eksempel?", "Hva er sammenhengen mellom X og Y?", "Hva skjer hvis...?"
+- Hvis eleven ikke kan svare: gå videre til neste aspekt — svar aldri selv
+- Tilpass deg det eleven sier — ingen faste, forhåndsbestemte spørsmål
+- Avslutt FØRST når alle emnene er berørt
+- Avslutt med én nøytral setning, f.eks. "Vi har vært gjennom alle emnene — takk for en god samtale." etterfulgt av [FERDIG]
+- [FERDIG] settes ALDRI midt i en melding, bare etter avslutningssetningen
+
+Stil og tone:
+- Vennlig og engasjert — dette er en læringssamtale, ikke en eksamen
+- Kort og tydelig: maks 2 setninger per tur fra deg
+- Profesjonell men ikke kald`;
+}
+
+function buildOvingOpeningMessage(subject: string, topics: string[]): string {
+  const isFrench = subject === "fransk-1" || subject === "fransk-2";
+  const isGerman = subject === "tysk-1" || subject === "tysk-2";
+  const isSpanish = subject === "spansk-1" || subject === "spansk-2";
+  const isEnglish = subject === "engelsk";
+
+  const topicStr = topics.join(", ");
+  const first = topics[0];
+
+  if (isEnglish) return `Start the subject conversation. Tell the student you will go through the following topics: ${topicStr}. Then start with "${first}" and ask one open question.`;
+  if (isFrench) return `Commence la conversation. Dis à l'élève que vous allez aborder les thèmes suivants : ${topicStr}. Commence par "${first}" et pose une question ouverte.`;
+  if (isGerman) return `Beginne das Gespräch. Sag dem Schüler, dass ihr folgende Themen besprechen werdet: ${topicStr}. Fange mit "${first}" an und stelle eine offene Frage.`;
+  if (isSpanish) return `Comienza la conversación. Dile al alumno que vais a tratar los siguientes temas: ${topicStr}. Empieza con "${first}" y haz una pregunta abierta.`;
+  return `Start fagsamtalen. Fortell eleven at dere skal gå gjennom følgende emner: ${topicStr}. Start med "${first}" og still ett åpent spørsmål.`;
+}
+
 function buildSystemPrompt(subject: string, topic: string): string {
   const subjectLabel = SUBJECT_LABELS[subject] ?? subject;
-  const isEnglish = subject === "engelsk";
-  const isFrench = subject === "fransk-1" || subject === "fransk-2";
-  const isGerman = subject === "tysk-2";
-  const isSpanish = subject === "spansk-2";
-
-  const langInstruction = isEnglish
-    ? "Conduct this exam entirely in English. The student must also answer in English."
-    : isFrench
-    ? "Conduis cet examen entièrement en français. L'élève doit aussi répondre en français."
-    : isGerman
-    ? "Führe diese Prüfung vollständig auf Deutsch durch. Der Schüler muss ebenfalls auf Deutsch antworten."
-    : isSpanish
-    ? "Conduce este examen completamente en español. El alumno también debe responder en español."
-    : "Eksamen foregår på norsk bokmål.";
 
   return `Du er en muntlig eksamenssensor for norsk videregående skole (VGS). Du eksaminerer en elev i faget ${subjectLabel}, tema: "${topic}".
 
-${langInstruction}
+${getLangInstruction(subject)}
 
 SENSORENS VIKTIGSTE OPPGAVE:
 Muntlig eksamen handler om å gi eleven best mulig mulighet til å vise hva de KAN — ikke å avsløre hva de ikke kan. En rettferdig sensor:
@@ -119,7 +159,8 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json() as ExamRequest;
-  const { subject, topic, messages, phase } = body;
+  const { subject, topic, topics, messages, phase } = body;
+  const isOvingFagsamtale = Array.isArray(topics) && topics.length > 1;
 
   // Only enforce quota on new exam starts, not follow-up turns or grading
   if (phase === "opening") {
@@ -139,7 +180,9 @@ export async function POST(req: NextRequest) {
 
   // Grading phase — returns JSON, not streaming
   if (phase === "grade") {
-    const gradePrompt = buildGradePrompt(subject, topic, messages);
+    const gradePrompt = isOvingFagsamtale
+      ? buildGradePrompt(subject, topics!.join(", "), messages)
+      : buildGradePrompt(subject, topic, messages);
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 512,
@@ -162,7 +205,9 @@ export async function POST(req: NextRequest) {
   }
 
   // Conversation phase — streaming
-  const systemPrompt = buildSystemPrompt(subject, topic);
+  const systemPrompt = isOvingFagsamtale
+    ? buildOvingSystemPrompt(subject, topics!)
+    : buildSystemPrompt(subject, topic);
 
   const anthropicMessages: Anthropic.MessageParam[] = [];
 
@@ -171,7 +216,9 @@ export async function POST(req: NextRequest) {
   if (phase === "opening") {
     anthropicMessages.push({
       role: "user",
-      content: isFrench
+      content: isOvingFagsamtale
+        ? buildOvingOpeningMessage(subject, topics!)
+        : isFrench
         ? `Commence l'examen. Dis d'abord "Tu as tiré le thème : ${topic}." puis pose une question ouverte qui donne à l'élève la possibilité de montrer ce qu'il sait sur ce thème. Ne pose pas de questions oui/non.`
         : `Start eksamenen. Si først "Du har trukket tema: ${topic}." og still deretter ett åpent spørsmål som gir eleven mulighet til å vise hva de kan om temaet. Ikke still ja/nei-spørsmål.`,
     });

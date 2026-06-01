@@ -346,11 +346,16 @@ export default function OvingPage() {
 
   function startSession() {
     if (selected.size === 0) return;
-    // Pick a random selected chapter — use its title as the exam topic
     const selectedIds = Array.from(selected);
-    const randomId = selectedIds[Math.floor(Math.random() * selectedIds.length)];
-    const topic = chapters.find(c => c.id === randomId)?.title ?? "";
-    const params = new URLSearchParams({ subject: selectedVariant ?? selectedFag!, topic, mode: "oving" });
+    const topicTitles = selectedIds
+      .map(id => chapters.find(c => c.id === id)?.title ?? "")
+      .filter(Boolean);
+    const params = new URLSearchParams({
+      subject: selectedVariant ?? selectedFag!,
+      topics: topicTitles.join("|"),
+      topic: topicTitles[0],
+      mode: "oving",
+    });
     router.push(`/exam?${params.toString()}`);
   }
 

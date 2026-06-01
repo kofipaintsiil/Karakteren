@@ -57,6 +57,9 @@ function ExamPageInner() {
   const subjectLabel = SUBJECT_LABELS[subject] ?? subject;
   const presetTopic = params.get("topic");
   const isOvingMode = params.get("mode") === "oving";
+  const ovingTopics = isOvingMode
+    ? (params.get("topics") ?? "").split("|").filter(Boolean)
+    : [];
 
   const [phase, setPhase] = useState<Phase>("draw");
   const [topicName, setTopicName] = useState<string>("");
@@ -118,7 +121,7 @@ function ExamPageInner() {
       const res = await fetch("/api/exam", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject, topic: currentTopic, messages: currentMessages, phase: apiPhase }),
+        body: JSON.stringify({ subject, topic: currentTopic, topics: ovingTopics.length > 1 ? ovingTopics : undefined, messages: currentMessages, phase: apiPhase }),
       });
       if (res.status === 429) {
         const data = await res.json();
@@ -153,7 +156,7 @@ function ExamPageInner() {
       const res = await fetch("/api/exam", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject, topic: currentTopic, messages: currentMessages, phase: "grade" }),
+        body: JSON.stringify({ subject, topic: currentTopic, topics: ovingTopics.length > 1 ? ovingTopics : undefined, messages: currentMessages, phase: "grade" }),
       });
       if (!res.ok) return null;
       return await res.json();
@@ -524,7 +527,10 @@ function ExamPageInner() {
       }}>
         <div>
           <div style={{ fontWeight: 600, fontSize: "13px", color: "var(--text)", fontFamily: "Inter, system-ui, sans-serif" }}>{subjectLabel}</div>
-          {topicName && <div style={{ fontSize: "11px", color: "var(--ink-light)", fontFamily: "Inter, system-ui, sans-serif" }}>{topicName}</div>}
+          {ovingTopics.length > 1
+            ? <div style={{ fontSize: "11px", color: "var(--ink-light)", fontFamily: "Inter, system-ui, sans-serif" }}>{ovingTopics.join(" · ")}</div>
+            : topicName && <div style={{ fontSize: "11px", color: "var(--ink-light)", fontFamily: "Inter, system-ui, sans-serif" }}>{topicName}</div>
+          }
         </div>
 
         {/* 3-segment progress bar + counter */}
